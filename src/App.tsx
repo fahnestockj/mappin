@@ -1,24 +1,18 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-
+import { useState } from "react";
+import Velmap from "./Velmap";
+import './App.css'
+// import 'rsuite/dist/styles/rsuite-default.min.css'
+import 'rsuite/dist/rsuite.min.css'
 function App() {
+  const [fetchFlag, setfetchFlag] = useState(false)
+  const [dataset, setDataset] = useState(null)
+  const [latLong, setLatLong] = useState([])
+
+// subtract 360 from long
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Velmap latLong={latLong} fetchFlag={fetchFlag} setfetchFlag={setfetchFlag}  dataset={dataset} setDataset={setDataset} setLatLong={setLatLong}/>
+
     </div>
   );
 }
