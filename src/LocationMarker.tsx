@@ -1,9 +1,19 @@
 import { useState, useRef, useMemo } from 'react'
 import { Marker, Popup } from 'react-leaflet'
-import { IMarker } from './Velmap'
+import { IColor, IMarker } from './Velmap'
 import L from 'leaflet'
 //@ts-ignore
+import blueMarker from './images/blueMarker.svg'
+//@ts-ignore
 import greenMarker from './images/greenMarker.svg'
+//@ts-ignore
+import orangeMarker from './images/orangeMarker.svg'
+//@ts-ignore
+import redMarker from './images/redMarker.svg'
+
+
+
+//@ts-ignore
 type IProps = {
   markerProp: IMarker
 }
@@ -23,10 +33,16 @@ const LocationMarker = (props: IProps) => {
   //   iconUrl: require('leaflet/dist/images/marker-icon.png'),
   //   shadowUrl: require('leaflet/dist/images/marker-shadow.png')
   // })
+  const dict: Record<string, any> = {
+    'blue': blueMarker,
+    'red': redMarker,
+    'orange': orangeMarker,
+    'green': greenMarker
+  }
 
 
-  const redIcon = L.icon({
-    iconUrl: greenMarker,
+  const icon = L.icon({
+    iconUrl: dict[markerProp.color],
     iconSize: [26, 26],
     iconAnchor: [13, 13],
     popupAnchor: [0, 0],
@@ -50,7 +66,7 @@ const LocationMarker = (props: IProps) => {
       draggable={true}
       eventHandlers={eventHandlers}
       ref={markerRef}
-      icon={redIcon}
+      icon={icon}
 
     >
       <Popup>Lat: {position.lat} Long: {position.lng}</Popup>

@@ -23,7 +23,7 @@ const MarkerController = (props: IProps) => {
   }
   useMapEvents({
     click(e) {
-      if (markers.length < 3) {
+      if (markers.length < 4) {
         setMarkers([
           ...markers,
           {

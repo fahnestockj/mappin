@@ -1,14 +1,14 @@
 import React from 'react'
 import { useState } from 'react'
-import { MapContainer, TileLayer, useMapEvents } from 'react-leaflet'
+import { MapContainer, TileLayer, GeoJSON, LayersControl, useMap } from 'react-leaflet'
 import LocationMarker from './LocationMarker'
 import "proj4leaflet"
 import { CRS } from 'leaflet'
 import { Scatter } from 'react-chartjs-2'
-import axios from 'axios';
-import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom'
 import MarkerController from './MarkerController'
+import catalogJson from './images/catalog_v02.json'
+
 export type IColor = 'green' | 'blue' | 'red' | 'orange'
 export type IMarker = {
   color: IColor
@@ -44,61 +44,56 @@ const Velmap = (props: IProps) => {
         lat: 70,
         lng: -50
       },
-      
+
     }
   ])
 
 
-
-  const EPSG3857 = CRS.EPSG3857
-
-
-  var data = {
-    datasets: [
-      {
-        label: `Velocity for Lat: ${lat} Long: ${long} `,
-        data: dataset,
-        backgroundColor: 'rgba(255, 99, 132, 1)',
-      },
-    ],
-  };
-  const options = {
-
-    responsive: true,
-    maintainAspectRatio: true,
-    scales: {
-      x: {
-        title: {
-          display: true,
-          text: "Years",
-          font: {
-            size: 14
-          }
+  // var data = {
+  //   datasets: [
+  //     {
+  //       label: `Velocity for Lat: ${lat} Long: ${long} `,
+  //       data: dataset,
+  //       backgroundColor: 'rgba(255, 99, 132, 1)',
+  //     },
+  //   ],
+  // };
+  // const options = {
+  //   responsive: true,
+  //   maintainAspectRatio: true,
+  //   scales: {
+  //     x: {
+  //       title: {
+  //         display: true,
+  //         text: "Years",
+  //         font: {
+  //           size: 14
+  //         }
 
 
-        },
-        ticks: {
-          //@ts-ignore
-          callback: function (value, index, values) {
-            return (value)
-          }
-        }
-      },
-      y: {
-        title: {
-          display: true,
-          text: "Velocity (meters/year)",
-          font: {
-            size: 14
-          },
-        }
-      },
+  //       },
+  //       ticks: {
+  //         //@ts-ignore
+  //         callback: function (value, index, values) {
+  //           return (value)
+  //         }
+  //       }
+  //     },
+  //     y: {
+  //       title: {
+  //         display: true,
+  //         text: "Velocity (meters/year)",
+  //         font: {
+  //           size: 14
+  //         },
+  //       }
+  //     },
 
 
-    },
-  };
+  //   },
+  // };
 
-
+  const { Overlay } = LayersControl
 
   return (
     <div className='body'>
@@ -112,18 +107,27 @@ const Velmap = (props: IProps) => {
             integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
             crossOrigin=""></script>
           <div className="trashgarboleaflet" >
-            <MapContainer crs={EPSG3857} style={{ height: "100%" }} center={[70.3, -49.5]} zoom={6} maxZoom={10} minZoom={2} scrollWheelZoom={true} >
-              <TileLayer
-                attribution='Imagery provided by ESRI'
-                url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.jpg"
-                maxNativeZoom={7}
-                tileSize={256}
-              />
-              {<TileLayer
-                url="https://glacierflow.nyc3.digitaloceanspaces.com/webmaps/vel_map/{z}/{x}/{y}.png"
-                maxNativeZoom={7}
-                tileSize={256}
-              />}
+            <MapContainer crs={CRS.EPSG3857} style={{ height: "100%" }} center={[70.3, -49.5]} zoom={6} maxZoom={10} minZoom={2} scrollWheelZoom={true}  >
+              <LayersControl >
+                <Overlay name='GeoJSON'>
+                  {/* @ts-ignore */}
+                  <GeoJSON data={catalogJson as GeoJsonObject} />
+                </Overlay>
+                <TileLayer
+                  attribution='Imagery provided by ESRI'
+                  url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.jpg"
+                  maxNativeZoom={7}
+                  tileSize={256}
+                />
+                <Overlay checked name='Velocity Map'>
+                  <TileLayer
+                    url="https://glacierflow.nyc3.digitaloceanspaces.com/webmaps/vel_map/{z}/{x}/{y}.png"
+                    maxNativeZoom={7}
+                    tileSize={256}
+                  />
+                </Overlay>
+
+              </LayersControl>
               <MarkerController markers={markers} setMarkers={setMarkers} />
               {markers.map(marker => (
                 <LocationMarker key={`${marker.latLng.lat}${marker.latLng.lng}`} markerProp={marker} />
@@ -134,7 +138,7 @@ const Velmap = (props: IProps) => {
 
           <div className="graphclass">
             {(dataset && !fetchFlag && renderFlag) ? <div>
-              <Scatter data={data} options={options} style={{ backgroundColor: "white" }} />
+              {/* <Scatter data={data} options={options} style={{ backgroundColor: "white" }} /> */}
               {/* <CsvDownload data={dataset} style={{ "marginTop": "15px" }} filename={"Lat:" + lat + "Long:" + long + "Timeseries.csv"} /> */}
             </div>
               : <div />}
