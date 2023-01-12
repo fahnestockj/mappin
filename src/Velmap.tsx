@@ -147,7 +147,7 @@ const Velmap = (props: IProps) => {
         </div>
 
       </div>
-      <button onClick={() => {
+      {/* <button onClick={() => {
         setSearchParams(
           {
 
@@ -155,9 +155,9 @@ const Velmap = (props: IProps) => {
           }
         )
         console.log(searchParams.get('lat'))
-      }}>
-        clickme
-      </button>
+      }}> */}
+        {/* clickme
+      </button> */}
 
     </div>
   )
