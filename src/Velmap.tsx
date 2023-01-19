@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { MapContainer, TileLayer, GeoJSON, LayersControl } from 'react-leaflet'
 import LocationMarker from './LocationMarker'
@@ -6,6 +6,7 @@ import "proj4leaflet"
 import { CRS } from 'leaflet'
 import MarkerController from './MarkerController'
 import catalogJson from './images/catalog_v02.json'
+import axios from 'axios'
 
 export type IColor = 'green' | 'blue' | 'red' | 'orange'
 export type IMarker = {
@@ -13,7 +14,6 @@ export type IMarker = {
   latLng: {
     lat: number
     lng: number
-
   }
 }
 
@@ -23,6 +23,21 @@ type IProps = {
 
 
 const Velmap = (props: IProps) => {
+
+  // const [res, setRes] = useState<string>('')
+
+  // useEffect(() => {
+  //   axios.get('/time', {
+  //     params: {
+  //       lat: 70,
+  //       lng: -50
+  //     }
+  //   }).then(res => {
+  //     console.log(res.data.time);
+  //   })
+
+  // },[])
+
 
   const [markers, setMarkers] = useState<Array<IMarker>>([
     {
@@ -49,7 +64,7 @@ const Velmap = (props: IProps) => {
           <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
             integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
             crossOrigin=""></script>
-          
+
           <div className="trashgarboleaflet" >
             <MapContainer crs={CRS.EPSG3857} style={{ height: "100%" }} center={[70.3, -49.5]} zoom={6} maxZoom={10} minZoom={2} scrollWheelZoom={true}  >
               <LayersControl >
