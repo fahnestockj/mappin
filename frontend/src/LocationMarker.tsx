@@ -11,8 +11,6 @@ import orangeMarker from './images/orangeMarker.svg'
 //@ts-ignore
 import redMarker from './images/redMarker.svg'
 
-
-
 //@ts-ignore
 type IProps = {
   markerProp: IMarker
@@ -33,6 +31,8 @@ const LocationMarker = (props: IProps) => {
   //   iconUrl: require('leaflet/dist/images/marker-icon.png'),
   //   shadowUrl: require('leaflet/dist/images/marker-shadow.png')
   // })
+
+
   const dict: Record<string, any> = {
     'blue': blueMarker,
     'red': redMarker,
@@ -46,7 +46,7 @@ const LocationMarker = (props: IProps) => {
     iconSize: [26, 26],
     iconAnchor: [13, 13],
     popupAnchor: [0, 0],
-    shadowAnchor: [13,28]
+    shadowAnchor: [13, 28]
   })
 
   const eventHandlers = useMemo(
@@ -67,7 +67,6 @@ const LocationMarker = (props: IProps) => {
       eventHandlers={eventHandlers}
       ref={markerRef}
       icon={icon}
-
     >
       <Popup>Lat: {position.lat} Long: {position.lng}</Popup>
     </Marker>
