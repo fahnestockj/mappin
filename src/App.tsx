@@ -1,4 +1,4 @@
-import Velmap from "./Velmap";
+import Velmap from "./components/Velmap";
 import './App.css'
 function App() {
   return (

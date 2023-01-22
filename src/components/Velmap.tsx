@@ -5,7 +5,7 @@ import LocationMarker from './LocationMarker'
 import "proj4leaflet"
 import { CRS } from 'leaflet'
 import MarkerController from './MarkerController'
-import catalogJson from './images/catalog_v02.json'
+import catalogJson from '../images/catalog_v02.json'
 import axios from 'axios'
 
 export type IColor = 'green' | 'blue' | 'red' | 'orange'
@@ -20,6 +20,7 @@ export type IMarker = {
 
 type IProps = {
 }
+
 
 
 const Velmap = (props: IProps) => {

@@ -3,13 +3,13 @@ import { Marker, Popup } from 'react-leaflet'
 import { IColor, IMarker } from './Velmap'
 import L from 'leaflet'
 //@ts-ignore
-import blueMarker from './images/blueMarker.svg'
+import blueMarker from '../images/blueMarker.svg'
 //@ts-ignore
-import greenMarker from './images/greenMarker.svg'
+import greenMarker from '../images/greenMarker.svg'
 //@ts-ignore
-import orangeMarker from './images/orangeMarker.svg'
+import orangeMarker from '../images/orangeMarker.svg'
 //@ts-ignore
-import redMarker from './images/redMarker.svg'
+import redMarker from '../images/redMarker.svg'
 
 //@ts-ignore
 type IProps = {

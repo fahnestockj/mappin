@@ -1,5 +1,6 @@
 import { useMapEvents } from "react-leaflet"
-import { IColor, IMarker } from './Velmap'
+import { IColor, IMarker } from "./Velmap"
+
 
 type IProps = {
   markers: Array<IMarker>
