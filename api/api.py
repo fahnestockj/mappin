@@ -1,5 +1,6 @@
 import time
-from flask import Flask, request
+from flask import Flask, request, make_response
+import gzip
 import json
 import itslive
 
@@ -12,19 +13,31 @@ def get_timeseries():
   lngList = (request.args.getlist("lng"))
   if not (latList and lngList):
     raise Exception("lat and lng are required")
+  points = []
   for lat, lng in zip(latList, lngList):
     print("lat: ", lat)
     print("lng: ", lng)
+    points.append((float(lng), float(lat)))
 
-  return {}
+  list_of_timeseries = itslive.cubes.get_time_series(points=points,variables = ['v', 'date_dt']) 
+  
+  list_of_timeseries_dict = {}
 
-  # list_of_timeseries = itslive.cubes.get_time_series(points=[(lng,lat)],variables = [ 'v', 'date_dt']) 
-  # response_for_first_point = list_of_timeseries[0]
+  for timeseries in list_of_timeseries:
+    mid_date_arr = timeseries['time_series']['date_dt']['mid_date'].data # np arrays
+    v_arr = timeseries['time_series']['v'].data
 
-  # mid_date_arr = response_for_first_point['time_series']['date_dt']['mid_date'].data # np arrays
-  # v_arr = response_for_first_point['time_series']['v'].data
+    timeseries_dict = {} # put in a dict for easier conversion to json
+    for A, B in zip(mid_date_arr, v_arr):
+      timeseries_dict[str(A)] = str(B) # convert np datetime & float32 to str for json
+    lng = timeseries['coordinates'][0]
+    lat = timeseries['coordinates'][1]
+    list_of_timeseries_dict[str(lng) + "," + str(lat)] = timeseries_dict
+  return json.dumps(list_of_timeseries_dict)
 
-  # timeseries_dict = {} # put in a dict 
-  # for A, B in zip(mid_date_arr, v_arr):
-  #     timeseries_dict[str(A)] = str(B) # convert np datetime & float32 to str for json
-  # return json.dumps(timeseries_dict)
+
+  # content = gzip.compress(json.dumps(list_of_timeseries_dict).encode('utf8'), 5)
+  # response = make_response(content)
+  # response.headers['Content-length'] = len(content)
+  # response.headers['Content-Encoding'] = 'gzip'
+  # return response

@@ -24,19 +24,23 @@ type IProps = {
 
 const Velmap = (props: IProps) => {
 
-  // const [res, setRes] = useState<string>('')
+  const [res, setRes] = useState<string>('')
 
-  // useEffect(() => {
-  //   axios.get('/time', {
-  //     params: {
-  //       lat: 70,
-  //       lng: -50
-  //     }
-  //   }).then(res => {
-  //     console.log(res.data.time);
-  //   })
-
-  // },[])
+  useEffect(() => {
+    //NOTE: useEffect will run twice development because of React.StrictMode this won't happen in production
+    axios.get('/timeseries', {
+      headers: {
+        'Accept-Encoding': 'gzip',
+      },
+      params: {
+        lat: 70,
+        lng: -50
+      },
+      
+    }).then(res => {
+      console.log(res.data);
+    })
+  },[])
 
 
   const [markers, setMarkers] = useState<Array<IMarker>>([
