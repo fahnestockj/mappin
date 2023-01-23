@@ -17,7 +17,7 @@ const MarkerController = (props: IProps) => {
       case 2:
         return 'red'
       case 3:
-        return 'orange'
+        return 'yellow'
       default:
         return 'blue'
     }

@@ -1,14 +1,16 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
-import { MapContainer, TileLayer, GeoJSON, LayersControl } from 'react-leaflet'
-import LocationMarker from './LocationMarker'
+import { MapContainer, TileLayer, LayersControl, GeoJSON } from 'react-leaflet'
+import LocationMarker from './LocationMarker/LocationMarker'
 import "proj4leaflet"
 import { CRS } from 'leaflet'
 import MarkerController from './MarkerController'
-import catalogJson from '../images/catalog_v02.json'
+import catalogJson from '../geoJson/catalog_v02.json'
 import axios from 'axios'
+import { GeoJsonObject } from 'geojson'
 
-export type IColor = 'green' | 'blue' | 'red' | 'orange'
+export type IColor = 'green' | 'blue' | 'red' | 'yellow'
+
 export type IMarker = {
   color: IColor
   latLng: {
@@ -37,11 +39,11 @@ const Velmap = (props: IProps) => {
         lat: 70,
         lng: -50
       },
-      
+
     }).then(res => {
       console.log(res.data);
     })
-  },[])
+  }, [])
 
 
   const [markers, setMarkers] = useState<Array<IMarker>>([
