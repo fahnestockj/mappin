@@ -33,11 +33,9 @@ def get_timeseries():
     lng = timeseries['coordinates'][0]
     lat = timeseries['coordinates'][1]
     list_of_timeseries_dict[str(lng) + "," + str(lat)] = timeseries_dict
-  return json.dumps(list_of_timeseries_dict)
 
-
-  # content = gzip.compress(json.dumps(list_of_timeseries_dict).encode('utf8'), 5)
-  # response = make_response(content)
-  # response.headers['Content-length'] = len(content)
-  # response.headers['Content-Encoding'] = 'gzip'
-  # return response
+  content = gzip.compress(json.dumps(list_of_timeseries_dict).encode('utf8'), 5)
+  response = make_response(content)
+  response.headers['Content-length'] = len(content)
+  response.headers['Content-Encoding'] = 'gzip'
+  return response

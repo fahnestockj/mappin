@@ -32,9 +32,6 @@ const Velmap = (props: IProps) => {
   useEffect(() => {
     //NOTE: useEffect will run twice development because of React.StrictMode this won't happen in production
     axios.get('/timeseries', {
-      headers: {
-        'Accept-Encoding': 'gzip',
-      },
       params: {
         lat: 70,
         lng: -50
@@ -61,10 +58,12 @@ const Velmap = (props: IProps) => {
 
   const { Overlay } = LayersControl
 
+
+
   return (
     <div className='body'>
       <div style={{ 'backgroundColor': '#192a43', height: '90vh', display: 'flex', flexDirection: 'column', width: '100vw', }}>
-        <div className="rowleafletmap-container">
+        <div className="flex flex-row w-full h-full">
           <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
             integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
             crossOrigin="" />
@@ -72,7 +71,7 @@ const Velmap = (props: IProps) => {
             integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
             crossOrigin=""></script>
 
-          <div className="trashgarboleaflet" >
+          <div className="w-full h-full m-auto" >
             <MapContainer crs={CRS.EPSG3857} style={{ height: "100%" }} center={[70.3, -49.5]} zoom={6} maxZoom={10} minZoom={2} scrollWheelZoom={true}  >
               <LayersControl >
                 <Overlay name='GeoJSON'>
