@@ -4,7 +4,7 @@ import { MapContainer, TileLayer, LayersControl, GeoJSON } from 'react-leaflet'
 import LocationMarker from '../LocationMarker/LocationMarker'
 import "proj4leaflet"
 import { CRS } from 'leaflet'
-import MarkerController from '../MarkerController'
+import LatLngMapEventController from '../LatLngMapEventController'
 import catalogJson from '../../geoJson/catalog_v02.json'
 import axios from 'axios'
 import { GeoJsonObject } from 'geojson'
@@ -98,6 +98,7 @@ const Velmap = (props: IProps) => {
                 />
               </Overlay>
             </LayersControl>
+            <LatLngMapEventController form={form}/>
             {markers.map(marker => (
               <LocationMarker key={`${marker.latLng.lat}${marker.latLng.lng}`} markerProp={marker} />
             ))}
@@ -153,12 +154,6 @@ const Velmap = (props: IProps) => {
         </div>
 
         <div className='basis-1/3'>
-          <button type='button' onClick={() => {
-            form.setValue('latitude', 70)
-            form.setValue('longitude', 40)
-
-          }}>click me</button>
-
           {/** Table go here */}
         </div>
       </div>
