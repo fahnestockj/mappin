@@ -14,10 +14,6 @@ const LocationMarker = (props: IProps) => {
   const markerRef = useRef(null)
   const [position, setPosition] = useState(markerProp.latLng)
 
-
-
-
-
   const icon = L.divIcon({
     html:  renderToStaticMarkup(SvgCross(markerProp.color)),
     iconSize: [26, 26],
@@ -46,7 +42,7 @@ const LocationMarker = (props: IProps) => {
       ref={markerRef}
       icon={icon}
     >
-      <Popup>Lat: {position.lat} Long: {position.lng}</Popup>
+      <Popup>Lat: {position.lat.toFixed(5)} Long: {position.lng.toFixed(5)}</Popup>
     </Marker>
   )
 }
