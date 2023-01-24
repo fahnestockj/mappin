@@ -10,7 +10,11 @@ import axios from 'axios'
 import { GeoJsonObject } from 'geojson'
 import { BiImport } from 'react-icons/bi'
 import { AiOutlineLineChart } from 'react-icons/ai'
-import { LatLngForm } from '../LatLngForm'
+import { LatLngForm, ZFormSchema } from '../LatLngForm'
+import { produce } from 'immer'
+import { getColor } from '../../utils/getColor'
+import { z } from 'zod'
+import { useForm } from 'react-hook-form'
 
 export type IColor = 'green' | 'blue' | 'red' | 'yellow'
 
@@ -45,6 +49,7 @@ const Velmap = (props: IProps) => {
     })
   }, [])
 
+  const form = useForm<z.infer<typeof ZFormSchema>>();
 
   const [markers, setMarkers] = useState<Array<IMarker>>([
     {
@@ -93,7 +98,6 @@ const Velmap = (props: IProps) => {
                 />
               </Overlay>
             </LayersControl>
-            <MarkerController markers={markers} setMarkers={setMarkers} />
             {markers.map(marker => (
               <LocationMarker key={`${marker.latLng.lat}${marker.latLng.lng}`} markerProp={marker} />
             ))}
@@ -110,7 +114,26 @@ const Velmap = (props: IProps) => {
       <div className='h-[15vh] w-full flex items-center'>
         <div className='basis-2/3 inline-flex'>
 
-          <LatLngForm />
+          <LatLngForm form={form} onSubmit={({ latitude, longitude }) => {
+            console.log('lat', latitude, 'lng', longitude);
+
+            if (markers.length < 4) {
+              const color = getColor(markers.length)
+              setMarkers(
+                //Immer produce for immutability
+                produce(markers, draft => {
+                  draft.push({
+                    color,
+                    latLng: {
+                      lat: latitude,
+                      lng: longitude
+                    }
+                  })
+                })
+              )
+            }
+
+          }} />
 
           <button
             type="button"
@@ -130,6 +153,12 @@ const Velmap = (props: IProps) => {
         </div>
 
         <div className='basis-1/3'>
+          <button type='button' onClick={() => {
+            form.setValue('latitude', 70)
+            form.setValue('longitude', 40)
+
+          }}>click me</button>
+
           {/** Table go here */}
         </div>
       </div>

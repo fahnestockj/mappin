@@ -1,11 +1,12 @@
 import { z } from "zod";
 import { createTsForm, useTsController } from '@ts-react/form';
 import { FaMapMarkerAlt } from 'react-icons/fa'
+import { useForm, UseFormReturn } from 'react-hook-form'
 
-type IProps = {
+type IInputProps = {
   message: string;
 }
-const NumInput = (props: IProps) => {
+const NumInput = (props: IInputProps) => {
   const { field, error } = useTsController<number>();
   return (
     <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0 flex flex-row items-center">
@@ -29,35 +30,39 @@ const NumInput = (props: IProps) => {
 const mapping = [
   [z.number(), NumInput] as const,
   [z.number(), NumInput] as const,
-
-  // [z.boolean(), CheckBoxField],
-  // [z.number(), NumberField],
 ] as const; // 👈 `as const` is necessary
+
 
 
 const MyForm = createTsForm(mapping);
 
-const formSchema = z.object({
+export const ZFormSchema = z.object({
   latitude: z.number(),
   longitude: z.number(),
 });
 
 
-export const LatLngForm = () => {
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    // gets typesafe data when form is submitted
-  }
+type IProps = {
+  onSubmit: (data: z.infer<typeof ZFormSchema>) => void;
+  form: UseFormReturn<{
+    latitude: number;
+    longitude: number;
+}, any> 
+}
+export const LatLngForm = (props: IProps) => {
 
+  const { onSubmit, form } = props;
   return (
     <MyForm
+      form={form}
       formProps={{
         className: 'inline-flex w-1/2',
       }}
-      schema={formSchema}
+      schema={ZFormSchema}
       onSubmit={onSubmit}
       renderAfter={() =>
         <button
-          type="button"
+          type="submit"
           className="ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-6 py-3 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         >
           <FaMapMarkerAlt className='scale-150 mr-2 mb-1' />

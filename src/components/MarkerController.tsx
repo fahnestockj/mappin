@@ -1,7 +1,6 @@
 import { useMapEvents } from "react-leaflet"
 import { IColor, IMarker } from "./leafletMap/Velmap"
 
-
 type IProps = {
   markers: Array<IMarker>
   setMarkers: Function
