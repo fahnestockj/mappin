@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createTsForm, useTsController } from '@ts-react/form';
 import { FaMapMarkerAlt } from 'react-icons/fa'
-import { useForm, UseFormReturn } from 'react-hook-form'
+import { UseFormReturn } from 'react-hook-form'
 
 type IInputProps = {
   message: string;
@@ -14,7 +14,7 @@ const NumInput = (props: IInputProps) => {
         {props.message}
       </label>
       <input className="appearance-none block w-full  text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-        value={field.value ? field.value : ""} // conditional to prevent "uncontrolled to controlled" react warning
+        value={field.value?.toFixed(3) ? field.value.toFixed(3) : ""} // conditional to prevent "uncontrolled to controlled" react warning
         type="number"
         placeholder="70.52"
         onChange={(e) => {
@@ -56,7 +56,7 @@ export const LatLngForm = (props: IProps) => {
     <MyForm
       form={form}
       formProps={{
-        className: 'inline-flex w-1/2',
+        className: 'inline-flex w-3/5',
       }}
       schema={ZFormSchema}
       onSubmit={onSubmit}
