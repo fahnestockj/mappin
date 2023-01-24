@@ -1,5 +1,5 @@
 import { useMapEvents } from "react-leaflet"
-import { IColor, IMarker } from "./Velmap"
+import { IColor, IMarker } from "./leafletMap/Velmap"
 
 
 type IProps = {

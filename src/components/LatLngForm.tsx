@@ -1,0 +1,78 @@
+import { z } from "zod";
+import { createTsForm, useTsController } from '@ts-react/form';
+import { FaMapMarkerAlt } from 'react-icons/fa'
+
+type IProps = {
+  message: string;
+}
+const NumInput = (props: IProps) => {
+  const { field, error } = useTsController<number>();
+  return (
+    <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0 flex flex-row items-center">
+      <label className="tracking-wide text-gray-700 text-2xl mr-2">
+        {props.message}
+      </label>
+      <input className="appearance-none block w-full  text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+        value={field.value ? field.value : ""} // conditional to prevent "uncontrolled to controlled" react warning
+        type="number"
+        placeholder="70.52"
+        onChange={(e) => {
+          field.onChange(e.target.valueAsNumber);
+        }}
+      />
+      {error?.errorMessage && <span>{error?.errorMessage}</span>}
+    </div>
+  )
+}
+
+// create the mapping
+const mapping = [
+  [z.number(), NumInput] as const,
+  [z.number(), NumInput] as const,
+
+  // [z.boolean(), CheckBoxField],
+  // [z.number(), NumberField],
+] as const; // 👈 `as const` is necessary
+
+
+const MyForm = createTsForm(mapping);
+
+const formSchema = z.object({
+  latitude: z.number(),
+  longitude: z.number(),
+});
+
+
+export const LatLngForm = () => {
+  function onSubmit(data: z.infer<typeof formSchema>) {
+    // gets typesafe data when form is submitted
+  }
+
+  return (
+    <MyForm
+      formProps={{
+        className: 'inline-flex w-1/2',
+      }}
+      schema={formSchema}
+      onSubmit={onSubmit}
+      renderAfter={() =>
+        <button
+          type="button"
+          className="ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-6 py-3 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+          <FaMapMarkerAlt className='scale-150 mr-2 mb-1' />
+          Add Point
+        </button>
+      }
+      props={{
+        latitude: {
+          message: 'Lat: '
+        },
+        longitude: {
+          message: 'Long: '
+        }
+      }}
+    />
+
+  )
+}

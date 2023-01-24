@@ -1,4 +1,4 @@
-import Velmap from "./components/Velmap";
+import Velmap from "./components/leafletMap/Velmap";
 function App() {
   return (
     <Velmap />
