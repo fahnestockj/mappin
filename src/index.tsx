@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import Page from './pages';
 import './index.css';
 import {
   BrowserRouter,
@@ -15,7 +15,7 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />}>
+        <Route path="/" element={<Page />}>
         </Route>
       </Routes>
     </BrowserRouter>

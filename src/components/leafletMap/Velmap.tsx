@@ -34,8 +34,6 @@ type IProps = {
 
 const Velmap = (props: IProps) => {
 
-  const [res, setRes] = useState<string>('')
-
   useEffect(() => {
     //NOTE: useEffect will run twice development because of React.StrictMode this won't happen in production
     axios.get('/timeseries', {
@@ -58,14 +56,10 @@ const Velmap = (props: IProps) => {
         lat: 70,
         lng: -50
       },
-
     }
   ])
 
-
-
   const { Overlay } = LayersControl
-
 
   const renderMap = () => (
     <div style={{ height: '85vh', display: 'flex', flexDirection: 'column', width: '100vw' }}>
@@ -98,7 +92,7 @@ const Velmap = (props: IProps) => {
                 />
               </Overlay>
             </LayersControl>
-            <LatLngMapEventController form={form}/>
+            <LatLngMapEventController form={form} />
             {markers.map(marker => (
               <LocationMarker key={`${marker.latLng.lat}${marker.latLng.lng}`} markerProp={marker} />
             ))}
@@ -133,7 +127,6 @@ const Velmap = (props: IProps) => {
                 })
               )
             }
-
           }} />
 
           <button
