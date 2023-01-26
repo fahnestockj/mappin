@@ -1,11 +1,16 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { BottomBar } from "../components/BottomBar";
 import { ZFormSchema } from "../components/LatLngForm";
 import Velmap, { IMarker } from "../components/leafletMap/Velmap";
-function Page() {
+type IProps = {
+  markers: Array<IMarker>
+  setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>
+}
+function MapPage(props: IProps) {
+  const { markers, setMarkers } = props
 
   useEffect(() => {
     //NOTE: useEffect will run twice development because of React.StrictMode this won't happen in production
@@ -22,19 +27,11 @@ function Page() {
 
   const form = useForm<z.infer<typeof ZFormSchema>>();
 
-  const [markers, setMarkers] = useState<Array<IMarker>>([
-    {
-      color: 'blue',
-      latLng: {
-        lat: 70,
-        lng: -50
-      },
-    }
-  ])
   
+
+
   return (
     <div>
-
       <div className="h-[85vh] w-full" >
         <Velmap
           form={form}
@@ -49,9 +46,8 @@ function Page() {
           markers={markers}
         />
       </div>
-
     </div>
   );
 }
 
-export default Page;
+export default MapPage;
