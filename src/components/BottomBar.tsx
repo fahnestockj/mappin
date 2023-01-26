@@ -2,6 +2,7 @@ import produce from "immer";
 import { UseFormReturn } from "react-hook-form";
 import { AiOutlineLineChart } from "react-icons/ai";
 import { BiImport } from "react-icons/bi";
+import { useNavigate } from "react-router-dom";
 import { getColor } from "../utils/getColor";
 import { LatLngForm } from "./LatLngForm";
 import { IMarker } from "./leafletMap/Velmap";
@@ -16,7 +17,7 @@ type IProps = {
 }
 export const BottomBar = (props: IProps) => {
   const { form, markers, setMarkers } = props
-
+  const navigate = useNavigate()
   return (
     <>
       <div className='basis-2/3 inline-flex'>
@@ -51,6 +52,7 @@ export const BottomBar = (props: IProps) => {
         <button
           type="button"
           className="ml-6 inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          onClick={() => { navigate('/chart') }}
         >
           <AiOutlineLineChart className='scale-150 mr-2 mb-1' />
           Plot
