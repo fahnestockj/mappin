@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { VictoryChart, VictoryZoomContainer, VictoryScatter } from "victory";
-import { round, minBy, maxBy, flatten } from 'lodash'
+import { minBy, maxBy, flatten } from 'lodash'
 import { ITimeseries } from "../pages/ChartPage";
 
 
@@ -14,7 +14,7 @@ const ZoomingChart = (props: IProps) => {
   const [zoomedXDomain, setZoomedXDomain] = useState<[Date, Date]>([new Date('2010-01-01'), new Date('2023-01-01')]);
 
   const { timeseriesArr } = props
-  
+
   if ((timeseriesArr.length === 0)) return (<div>loading...</div>)
 
   function getData(): Array<ITimeseries & {
@@ -40,8 +40,8 @@ const ZoomingChart = (props: IProps) => {
     })
   }
   function getEntireDomain(data: [Date, number][][]): { x: [Date, Date], y: [number, number] } {
-    if(data.length === 0) return ({ x: [new Date('2010-01-01'), new Date('2023-01-01')], y: [0, 3000] })
-    
+    if (data.length === 0) return ({ x: [new Date('2010-01-01'), new Date('2023-01-01')], y: [0, 3000] })
+
     const flattenedData = flatten(data);
     return {
       y: [minBy(flattenedData, d => d[1])![1], maxBy(flattenedData, d => d[1])![1]],
@@ -49,10 +49,6 @@ const ZoomingChart = (props: IProps) => {
     };
   }
 
-  function getZoomFactor() {
-    const factor = 10 / (zoomedXDomain[1].getTime() - zoomedXDomain[0].getTime());
-    return round(factor, factor < 3 ? 1 : 0);
-  }
   const entireDomain = getEntireDomain(timeseriesArr.map(timeseries => timeseries.timeseries));
   const filteredTimeseriesArr = getData();
 
@@ -71,7 +67,7 @@ const ZoomingChart = (props: IProps) => {
         {
           filteredTimeseriesArr.map(timeseries =>
             <VictoryScatter
-              key={`${timeseries.coordinates.lat},${timeseries.coordinates.lng}`}
+              key={`${timeseries.coordinateStr}`}
               style={{ data: { fill: `${timeseries.color}` } }}
               x={0}
               y={1}
@@ -80,9 +76,6 @@ const ZoomingChart = (props: IProps) => {
           )
         }
       </VictoryChart>
-      <div>
-        {getZoomFactor()}x zoom;
-      </div>
     </div>
   );
 }

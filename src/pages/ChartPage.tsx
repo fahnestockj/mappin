@@ -1,6 +1,5 @@
 import axios from "axios";
 import React, { useEffect } from "react"
-import { Log } from "victory";
 import { z } from "zod";
 import { IMarker } from "../components/leafletMap/Velmap";
 import ZoomingChart from "../components/ZoomingChart";
@@ -31,14 +30,6 @@ const ZResponse = z.record(
   z.array(z.tuple([z.coerce.date(), z.coerce.number()]))
 )
 
-
-const params = new URLSearchParams();
-params.append('lat', '70');
-params.append('lat', '70');
-params.append('lng', '-50');
-params.append('lng', '-49.5');
-
-
 type IProps = {
   markers: Array<IMarker>
 }
@@ -48,6 +39,13 @@ const ChartPage = (props: IProps) => {
   const { markers } = props
   useEffect(() => {
     //NOTE: useEffect will run twice development because of React.StrictMode this won't happen in production
+
+    const params = new URLSearchParams();
+    markers.forEach(marker => {
+      params.append('lat', marker.latLng.lat.toString());
+      params.append('lng', marker.latLng.lng.toString());
+    })
+    
     axios.get('/timeseries', {
       params: params
     }).then(res => {

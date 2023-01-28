@@ -14,13 +14,6 @@ const App = () => {
         lng: -50
       },
     },
-    {
-      color: 'red',
-      latLng: {
-        lat: 70,
-        lng: -49.5
-      },
-    }
   ])
 
   return (
