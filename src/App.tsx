@@ -13,6 +13,13 @@ const App = () => {
         lat: 70,
         lng: -50
       },
+    },
+    {
+      color: 'red',
+      latLng: {
+        lat: 70,
+        lng: -49.5
+      },
     }
   ])
 

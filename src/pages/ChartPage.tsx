@@ -1,14 +1,17 @@
 import axios from "axios";
 import React, { useEffect } from "react"
+import { Log } from "victory";
 import { z } from "zod";
 import { IMarker } from "../components/leafletMap/Velmap";
 import ZoomingChart from "../components/ZoomingChart";
 
 export type ITimeseries = {
+  coordinateStr: string
   coordinates: {
     lat: number
     lng: number
   }
+  color?: string
   //[datetimeString, velocity]
   timeseries: Array<[Date, number]>
 }
@@ -28,6 +31,14 @@ const ZResponse = z.record(
   z.array(z.tuple([z.coerce.date(), z.coerce.number()]))
 )
 
+
+const params = new URLSearchParams();
+params.append('lat', '70');
+params.append('lat', '70');
+params.append('lng', '-50');
+params.append('lng', '-49.5');
+
+
 type IProps = {
   markers: Array<IMarker>
 }
@@ -35,14 +46,10 @@ const ChartPage = (props: IProps) => {
   const [timeseriesArr, setTimeseriesArr] = React.useState<IArrayOfTimeseries>([])
 
   const { markers } = props
-
   useEffect(() => {
     //NOTE: useEffect will run twice development because of React.StrictMode this won't happen in production
     axios.get('/timeseries', {
-      params: {
-        lat: 70,
-        lng: -50
-      },
+      params: params
     }).then(res => {
 
       //parse res with zod schema
@@ -51,6 +58,8 @@ const ChartPage = (props: IProps) => {
         const lat = parseFloat(latLngStr.split(',')[0])
         const lng = parseFloat(latLngStr.split(',')[1])
         return {
+          color: markers.find(marker => marker.latLng.lat === lat && marker.latLng.lng === lng)?.color,
+          coordinateStr: latLngStr,
           coordinates: {
             lat,
             lng
@@ -61,11 +70,11 @@ const ChartPage = (props: IProps) => {
       console.log(data);
       setTimeseriesArr(data)
     })
-  }, [])
+  }, [markers])
 
 
   return (
-    <ZoomingChart timeseries={timeseriesArr[0]} />
+    <ZoomingChart timeseriesArr={timeseriesArr} />
   )
 
   // return (

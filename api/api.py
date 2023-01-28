@@ -36,7 +36,7 @@ def get_timeseries():
       timeseries_tupleArray.append([str(A), str(B)]) 
     lng = timeseries['coordinates'][0]
     lat = timeseries['coordinates'][1]
-    list_of_timeseries_dict[str(lng) + "," + str(lat)] = timeseries_tupleArray
+    list_of_timeseries_dict[str(lat) + "," + str(lng)] = timeseries_tupleArray
 
   content = gzip.compress(json.dumps(list_of_timeseries_dict).encode('utf8'), 5)
   response = make_response(content)
