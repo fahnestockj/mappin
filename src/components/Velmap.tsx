@@ -17,13 +17,13 @@ export type IMarker = {
 }
 
 type IProps = {
-  markers: Array<IMarker>
-  setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>
-  children?: React.ReactNode
+  mapChildren?: React.ReactNode
+  center?: [number, number]
+  zoom?: number
 }
 
 const Velmap = (props: IProps) => {
-  const { markers, setMarkers } = props
+  const { center, zoom } = props
   const { Overlay } = LayersControl
 
   return (
@@ -36,7 +36,7 @@ const Velmap = (props: IProps) => {
           crossOrigin="" />
 
         <div className="w-full h-full m-auto" >
-          <MapContainer crs={CRS.EPSG3857} style={{ height: "100%" }} center={[70.3, -49.5]} zoom={6} maxZoom={10} minZoom={2} scrollWheelZoom={true}  >
+          <MapContainer crs={CRS.EPSG3857} style={{ height: "100%" }} center={center || [70.3, -49.5]} zoom={zoom || 6} maxZoom={10} minZoom={2} scrollWheelZoom={true}  >
             <LayersControl >
               <Overlay name='GeoJSON'>
                 {/* @ts-ignore */}
@@ -56,10 +56,7 @@ const Velmap = (props: IProps) => {
                 />
               </Overlay>
             </LayersControl>
-            {props.children}
-            {markers.map(marker => (
-              <LocationMarker key={`${marker.latLng.lat}${marker.latLng.lng}`} markerProp={marker} markers={markers} setMarkers={setMarkers} />
-            ))}
+            {props.mapChildren}
           </MapContainer>
         </div>
       </div>

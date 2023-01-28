@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { VictoryChart, VictoryZoomContainer, VictoryScatter, VictoryAxis, VictoryLabel } from "victory";
+import { VictoryChart, VictoryZoomContainer, VictoryScatter } from "victory";
 import { minBy, maxBy, flatten } from 'lodash'
 import { ITimeseries } from "../pages/ChartPage";
 
@@ -52,7 +52,7 @@ const ZoomingChart = (props: IProps) => {
   const filteredTimeseriesArr = getData();
 
   return (
-    <div className="h-full w-full flex flex-col items-center">
+    <div className="h-full w-1/2 flex flex-col items-center">
       <div className=" py-3 px-5 font-bold">ITS_LIVE Ice Flow Speed m/yr</div>
       <div className="flex flex-row items-center">
         <div className="-rotate-90 whitespace-nowrap">speed (m/y)</div>

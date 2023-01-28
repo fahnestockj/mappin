@@ -2,7 +2,8 @@ import axios from "axios";
 import React, { useEffect } from "react"
 import { z } from "zod";
 import BackButton from "../components/BackButton";
-import { IMarker } from "../components/Velmap";
+import LocationMarker from "../components/LocationMarker/LocationMarker";
+import Velmap, { IMarker } from "../components/Velmap";
 import ZoomingChart from "../components/ZoomingChart";
 
 export type ITimeseries = {
@@ -73,9 +74,26 @@ const ChartPage = (props: IProps) => {
 
 
   return (
-    <div>
+    <div className="w-full h-full">
       <BackButton />
-      <ZoomingChart timeseriesArr={timeseriesArr} />
+      <div className="flex flex-row">
+        <ZoomingChart timeseriesArr={timeseriesArr} />
+        <div className="w-[40vh] h-[40vh]">
+          <Velmap
+            zoom={7}
+            center={[markers[0].latLng.lat, markers[0].latLng.lng]}
+            mapChildren={
+              <>
+                {
+                  markers.map(marker => (
+                    <LocationMarker key={`${marker.latLng.lat}${marker.latLng.lng}`} markerProp={marker} markers={markers} draggable={false} />
+                  ))
+                }
+              </>
+            }
+          />
+        </div>
+      </div>
     </div>
   )
 };

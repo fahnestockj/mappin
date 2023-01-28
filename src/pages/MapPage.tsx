@@ -5,6 +5,7 @@ import { z } from "zod";
 import { BottomBar } from "../components/BottomBar";
 import { ZFormSchema } from "../components/LatLngForm";
 import LatLngMapEventController from "../components/LatLngMapEventController";
+import LocationMarker from "../components/LocationMarker/LocationMarker";
 import Velmap, { IMarker } from "../components/Velmap";
 type IProps = {
   markers: Array<IMarker>
@@ -28,18 +29,21 @@ function MapPage(props: IProps) {
 
   const form = useForm<z.infer<typeof ZFormSchema>>();
 
-  
+
 
 
   return (
     <div>
       <div className="h-[85vh] w-full" >
         <Velmap
-          children={
-            <LatLngMapEventController form={form} />
+          mapChildren={
+            <>
+              <LatLngMapEventController form={form} />
+              {markers.map(marker => (
+                <LocationMarker key={`${marker.latLng.lat}${marker.latLng.lng}`} markerProp={marker} markers={markers} setMarkers={setMarkers} draggable={true} />
+              ))}
+            </>
           }
-          markers={markers}
-          setMarkers={setMarkers}
         />
       </div>
 
