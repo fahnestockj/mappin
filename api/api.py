@@ -3,6 +3,7 @@ from flask import Flask, request, make_response
 import gzip
 import json
 import itslive
+import math
 
 
 app = Flask(__name__)
@@ -27,12 +28,15 @@ def get_timeseries():
     mid_date_arr = timeseries['time_series']['date_dt']['mid_date'].data # np arrays
     v_arr = timeseries['time_series']['v'].data
 
-    timeseries_dict = {} # put in a dict for easier conversion to json
+    timeseries_tupleArray = []
+    # timeseries_dict = {} # put in a dict for easier conversion to json
     for A, B in zip(mid_date_arr, v_arr):
-      timeseries_dict[str(A)] = str(B) # convert np datetime & float32 to str for json
+      if(math.isnan(B)): # remove NaNs
+        continue
+      timeseries_tupleArray.append([str(A), str(B)]) 
     lng = timeseries['coordinates'][0]
     lat = timeseries['coordinates'][1]
-    list_of_timeseries_dict[str(lng) + "," + str(lat)] = timeseries_dict
+    list_of_timeseries_dict[str(lng) + "," + str(lat)] = timeseries_tupleArray
 
   content = gzip.compress(json.dumps(list_of_timeseries_dict).encode('utf8'), 5)
   response = make_response(content)
