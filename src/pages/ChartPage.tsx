@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect } from "react"
 import { z } from "zod";
+import BackButton from "../components/BackButton";
 import { IMarker } from "../components/leafletMap/Velmap";
 import ZoomingChart from "../components/ZoomingChart";
 
@@ -45,7 +46,7 @@ const ChartPage = (props: IProps) => {
       params.append('lat', marker.latLng.lat.toString());
       params.append('lng', marker.latLng.lng.toString());
     })
-    
+
     axios.get('/timeseries', {
       params: params
     }).then(res => {
@@ -72,7 +73,10 @@ const ChartPage = (props: IProps) => {
 
 
   return (
-    <ZoomingChart timeseriesArr={timeseriesArr} />
+    <div>
+      <BackButton />
+      <ZoomingChart timeseriesArr={timeseriesArr} />
+    </div>
   )
 };
 

@@ -52,7 +52,7 @@ const ZoomingChart = (props: IProps) => {
   const filteredTimeseriesArr = getData();
 
   return (
-    <div className="h-[100vh] w-[100vh] flex flex-col items-center">
+    <div className="h-full w-full flex flex-col items-center">
       <div className=" py-3 px-5 font-bold">ITS_LIVE Ice Flow Speed m/yr</div>
       <div className="flex flex-row items-center">
         <div className="-rotate-90 whitespace-nowrap">speed (m/y)</div>
