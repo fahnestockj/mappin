@@ -8,9 +8,11 @@ import './LocationMarker.css'
 
 type IProps = {
   markerProp: IMarker
+  markers: Array<IMarker>
+  setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>
 }
 const LocationMarker = (props: IProps) => {
-  const { markerProp } = props
+  const { markerProp, markers, setMarkers } = props
   const markerRef = useRef(null)
   const [position, setPosition] = useState(markerProp.latLng)
 
@@ -26,8 +28,13 @@ const LocationMarker = (props: IProps) => {
   const eventHandlers = useMemo(
     () => ({
       dragend() {
+        const oldMarkerIndex = markers.findIndex(marker => marker.latLng.lat === markerProp.latLng.lat && marker.latLng.lng === markerProp.latLng.lng)
         const marker = markerRef.current
         if (marker != null) {
+          const newMarkers = [...markers]
+          //@ts-ignore
+          newMarkers[oldMarkerIndex] = { ...markerProp, latLng: marker.getLatLng() }
+          setMarkers(newMarkers)
           //@ts-ignore
           setPosition(marker.getLatLng())
         }

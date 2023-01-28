@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { BottomBar } from "../components/BottomBar";
 import { ZFormSchema } from "../components/LatLngForm";
+import LatLngMapEventController from "../components/LatLngMapEventController";
 import Velmap, { IMarker } from "../components/Velmap";
 type IProps = {
   markers: Array<IMarker>
@@ -34,8 +35,11 @@ function MapPage(props: IProps) {
     <div>
       <div className="h-[85vh] w-full" >
         <Velmap
-          form={form}
+          children={
+            <LatLngMapEventController form={form} />
+          }
           markers={markers}
+          setMarkers={setMarkers}
         />
       </div>
 

@@ -3,10 +3,8 @@ import { MapContainer, TileLayer, LayersControl, GeoJSON } from 'react-leaflet'
 import LocationMarker from './LocationMarker/LocationMarker'
 import "proj4leaflet"
 import { CRS } from 'leaflet'
-import LatLngMapEventController from './LatLngMapEventController'
 import catalogJson from '../geoJson/catalog_v02.json'
 import { GeoJsonObject } from 'geojson'
-import { UseFormReturn } from 'react-hook-form'
 
 export type IColor = 'green' | 'blue' | 'red' | 'yellow'
 
@@ -19,17 +17,13 @@ export type IMarker = {
 }
 
 type IProps = {
-  form: UseFormReturn<{
-    latitude: number;
-    longitude: number;
-  }, any>
   markers: Array<IMarker>
+  setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>
+  children?: React.ReactNode
 }
 
 const Velmap = (props: IProps) => {
-  const { form, markers } = props
-
-
+  const { markers, setMarkers } = props
   const { Overlay } = LayersControl
 
   return (
@@ -62,9 +56,9 @@ const Velmap = (props: IProps) => {
                 />
               </Overlay>
             </LayersControl>
-            <LatLngMapEventController form={form} />
+            {props.children}
             {markers.map(marker => (
-              <LocationMarker key={`${marker.latLng.lat}${marker.latLng.lng}`} markerProp={marker} />
+              <LocationMarker key={`${marker.latLng.lat}${marker.latLng.lng}`} markerProp={marker} markers={markers} setMarkers={setMarkers} />
             ))}
           </MapContainer>
         </div>
