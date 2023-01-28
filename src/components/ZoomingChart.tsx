@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { VictoryChart, VictoryZoomContainer, VictoryScatter } from "victory";
+import { VictoryChart, VictoryZoomContainer, VictoryScatter, VictoryAxis, VictoryLabel } from "victory";
 import { minBy, maxBy, flatten } from 'lodash'
 import { ITimeseries } from "../pages/ChartPage";
-
 
 type IProps = {
   timeseriesArr: ITimeseries[]
@@ -53,29 +52,35 @@ const ZoomingChart = (props: IProps) => {
   const filteredTimeseriesArr = getData();
 
   return (
-    <div className="h-[50vh] ">
-      <VictoryChart
-        domain={entireDomain}
-        containerComponent={<VictoryZoomContainer
-          zoomDimension="x"
-          onZoomDomainChange={(domain) => {
-            setZoomedXDomain(domain.x as [Date, Date])
-          }}
-          minimumZoom={{ x: 1 / 10000 }}
-        />}
-      >
-        {
-          filteredTimeseriesArr.map(timeseries =>
-            <VictoryScatter
-              key={`${timeseries.coordinateStr}`}
-              style={{ data: { fill: `${timeseries.color}` } }}
-              x={0}
-              y={1}
-              data={timeseries.filteredTimeseries}
-            />
-          )
-        }
-      </VictoryChart>
+    <div className="h-[100vh] w-[100vh] flex flex-col items-center">
+      <div className=" py-3 px-5 font-bold">ITS_LIVE Ice Flow Speed m/yr</div>
+      <div className="flex flex-row items-center">
+        <div className="-rotate-90 whitespace-nowrap">speed (m/y)</div>
+        <VictoryChart
+          domain={entireDomain}
+          containerComponent={<VictoryZoomContainer
+            zoomDimension="x"
+            onZoomDomainChange={(domain) => {
+              setZoomedXDomain(domain.x as [Date, Date])
+            }}
+            minimumZoom={{ x: 1 / 10000 }}
+          />}
+        >
+
+          {
+            filteredTimeseriesArr.map(timeseries =>
+              <VictoryScatter
+                key={`${timeseries.coordinateStr}`}
+                style={{ data: { fill: `${timeseries.color}` } }}
+                x={0}
+                y={1}
+                data={timeseries.filteredTimeseries}
+              />
+            )
+          }
+        </VictoryChart>
+      </div>
+      <div>date</div>
     </div>
   );
 }

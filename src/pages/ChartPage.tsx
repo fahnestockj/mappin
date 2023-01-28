@@ -74,31 +74,6 @@ const ChartPage = (props: IProps) => {
   return (
     <ZoomingChart timeseriesArr={timeseriesArr} />
   )
-
-  // return (
-  //   <div className="h-[50vh]">
-  //     <VictoryChart
-  //       name="chart"
-  //       theme={VictoryTheme.material}
-  //       domain={{ x: [new Date('01-01-2010'), new Date('01-01-2022')], y: [0, 3000] }}
-  //     >
-  //       {data.map((timeseries: ITimeseries) => {
-  //         return (
-  //           <VictoryScatter
-  //             key={`${timeseries.coordinates.lat},${timeseries.coordinates.lng}`}
-  //             style={{ data: { fill: "#c43a31" } }}
-  //             size={7}
-  //             x={0}
-  //             y={1}
-  //             data={timeseries.timeseries}
-  //           />
-  //         )
-  //       }
-  //       )}
-
-  //     </VictoryChart>
-  //   </div>
-  // )
 };
 
 export default ChartPage;
