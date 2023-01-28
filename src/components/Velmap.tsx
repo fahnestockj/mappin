@@ -1,10 +1,10 @@
 import React from 'react'
 import { MapContainer, TileLayer, LayersControl, GeoJSON } from 'react-leaflet'
-import LocationMarker from '../LocationMarker/LocationMarker'
+import LocationMarker from './LocationMarker/LocationMarker'
 import "proj4leaflet"
 import { CRS } from 'leaflet'
-import LatLngMapEventController from '../LatLngMapEventController'
-import catalogJson from '../../geoJson/catalog_v02.json'
+import LatLngMapEventController from './LatLngMapEventController'
+import catalogJson from '../geoJson/catalog_v02.json'
 import { GeoJsonObject } from 'geojson'
 import { UseFormReturn } from 'react-hook-form'
 

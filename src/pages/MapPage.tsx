@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { BottomBar } from "../components/BottomBar";
 import { ZFormSchema } from "../components/LatLngForm";
-import Velmap, { IMarker } from "../components/leafletMap/Velmap";
+import Velmap, { IMarker } from "../components/Velmap";
 type IProps = {
   markers: Array<IMarker>
   setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>

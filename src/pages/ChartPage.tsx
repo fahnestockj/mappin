@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect } from "react"
 import { z } from "zod";
 import BackButton from "../components/BackButton";
-import { IMarker } from "../components/leafletMap/Velmap";
+import { IMarker } from "../components/Velmap";
 import ZoomingChart from "../components/ZoomingChart";
 
 export type ITimeseries = {

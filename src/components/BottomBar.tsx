@@ -5,7 +5,7 @@ import { BiImport } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { getColor } from "../utils/getColor";
 import { LatLngForm } from "./LatLngForm";
-import { IMarker } from "./leafletMap/Velmap";
+import { IMarker } from "./Velmap";
 
 type IProps = {
   form: UseFormReturn<{

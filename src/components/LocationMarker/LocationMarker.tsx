@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo } from 'react'
 import { Marker, Popup } from 'react-leaflet'
-import { IMarker } from '../leafletMap/Velmap'
+import { IMarker } from '../Velmap'
 import { renderToStaticMarkup } from 'react-dom/server'
 import L from 'leaflet'
 import { SvgCross } from '../SvgCross'
