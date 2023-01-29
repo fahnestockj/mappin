@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect } from "react"
 import { z } from "zod";
 import BackButton from "../components/BackButton";
+import { StyledCSVDownloadLink } from "../components/CSVDownloadButton";
 import LocationMarker from "../components/LocationMarker/LocationMarker";
 import Velmap, { IMarker } from "../components/Velmap";
 import ZoomingChart from "../components/ZoomingChart";
@@ -86,7 +87,7 @@ const ChartPage = (props: IProps) => {
               <>
                 {
                   markers.map(marker => (
-                    <LocationMarker key={`${marker.latLng.lat}${marker.latLng.lng}`} markerProp={marker} markers={markers} draggable={false} />
+                    <LocationMarker key={`${marker.id}`} markerProp={marker} markers={markers} draggable={false} />
                   ))
                 }
               </>
@@ -94,6 +95,8 @@ const ChartPage = (props: IProps) => {
           />
         </div>
       </div>
+
+      <StyledCSVDownloadLink data={[]} filename={"testing"} anchorText={"testing"} />
     </div>
   )
 };

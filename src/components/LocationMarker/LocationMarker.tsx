@@ -38,7 +38,7 @@ const LocationMarker = (props: IProps) => {
 
   const eventHandlers = {
     dragend() {
-      const oldMarkerIndex = markers.findIndex(marker => marker.latLng.lat === markerProp.latLng.lat && marker.latLng.lng === markerProp.latLng.lng)
+      const oldMarkerIndex = markers.findIndex(marker => marker.id === markerProp.id)
       const marker = markerRef.current
       if (marker != null) {
         const newMarkers = [...markers]

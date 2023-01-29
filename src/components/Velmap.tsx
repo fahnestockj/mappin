@@ -1,7 +1,5 @@
 import React from 'react'
 import { MapContainer, TileLayer, LayersControl, GeoJSON } from 'react-leaflet'
-import LocationMarker from './LocationMarker/LocationMarker'
-import "proj4leaflet"
 import { CRS } from 'leaflet'
 import catalogJson from '../geoJson/catalog_v02.json'
 import { GeoJsonObject } from 'geojson'
@@ -9,6 +7,7 @@ import { GeoJsonObject } from 'geojson'
 export type IColor = 'green' | 'blue' | 'red' | 'yellow'
 
 export type IMarker = {
+  id: string
   color: IColor
   latLng: {
     lat: number
@@ -36,7 +35,7 @@ const Velmap = (props: IProps) => {
           crossOrigin="" />
 
         <div className="w-full h-full m-auto" >
-          <MapContainer crs={CRS.EPSG3857} style={{ height: "100%" }} center={center || [70.3, -49.5]} zoom={zoom || 6} maxZoom={10} minZoom={2} scrollWheelZoom={true}  >
+          <MapContainer className='h-[100%]'  crs={CRS.EPSG3857}  center={center || [70.3, -49.5]} zoom={zoom || 6} maxZoom={10} minZoom={2} scrollWheelZoom={true}  >
             <LayersControl >
               <Overlay name='GeoJSON'>
                 {/* @ts-ignore */}

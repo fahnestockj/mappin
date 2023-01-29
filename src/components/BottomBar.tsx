@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { getColor } from "../utils/getColor";
 import { LatLngForm } from "./LatLngForm";
 import { IMarker } from "./Velmap";
+import { createId } from '@paralleldrive/cuid2';
 
 type IProps = {
   form: UseFormReturn<{
@@ -30,6 +31,7 @@ export const BottomBar = (props: IProps) => {
               //Immer produce for immutability
               produce(markers, draft => {
                 draft.push({
+                  id: createId(),
                   color,
                   latLng: {
                     lat: latitude,
