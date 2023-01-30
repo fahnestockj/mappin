@@ -5,6 +5,7 @@ import { UseFormReturn } from 'react-hook-form'
 
 type IInputProps = {
   message: string;
+  placeholder: string;
 }
 const NumInput = (props: IInputProps) => {
   const { field, error } = useTsController<number>();
@@ -14,9 +15,9 @@ const NumInput = (props: IInputProps) => {
         {props.message}
       </label>
       <input className="appearance-none block w-full  text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-        value={field.value?.toFixed(3) ? field.value.toFixed(3) : ""} // conditional to prevent "uncontrolled to controlled" react warning
+        value={field.value ? field.value.toFixed(5) : ""} // conditional to prevent "uncontrolled to controlled" react warning
         type="number"
-        placeholder="70.52"
+        placeholder={props.placeholder}
         onChange={(e) => {
           field.onChange(e.target.valueAsNumber);
         }}
@@ -71,9 +72,11 @@ export const LatLngForm = (props: IProps) => {
       }
       props={{
         latitude: {
+          placeholder: '70.00',
           message: 'Lat: '
         },
         longitude: {
+          placeholder: '-50.00',
           message: 'Long: '
         }
       }}

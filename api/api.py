@@ -29,7 +29,6 @@ def get_timeseries():
     v_arr = timeseries['time_series']['v'].data
 
     timeseries_tupleArray = []
-    # timeseries_dict = {} # put in a dict for easier conversion to json
     for A, B in zip(mid_date_arr, v_arr):
       if(math.isnan(B)): # remove NaNs
         continue

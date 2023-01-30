@@ -34,8 +34,8 @@ export const BottomBar = (props: IProps) => {
                   id: createId(),
                   color,
                   latLng: {
-                    lat: latitude,
-                    lng: longitude
+                    lat: parseFloat(latitude.toFixed(5)),
+                    lng: parseFloat(longitude.toFixed(5))
                   }
                 })
               })

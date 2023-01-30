@@ -42,8 +42,15 @@ const LocationMarker = (props: IProps) => {
       const marker = markerRef.current
       if (marker != null) {
         const newMarkers = [...markers]
-        //@ts-ignore
-        newMarkers[oldMarkerIndex] = { ...markerProp, latLng: marker.getLatLng() }
+        // @ts-ignore
+        const { lat, lng } = marker.getLatLng() as { lat: number, lng: number }
+        newMarkers[oldMarkerIndex] = {
+          ...markerProp,
+          latLng: {
+            lat: parseFloat(lat.toFixed(5)),
+            lng: parseFloat(lng.toFixed(5))
+          }
+        }
         setMarkers(newMarkers)
         //@ts-ignore
         setPosition(marker.getLatLng())

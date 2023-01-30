@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { VictoryChart, VictoryZoomContainer, VictoryScatter } from "victory";
 import { minBy, maxBy, flatten } from 'lodash'
 import { ITimeseries } from "../pages/ChartPage";
@@ -7,7 +7,7 @@ type IProps = {
   timeseriesArr: ITimeseries[]
 }
 
-const ZoomingChart = (props: IProps) => {
+export const ZoomingChart = (props: IProps) => {
 
   const maxPoints = 1000
   const [zoomedXDomain, setZoomedXDomain] = useState<[Date, Date]>([new Date('2010-01-01'), new Date('2023-01-01')]);
@@ -57,6 +57,7 @@ const ZoomingChart = (props: IProps) => {
       <div className="flex flex-row items-center">
         <div className="-rotate-90 whitespace-nowrap">speed (m/y)</div>
         <VictoryChart
+          scale={{ x: "time" }}
           domain={entireDomain}
           containerComponent={<VictoryZoomContainer
             zoomDimension="x"
@@ -85,4 +86,4 @@ const ZoomingChart = (props: IProps) => {
   );
 }
 
-export default ZoomingChart;
+// export const ZoomingChartMemo = React.memo(ZoomingChart)

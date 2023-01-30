@@ -2,10 +2,10 @@ import axios from "axios";
 import React, { useEffect } from "react"
 import { z } from "zod";
 import BackButton from "../components/BackButton";
-import { StyledCSVDownloadLink } from "../components/CSVDownloadButton";
+import { CSVDownloadButton } from "../components/CSVDownloadButton";
 import LocationMarker from "../components/LocationMarker/LocationMarker";
 import Velmap, { IMarker } from "../components/Velmap";
-import ZoomingChart from "../components/ZoomingChart";
+import { ZoomingChart } from "../components/ZoomingChart";
 
 export type ITimeseries = {
   coordinateStr: string
@@ -20,13 +20,8 @@ export type ITimeseries = {
 
 export type IArrayOfTimeseries = Array<ITimeseries>
 
-// type IResponse = {
-//   [key: string]: Record<string, string>
-// }
-
 const latLngRegex = new RegExp(/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/)
 const ZLatLngKey = z.string().trim().regex(latLngRegex)
-
 
 const ZResponse = z.record(
   ZLatLngKey,
@@ -73,7 +68,6 @@ const ChartPage = (props: IProps) => {
     })
   }, [markers])
 
-
   return (
     <div className="w-full h-full">
       <BackButton />
@@ -96,7 +90,7 @@ const ChartPage = (props: IProps) => {
         </div>
       </div>
 
-      <StyledCSVDownloadLink data={[]} filename={"testing"} anchorText={"testing"} />
+      <CSVDownloadButton data={timeseriesArr} />
     </div>
   )
 };
