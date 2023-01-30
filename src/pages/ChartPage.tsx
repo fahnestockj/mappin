@@ -69,28 +69,36 @@ const ChartPage = (props: IProps) => {
   }, [markers])
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-[89vh]">
       <BackButton />
-      <div className="flex flex-row">
-        <ZoomingChart timeseriesArr={timeseriesArr} />
-        <div className="w-[40vh] h-[40vh]">
-          <Velmap
-            zoom={7}
-            center={[markers[0].latLng.lat, markers[0].latLng.lng]}
-            mapChildren={
-              <>
-                {
-                  markers.map(marker => (
-                    <LocationMarker key={`${marker.id}`} markerProp={marker} markers={markers} draggable={false} />
-                  ))
-                }
-              </>
-            }
-          />
-        </div>
-      </div>
+      <div className="w-full h-full grid grid-cols-3 grid-rows-1 gap-4">
 
-      <CSVDownloadButton data={timeseriesArr} />
+        <div className="col-span-2">
+          <ZoomingChart timeseriesArr={timeseriesArr} />
+        </div>
+
+        <div className="mr-5">
+          <div className="w-[100%] h-[40%] ">
+            <Velmap
+              zoom={7}
+              center={[markers[0].latLng.lat, markers[0].latLng.lng]}
+              mapChildren={
+                <>
+                  {
+                    markers.map(marker => (
+                      <LocationMarker key={`${marker.id}`} markerProp={marker} markers={markers} draggable={false} />
+                    ))
+                  }
+                </>
+              }
+            />
+          </div>
+          <div className="mt-4">
+            <CSVDownloadButton data={timeseriesArr} />
+          </div>
+        </div>
+
+      </div>
     </div>
   )
 };
