@@ -14,7 +14,34 @@ export const ZoomingChart = (props: IProps) => {
 
   const { timeseriesArr } = props
 
-  if ((timeseriesArr.length === 0)) return (<div>loading...</div>)
+  if ((timeseriesArr.length === 0)) return (
+    <>
+      <div className="h-full w-full flex flex-col items-center">
+        <div className=" py-3 pl-36 font-bold">ITS_LIVE Ice Flow Speed m/yr</div>
+        <div className="flex flex-row items-center">
+          <div className="-rotate-90 whitespace-nowrap">speed (m/y)</div>
+          <VictoryChart
+            height={600}
+            width={1000}
+            scale={{ x: "time", y: "linear" }}
+            domain={{ x: [new Date('2010-01-01'), new Date('2023-01-01')], y: [0, 1000] }}
+            containerComponent={<VictoryZoomContainer
+              zoomDimension="x"
+              onZoomDomainChange={(domain) => {
+                setZoomedXDomain(domain.x as [Date, Date])
+              }}
+              minimumZoom={{ x: 10000 }}
+            />}
+          >
+          </VictoryChart>
+        </div>
+        <div className="pl-36">date</div>
+      </div>
+      {/* <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+        <div className="bg-blue-600 h-2.5 rounded-full" style={{ "width": "45%" }}></div>
+      </div> */}
+    </>
+  )
 
   function getData(): Array<ITimeseries & {
     filteredTimeseries: [Date, number][]
@@ -53,7 +80,7 @@ export const ZoomingChart = (props: IProps) => {
 
   return (
     <div className="h-full w-full flex flex-col items-center">
-      <div className=" py-3 px-5 font-bold">ITS_LIVE Ice Flow Speed m/yr</div>
+      <div className=" py-3 pl-36 font-bold">ITS_LIVE Ice Flow Speed m/yr</div>
       <div className="flex flex-row items-center">
         <div className="-rotate-90 whitespace-nowrap">speed (m/y)</div>
         <VictoryChart
@@ -83,7 +110,7 @@ export const ZoomingChart = (props: IProps) => {
           }
         </VictoryChart>
       </div>
-      <div>date</div>
+      <div className="pl-36">date</div>
     </div>
   );
 }

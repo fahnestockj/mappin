@@ -1,11 +1,12 @@
 import axios from "axios";
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { z } from "zod";
 import BackButton from "../components/BackButton";
 import { CSVDownloadButton } from "../components/CSVDownloadButton";
 import LocationMarker from "../components/LocationMarker/LocationMarker";
 import Velmap, { IMarker } from "../components/Velmap";
 import { ZoomingChart } from "../components/ZoomingChart";
+import ProgressBarWithTimer from "../components/ProgressBarWithTimer";
 
 export type ITimeseries = {
   coordinateStr: string
@@ -31,23 +32,23 @@ const ZResponse = z.record(
 type IProps = {
   markers: Array<IMarker>
 }
+
 const ChartPage = (props: IProps) => {
   const [timeseriesArr, setTimeseriesArr] = React.useState<IArrayOfTimeseries>([])
+  const [progress, setProgress] = React.useState<number>(0)
 
   const { markers } = props
+  
   useEffect(() => {
     //NOTE: useEffect will run twice development because of React.StrictMode this won't happen in production
-
     const params = new URLSearchParams();
     markers.forEach(marker => {
       params.append('lat', marker.latLng.lat.toString());
       params.append('lng', marker.latLng.lng.toString());
     })
-
     axios.get('/timeseries', {
       params: params
     }).then(res => {
-
       //parse res with zod schema
       const parsedRes = ZResponse.parse(res.data)
       const data: IArrayOfTimeseries = Object.keys(parsedRes).map(latLngStr => {
@@ -64,12 +65,14 @@ const ChartPage = (props: IProps) => {
         }
       })
       console.log(data);
+      setProgress(100)
       setTimeseriesArr(data)
     })
-  }, [markers])
+  }, [markers, setProgress])
 
   return (
     <div className="w-full h-[89vh]">
+      <ProgressBarWithTimer disabled={!(timeseriesArr.length === 0)} setProgress={setProgress} progress={progress} />
       <BackButton />
       <div className="w-full h-full grid grid-cols-3 grid-rows-1 gap-4">
 

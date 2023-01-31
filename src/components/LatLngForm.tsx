@@ -64,7 +64,7 @@ export const LatLngForm = (props: IProps) => {
       renderAfter={() =>
         <button
           type="submit"
-          className="ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-6 py-3 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          className="ml-5 inline-flex items-center rounded-md border border-gray-300 bg-white px-6 py-3 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         >
           <FaMapMarkerAlt className='scale-150 mr-2 mb-1' />
           Add Point
