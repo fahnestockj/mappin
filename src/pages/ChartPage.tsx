@@ -72,7 +72,7 @@ const ChartPage = (props: IProps) => {
 
   return (
     <div className="w-full h-[89vh]">
-      <ProgressBarWithTimer disabled={!(timeseriesArr.length === 0)} setProgress={setProgress} progress={progress} />
+      <ProgressBarWithTimer numOfMarkers={markers.length} disabled={!(timeseriesArr.length === 0)} setProgress={setProgress} progress={progress} />
       <BackButton />
       <div className="w-full h-full grid grid-cols-3 grid-rows-1 gap-4">
 

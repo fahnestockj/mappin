@@ -5,21 +5,34 @@ type IProps = {
   disabled: boolean
   setProgress: React.Dispatch<React.SetStateAction<number>>
   progress: number
+  numOfMarkers: number
 }
 
 let progressInterval: any;
 
 const ProgressBarWithTimer = (props: IProps) => {
-  const { disabled, setProgress, progress } = props
+  const { disabled, setProgress, progress, numOfMarkers } = props
+
+  const getIntervalFromNumOfMarkers = (numOfMarkers: number) => {
+    switch (numOfMarkers) {
+      case 1:
+        return 50
+      case 2:
+        return 100
+      case 3:
+        return 150
+      case 4:
+        return 200
+    }
+  }
+
   useEffect(() => {
     if (!disabled) {
       progressInterval = setInterval(() => {
         setProgress(prev => prev + 1);
-      }, 20);
-
-      console.log('progressInterval', progressInterval);
+      }, getIntervalFromNumOfMarkers(numOfMarkers));
     }
-  }, [disabled, setProgress]);
+  }, [disabled, numOfMarkers, setProgress]);
 
   useEffect(() => {
     if (progress >= 100) {
