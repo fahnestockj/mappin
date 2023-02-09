@@ -1,42 +1,52 @@
+import { SvgCross } from "./components/SvgCross"
 import { IMarker } from "./components/Velmap"
 
 type IProps = {
-    markers: Array<IMarker>
+  markers: Array<IMarker>
 }
 
 export function Table(props: IProps) {
 
-    return (
-        <div id="dvContents"
-        // style={{ "border": "1px dotted black", "padding": "5px", "width":"305px" }}
-        //className="bg-green-700"
-        >
-            <table className="border-spacing-2 border border-slate-500"
-            //  border="1
-            >
-                <tbody>
+  return (
+    <div className="w-full flex flex-row justify-start">
+      <table className="border-spacing-2 border border-slate-500 w-4/5 table-fixed">
+        <tbody>
+          <tr className="bg-slate-500">
+            <th className="border border-slate-600 text-white">Latitude</th>
+            <th className="border border-slate-600 text-white">Longitude</th>
+            <th className="border border-slate-600 text-white">Symbol</th>
+          </tr>
+          {props.markers.length === 0 &&
+            <tr className="h-[10px]">
+              <td className="border border-slate-600"/>
+              <td className="border border-slate-600"/>
+              <td className="border border-slate-600 h-5"/>
+            </tr>
+          }
+          {
+            props.markers.map(marker => {
+              return (
+                <tr className="h-[10px]" key={`${marker.color}`}>
+                  <td className="border border-slate-600">
+                    <div className="ml-2">{marker.latLng.lat}</div>
+                    </td>
 
-                    <tr>
-                        <th className="border border-slate-600">Longitude</th>
-                        <th className="border border-slate-600">Latitude</th>
-                        <th className="border border-slate-600">Symbol</th>
-                    </tr>
-                    {
-                        props.markers.map(marker => {
-                            return (
-                                <tr key={`${marker.color}`}>
-                                    <td className="border border-slate-600">{marker.latLng.lng}</td>
-                                    <td className="border border-slate-600">{marker.latLng.lat}</td>
-                                    <td className="border border-slate-600">{marker.color}</td>
-                                </tr>
-                            )
-                        })
-                    }
-                </tbody>
+                  <td className="border border-slate-600">
+                    <div className="ml-2">{marker.latLng.lng}</div>
+                    </td>
 
-            </table>
-        </div>
-        /*<br />*/
-        /*<input type="button" onclick="PrintTable();" value="Print" />   */
-    )
+                  <td className="border border-slate-600">
+                    <div className="h-5 flex flex-col justify-middle">
+                      {SvgCross(marker.color, ' ')}
+                    </div>
+                  </td>
+                </tr>
+              )
+            })
+          }
+        </tbody>
+
+      </table>
+    </div>
+  )
 }
