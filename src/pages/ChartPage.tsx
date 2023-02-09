@@ -39,7 +39,7 @@ const ChartPage = (props: IProps) => {
   const [progress, setProgress] = React.useState<number>(0)
 
   const { markers } = props
-  
+
   useEffect(() => {
     //NOTE: useEffect will run twice development because of React.StrictMode this won't happen in production
     const params = new URLSearchParams();
@@ -98,13 +98,18 @@ const ChartPage = (props: IProps) => {
             />
           </div>
           <div className="mt-4">
-              <MarkerTable markers={markers} />
+            <MarkerTable markers={markers} />
           </div>
           <div className="mt-4">
             <CSVDownloadButton data={timeseriesArr} />
           </div>
         </div>
 
+      </div>
+      <div className="w-full h-[50px]  flex flex-row justify-center">
+        <div className="flex flex-col justify-center">
+          <div className="">Velocity data generated using auto-RIFT (Gardner et al., 2018) and provided by the NASA MEaSUREs ITS_LIVE project (Gardner et al., 20XX).</div>
+        </div>
       </div>
     </div>
   )
