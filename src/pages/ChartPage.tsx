@@ -7,6 +7,7 @@ import LocationMarker from "../components/LocationMarker/LocationMarker";
 import Velmap, { IMarker } from "../components/Velmap";
 import { ZoomingChart } from "../components/ZoomingChart";
 import ProgressBarWithTimer from "../components/ProgressBarWithTimer";
+import { MarkerTable } from "../components/MarkerTable";
 
 export type ITimeseries = {
   coordinateStr: string
@@ -95,6 +96,9 @@ const ChartPage = (props: IProps) => {
                 </>
               }
             />
+          </div>
+          <div className="mt-4">
+              <MarkerTable markers={markers} />
           </div>
           <div className="mt-4">
             <CSVDownloadButton data={timeseriesArr} />

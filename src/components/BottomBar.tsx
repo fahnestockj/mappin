@@ -7,7 +7,7 @@ import { getColor } from "../utils/getColor";
 import { LatLngForm } from "./LatLngForm";
 import { IMarker } from "./Velmap";
 import { createId } from '@paralleldrive/cuid2';
-import { Table } from "../Table";
+import { MarkerTable } from "./MarkerTable";
 
 type IProps = {
   form: UseFormReturn<{
@@ -73,7 +73,7 @@ export const BottomBar = (props: IProps) => {
 
       </div>
       <div className='basis-1/3 flex flex-col items-center'>
-        <Table markers={markers} />
+        <MarkerTable markers={markers} />
       </div>
       {/** Table go here */}
     </>

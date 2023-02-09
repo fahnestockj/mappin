@@ -1,11 +1,11 @@
-import { SvgCross } from "./components/SvgCross"
-import { IMarker } from "./components/Velmap"
+import { SvgCross } from "./SvgCross"
+import { IMarker } from "./Velmap"
 
 type IProps = {
   markers: Array<IMarker>
 }
 
-export function Table(props: IProps) {
+export function MarkerTable(props: IProps) {
 
   return (
     <div className="w-full flex flex-row justify-start">
