@@ -11,7 +11,7 @@ const LatLngMapEventController = (props: IProps) => {
 
   useMapEvents({
     click(e) {
-      console.log(e.latlng);
+      // console.log(e.latlng);
       props.form.setValue('latitude', e.latlng.lat)
       props.form.setValue('longitude', e.latlng.lng)
     }

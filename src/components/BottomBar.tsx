@@ -24,7 +24,7 @@ export const BottomBar = (props: IProps) => {
     <>
       <div className='basis-2/3 inline-flex ml-5 h-14'>
         <LatLngForm form={form} onSubmit={({ latitude, longitude }) => {
-          console.log('lat', latitude, 'lng', longitude);
+          // console.log('lat', latitude, 'lng', longitude);
 
           if (markers.length < 4) {
             const color = getColor(markers.length)

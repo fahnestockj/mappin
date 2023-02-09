@@ -36,7 +36,7 @@ const ProgressBarWithTimer = (props: IProps) => {
 
   useEffect(() => {
     if (progress >= 100) {
-      console.log('clearing', progressInterval);
+      // console.log('clearing', progressInterval);
       clearInterval(progressInterval);
       //@ts-ignore
       clearInterval(progressInterval - 1);

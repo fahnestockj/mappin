@@ -65,7 +65,7 @@ const ChartPage = (props: IProps) => {
           timeseries: parsedRes[latLngStr]
         }
       })
-      console.log(data);
+      // console.log(data);
       setProgress(100)
       setTimeseriesArr(data)
     })
