@@ -24,7 +24,7 @@ export type IArrayOfTimeseries = Array<ITimeseries>
 
 const latLngRegex = new RegExp(/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/)
 const ZLatLngKey = z.string().trim().regex(latLngRegex)
-
+//@ts-ignore
 const ZResponse = z.record(
   ZLatLngKey,
   z.array(z.tuple([z.coerce.date(), z.coerce.number()]))

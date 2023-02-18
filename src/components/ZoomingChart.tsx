@@ -9,7 +9,7 @@ type IProps = {
 
 export const ZoomingChart = (props: IProps) => {
 
-  const maxPoints = 1000
+  const maxPoints = 10000
   const [zoomedXDomain, setZoomedXDomain] = useState<[Date, Date]>([new Date('2010-01-01'), new Date('2023-01-01')]);
 
   const { timeseriesArr } = props

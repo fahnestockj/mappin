@@ -6,13 +6,14 @@ import { GeoJsonObject } from 'geojson'
 
 export type IColor = 'green' | 'blue' | 'red' | 'yellow'
 
+export type ICoordinate = {
+  lat: number
+  lng: number
+}
 export type IMarker = {
   id: string
   color: IColor
-  latLng: {
-    lat: number
-    lng: number
-  }
+  latLng: ICoordinate
 }
 
 type IProps = {

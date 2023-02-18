@@ -36,6 +36,7 @@ function MapPage(props: IProps) {
     <div>
       <div className="h-[85vh] w-full" >
         <Velmap
+        center={markers.length ? [markers[0].latLng.lat, markers[0].latLng.lng] : undefined}
           mapChildren={
             <>
               <LatLngMapEventController form={form} />
