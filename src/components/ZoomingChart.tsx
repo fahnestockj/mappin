@@ -42,13 +42,13 @@ export const ZoomingChart = (props: IProps) => {
       </div> */}
     </>
   )
-
+  //TODO: memoize getDate - see if you can improve performance
   function getData(): Array<ITimeseries & {
     filteredTimeseries: [Date, number][]
   }> {
 
     const filteredTimeseries = timeseriesArr.map((timeseries: ITimeseries) => {
-      const filteredTimeseries = timeseries.timeseries.filter((d) => (d[0] >= zoomedXDomain[0] && d[0] <= zoomedXDomain[1]));
+      const filteredTimeseries = timeseries.data.filter((d) => (d[0] >= zoomedXDomain[0] && d[0] <= zoomedXDomain[1]));
       if (filteredTimeseries.length > maxPoints) {
         const k = Math.ceil(filteredTimeseries.length / maxPoints);
         return filteredTimeseries.filter(
@@ -75,7 +75,7 @@ export const ZoomingChart = (props: IProps) => {
     };
   }
 
-  const entireDomain = getEntireDomain(timeseriesArr.map(timeseries => timeseries.timeseries));
+  const entireDomain = getEntireDomain(timeseriesArr.map(timeseries => timeseries.data));
   const filteredTimeseriesArr = getData();
 
   return (
@@ -100,8 +100,8 @@ export const ZoomingChart = (props: IProps) => {
           {
             filteredTimeseriesArr.map(timeseries =>
               <VictoryScatter
-                key={`${timeseries.coordinateStr}`}
-                style={{ data: { fill: `${timeseries.color}` } }}
+                key={`${timeseries.marker.id}`}
+                style={{ data: { fill: `${timeseries.marker.color}` } }}
                 x={0}
                 y={1}
                 data={timeseries.filteredTimeseries}

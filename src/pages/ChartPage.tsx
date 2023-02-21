@@ -1,6 +1,4 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react"
-import { z } from "zod";
+import React, { useEffect } from "react"
 import BackButton from "../components/BackButton";
 import { CSVDownloadButton } from "../components/CSVDownloadButton";
 import LocationMarker from "../components/LocationMarker/LocationMarker";
@@ -8,68 +6,33 @@ import Velmap, { IMarker } from "../components/Velmap";
 import { ZoomingChart } from "../components/ZoomingChart";
 import ProgressBarWithTimer from "../components/ProgressBarWithTimer";
 import { MarkerTable } from "../components/MarkerTable";
+import { findManyTimeseries } from "../utils/findManyTimeseries";
 
 export type ITimeseries = {
-  coordinateStr: string
-  coordinates: {
-    lat: number
-    lng: number
-  }
-  color?: string
+  marker: IMarker
   //[datetimeString, velocity]
-  timeseries: Array<[Date, number]>
+  data: Array<[Date, number]>
 }
-
-export type IArrayOfTimeseries = Array<ITimeseries>
-
-const latLngRegex = new RegExp(/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/)
-const ZLatLngKey = z.string().trim().regex(latLngRegex)
-//@ts-ignore
-const ZResponse = z.record(
-  ZLatLngKey,
-  z.array(z.tuple([z.coerce.date(), z.coerce.number()]))
-)
 
 type IProps = {
   markers: Array<IMarker>
 }
 
 const ChartPage = (props: IProps) => {
-  const [timeseriesArr, setTimeseriesArr] = React.useState<IArrayOfTimeseries>([])
+  const [timeseriesArr, setTimeseriesArr] = React.useState<Array<ITimeseries>>([])
   const [progress, setProgress] = React.useState<number>(0)
 
   const { markers } = props
 
   useEffect(() => {
-    //NOTE: useEffect will run twice development because of React.StrictMode this won't happen in production
-    const params = new URLSearchParams();
-    markers.forEach(marker => {
-      params.append('lat', marker.latLng.lat.toString());
-      params.append('lng', marker.latLng.lng.toString());
-    })
-    axios.get('/timeseries', {
-      params: params
-    }).then(res => {
-      //parse res with zod schema
-      const parsedRes = ZResponse.parse(res.data)
-      const data: IArrayOfTimeseries = Object.keys(parsedRes).map(latLngStr => {
-        const lat = parseFloat(latLngStr.split(',')[0])
-        const lng = parseFloat(latLngStr.split(',')[1])
-        return {
-          color: markers.find(marker => marker.latLng.lat === lat && marker.latLng.lng === lng)?.color,
-          coordinateStr: latLngStr,
-          coordinates: {
-            lat,
-            lng
-          },
-          timeseries: parsedRes[latLngStr]
-        }
-      })
-      // console.log(data);
+    //NOTE: useEffect will run twice in development because of React.StrictMode this won't happen in production
+    findManyTimeseries(markers).then((timeseriesArr) => {
+      setTimeseriesArr(timeseriesArr)
       setProgress(100)
-      setTimeseriesArr(data)
+    }).catch((err) => {
+      console.error(err)
     })
-  }, [markers, setProgress])
+  }, [markers])
 
   return (
     <div className="w-full h-[89vh]">

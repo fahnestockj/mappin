@@ -1,51 +1,21 @@
-import { openArray, HTTPStore, slice, array } from 'zarr';
-import fetch, {
-  Headers,
-  Request,
-  Response
-} from 'node-fetch'
-import { geoJsonLookup } from './geoJsonLookup';
-import { ICoordinate, IMarker } from '../components/Velmap';
-import { createId } from '@paralleldrive/cuid2';
-import { appProj4 } from './proj4Projections';
-import { findClosestIndex } from './findClosestIndex';
-
-
+import { HTTPStore, openArray } from "zarr";
+import { IMarker } from "../components/Velmap";
+import { ITimeseries } from "../pages/ChartPage";
+import { findClosestIndex } from "./findClosestIndex";
+import { geoJsonLookup } from "./geoJsonLookup";
 
 declare enum HTTPMethod {
   GET = "GET",
 }
 
-async function main() {
-  console.log('start');
-  if (!globalThis.fetch) {
-    // @ts-ignore
-    globalThis.fetch = fetch
-    // @ts-ignore
-    globalThis.Headers = Headers
-    // @ts-ignore
-    globalThis.Request = Request
-    // @ts-ignore
-    globalThis.Response = Response
-  }
+export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Array<ITimeseries>> {
+  const results: Array<ITimeseries> = []
 
-  const marker: IMarker = {
-    id: createId(),
-    color: 'blue',
-    latLng: {
-      lat: 70,
-      lng: -50,
-    },
-  }
-  const markerArray = [marker]
+  const geoJsonLookupRes = geoJsonLookup(markerArr)
 
-  const geoJsonLookupRes = geoJsonLookup([marker])
-  // console.log(coordinateS3UrlTuples);
-
-
-  for (const { zarrUrl, cartesianCoordinate } of geoJsonLookupRes) {
-
-    const store = new HTTPStore(zarrUrl, { fetchOptions: {}, supportedMethods: ["GET" as HTTPMethod] });
+  for (const { marker, zarrUrl, cartesianCoordinate } of geoJsonLookupRes) {
+    const url = 'http://localhost:5000/' + zarrUrl
+    const store = new HTTPStore(url, { fetchOptions: {}, supportedMethods: ["GET" as HTTPMethod] });
 
     const xArrayZarr = await openArray({
       store,
@@ -75,15 +45,11 @@ async function main() {
 
     const [xIndex, yIndex] = findClosestIndex(xArray, yArray, cartesianCoordinate)
 
-
-
     const midDateZarr = await openArray({
       store,
       path: "/mid_date",
       mode: "r"
     })
-
-
 
     const timeseriesArrZarr = await openArray({
       store,
@@ -110,23 +76,18 @@ async function main() {
       return res.data as Float64Array
     })
 
-    const timeseries: Array<[Date, number]> = []
+    const timeseriesData: Array<[Date, number]> = []
     for (let i = 0; i < timeseriesArr.length; i++) {
-      if(timeseriesArr[i] === -32767) continue
-      timeseries.push([new Date(midDateArr[i] * 86400000), timeseriesArr[i]])
+      if (timeseriesArr[i] === -32767) continue
+      timeseriesData.push([new Date(midDateArr[i] * 86400000), timeseriesArr[i]])
     }
-    console.log(timeseries);
 
+    console.log(timeseriesData);
+    results.push({
+      marker,
+      data: timeseriesData,
+    })
   }
+  return results
 
 }
-
-
-main()
-  .catch((e) => {
-    console.log(e);
-    process.exit(1)
-  })
-  .finally(async () => {
-    process.exit(0)
-  })
