@@ -2,6 +2,7 @@
 import GeoJsonGeometriesLookup from "geojson-geometries-lookup";
 import { IMarker } from "../components/Velmap";
 import geoJsonFile from "../geoJson/catalog_v02.json";
+import { checkIfCoordinateIsWithinBounds } from "./checkIfCoordinateIsWithinBounds";
 import { appProj4 } from "./proj4Projections";
 
 export function geoJsonLookup(markers: Array<IMarker>): Array<{
@@ -29,7 +30,10 @@ export function geoJsonLookup(markers: Array<IMarker>): Array<{
     //NOTE: EPSG:4326 is the projection of the lat lng coordinates
     // lat: 70, lng: -50 => [-200000, -2200000] in the locale projection EPSG:3413
     const cartesianCoordinate: [number, number] = appProj4("EPSG:4326", projection).forward([coordinate.lng, coordinate.lat])
-    console.log(cartesianCoordinate);
+
+    const bool = checkIfCoordinateIsWithinBounds(cartesianCoordinate, features[0].properties.geometry_epsg.coordinates[0])
+    //TODO: handle if bool is false
+
     results.push({
       marker,
       zarrUrl,
