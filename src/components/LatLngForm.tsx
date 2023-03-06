@@ -36,7 +36,7 @@ const mapping = [
 
 
 const MyForm = createTsForm(mapping);
-
+//@ts-ignore
 export const ZFormSchema = z.object({
   latitude: z.number(),
   longitude: z.number(),
