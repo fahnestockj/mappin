@@ -9,8 +9,7 @@ import { MarkerTable } from "../components/MarkerTable";
 import { findManyTimeseries } from "../utils/findManyTimeseries";
 import { useSearchParams } from "react-router-dom";
 import { urlParamsToMarkers } from "../utils/markerParamUtilities";
-import { BiShare } from "react-icons/bi";
-import { ShareButton } from "../components/CopyButton";
+import { ShareButton } from "../components/ShareButton";
 
 export type ITimeseries = {
   marker: IMarker
@@ -42,7 +41,7 @@ const ChartPage = (props: IProps) => {
   return (
     <div className="w-full h-[89vh]">
       <ProgressBarWithTimer numOfMarkers={markers.length} disabled={!(timeseriesArr.length === 0)} setProgress={setProgress} progress={progress} />
-      <BackButton />
+      <BackButton params={params}/>
       <div className="w-full h-full grid grid-cols-3 grid-rows-1 gap-4">
 
         <div className="col-span-2">
