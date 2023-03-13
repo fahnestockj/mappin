@@ -3,20 +3,16 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { IMarker } from "./components/Velmap";
 import ChartPage from "./pages/ChartPage";
 import MapPage from "./pages/MapPage";
-import { createId } from '@paralleldrive/cuid2'
+import { useSearchParams } from "react-router-dom";
+import { urlParamsToMarkers } from "./utils/urlParamsToMarkers";
+
 
 const App = () => {
 
-  const [markers, setMarkers] = useState<Array<IMarker>>([
-    { 
-      id: createId(),
-      color: 'blue',
-      latLng: {
-        lat: 70,
-        lng: -50
-      },
-    },
-  ])
+  const [params] = useSearchParams();
+  const initialMarkers = urlParamsToMarkers(params)
+  
+  const [markers, setMarkers] = useState<Array<IMarker>>(initialMarkers)
 
   return (
     <BrowserRouter>
