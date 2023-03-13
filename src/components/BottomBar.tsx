@@ -1,14 +1,11 @@
-import produce from "immer";
 import { UseFormReturn } from "react-hook-form";
 import { AiOutlineLineChart } from "react-icons/ai";
 import { BiTrash } from "react-icons/bi";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { getColor } from "../utils/getColor";
 import { LatLngForm } from "./LatLngForm";
 import { IMarker } from "./Velmap";
-import { createId } from '@paralleldrive/cuid2';
 import { MarkerTable } from "./MarkerTable";
-import { markersToUrlParams } from "../utils/markerParamUtilities";
+import { createMarker } from "../utils/createMarker";
 
 type IProps = {
   form: UseFormReturn<{
@@ -21,42 +18,28 @@ type IProps = {
 export const BottomBar = (props: IProps) => {
   const { form, markers, setMarkers } = props
   const navigate = useNavigate()
-  const [params, setParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   return (
     <>
       <div className='basis-2/3 inline-flex ml-5 h-14'>
         <LatLngForm form={form} onSubmit={({ latitude, longitude }) => {
-          // console.log('lat', latitude, 'lng', longitude);
-
-          if (markers.length < 4) {
-            const color = getColor(markers.length)
-
-
-            //Immer produce for immutability
-            const updatedMarkers = produce(markers, draft => {
-              draft.push({
-                id: createId(),
-                color,
-                latLng: {
-                  lat: parseFloat(latitude.toFixed(5)),
-                  lng: parseFloat(longitude.toFixed(5))
-                }
-              })
-            })
-
-            const urlParams = markersToUrlParams(updatedMarkers)
-            setParams(urlParams)
-            setMarkers(updatedMarkers)
-          }
-        }} />
+          createMarker({
+            latitude,
+            longitude,
+            markers,
+            setMarkers,
+            setSearchParams,
+          })
+        }
+        } />
 
         <button
           type="button"
           className="mx-2 inline-flex items-center rounded-md border border-gray-300 bg-white px-6 py-3 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           onClick={() => {
             setMarkers([])
-            setParams({})
+            setSearchParams({})
           }}
         >
           <BiTrash className='scale-150 mr-2 mb-1' />
@@ -69,7 +52,7 @@ export const BottomBar = (props: IProps) => {
           onClick={() => {
             navigate({
               pathname: '/chart',
-              search: params.toString()
+              search: searchParams.toString()
             })
           }}
         >

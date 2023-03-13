@@ -27,9 +27,9 @@ function MapPage(props: IProps) {
           center={markers.length ? [markers[0].latLng.lat, markers[0].latLng.lng] : undefined}
           mapChildren={
             <>
-              <LatLngMapEventController form={form} />
+              <LatLngMapEventController markers={markers} setMarkers={setMarkers} setSearchParams={setSearchParams} />
               {markers.map(marker => (
-                <LocationMarker key={`${marker.latLng.lat}${marker.latLng.lng}`} markerProp={marker} markers={markers} setMarkers={setMarkers} setSearchParams={setSearchParams} draggable={true} />
+                <LocationMarker key={`${marker.id}`} markerProp={marker} markers={markers} setMarkers={setMarkers} setSearchParams={setSearchParams} draggable={true} />
               ))}
             </>
           }

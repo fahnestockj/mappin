@@ -1,19 +1,24 @@
 import { useMapEvents } from "react-leaflet"
-import { UseFormReturn } from "react-hook-form"
+import { createMarker } from "../utils/createMarker";
+import { IMarker } from "./Velmap";
 
 type IProps = {
-  form: UseFormReturn<{
-    latitude: number;
-    longitude: number;
-  }, any>
+  markers: Array<IMarker>
+  setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>
+  setSearchParams: (params: URLSearchParams) => void
 }
 const LatLngMapEventController = (props: IProps) => {
-
+  const { markers, setMarkers, setSearchParams } = props
   useMapEvents({
     click(e) {
-      // console.log(e.latlng);
-      props.form.setValue('latitude', e.latlng.lat)
-      props.form.setValue('longitude', e.latlng.lng)
+      createMarker({
+        latitude: e.latlng.lat,
+        longitude: e.latlng.lng,
+        markers,
+        setMarkers,
+        setSearchParams,
+      })
+
     }
   })
 

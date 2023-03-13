@@ -27,7 +27,7 @@ const Velmap = (props: IProps) => {
   const { Overlay } = LayersControl
 
   return (
-      <div className="w-full h-full cursor-crosshair"
+      <div className="w-full h-full"
       >
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
           integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
@@ -36,8 +36,8 @@ const Velmap = (props: IProps) => {
           integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
           crossOrigin="" />
 
-        <div className="w-full h-full m-auto" >
-          <MapContainer className='h-[100%]'  crs={CRS.EPSG3857}  center={center || [70.3, -49.5]} zoom={zoom || 6} maxZoom={10} minZoom={2} scrollWheelZoom={true}  >
+        <div className="w-full h-full m-auto " >
+          <MapContainer className='h-[100%] cursor-crosshair'  crs={CRS.EPSG3857}  center={center || [70.3, -49.5]} zoom={zoom || 6} maxZoom={10} minZoom={2} scrollWheelZoom={true}  >
             <LayersControl >
               <Overlay name='GeoJSON'>
                 {/* @ts-ignore */}
