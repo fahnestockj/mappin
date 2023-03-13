@@ -13,21 +13,9 @@ type IProps = {
 }
 function MapPage(props: IProps) {
   const { markers, setMarkers } = props
-
-  useEffect(() => {
-    //NOTE: useEffect will run twice development because of React.StrictMode this won't happen in production
-    axios.get('/timeseries', {
-      params: {
-        lat: 70,
-        lng: -50
-      },
-
-    }).then(res => {
-      // console.log(res.data);
-    })
-  }, [])
-
   const form = useForm<z.infer<typeof ZFormSchema>>();
+
+
 
 
 

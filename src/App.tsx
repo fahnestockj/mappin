@@ -4,7 +4,7 @@ import { IMarker } from "./components/Velmap";
 import ChartPage from "./pages/ChartPage";
 import MapPage from "./pages/MapPage";
 import { useSearchParams } from "react-router-dom";
-import { urlParamsToMarkers } from "./utils/urlParamsToMarkers";
+import { urlParamsToMarkers } from "./utils/markerParamUtilities";
 
 
 const App = () => {

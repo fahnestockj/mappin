@@ -1,6 +1,16 @@
 import { createId } from "@paralleldrive/cuid2";
 import { IColor, IMarker } from "../components/Velmap";
 
+export function markersToUrlParams(markers: Array<IMarker>): URLSearchParams {
+  const params = new URLSearchParams();
+  markers.forEach((marker) => {
+    params.append('lat', marker.latLng.lat.toString());
+    params.append('lng', marker.latLng.lng.toString());
+    params.append('c', colorToC(marker.color));
+  });
+  return params;
+}
+
 export function urlParamsToMarkers(params: URLSearchParams): Array<IMarker> {
     const markers: Array<IMarker> = [];
     for (let i = 0; i < params.getAll('lat').length; i++) {
@@ -29,5 +39,17 @@ function cToColor (c: string): IColor {
     default:
       throw new Error('Invalid color')
   }
+}
 
+function colorToC (color: IColor): string {
+  switch(color) {
+    case 'red':
+      return 'r'
+    case 'green':
+      return 'g'
+    case 'blue':
+      return 'b'
+    case 'yellow':
+      return 'y'
+  }
 }

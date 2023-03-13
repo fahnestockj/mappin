@@ -2,12 +2,13 @@ import produce from "immer";
 import { UseFormReturn } from "react-hook-form";
 import { AiOutlineLineChart } from "react-icons/ai";
 import { BiTrash } from "react-icons/bi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getColor } from "../utils/getColor";
 import { LatLngForm } from "./LatLngForm";
 import { IMarker } from "./Velmap";
 import { createId } from '@paralleldrive/cuid2';
 import { MarkerTable } from "./MarkerTable";
+import { markersToUrlParams } from "../utils/markerParamUtilities";
 
 type IProps = {
   form: UseFormReturn<{
@@ -20,6 +21,8 @@ type IProps = {
 export const BottomBar = (props: IProps) => {
   const { form, markers, setMarkers } = props
   const navigate = useNavigate()
+  const [,setParams] = useSearchParams();
+
   return (
     <>
       <div className='basis-2/3 inline-flex ml-5 h-14'>
@@ -28,6 +31,9 @@ export const BottomBar = (props: IProps) => {
 
           if (markers.length < 4) {
             const color = getColor(markers.length)
+
+            const urlParams = markersToUrlParams(markers)
+            setParams(urlParams)
             setMarkers(
               //Immer produce for immutability
               produce(markers, draft => {
