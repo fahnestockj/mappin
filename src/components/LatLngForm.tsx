@@ -33,7 +33,6 @@ const NumInput = (props: IInputProps) => {
 // create the mapping
 const mapping = [
   [z.number(), NumInput] as const,
-  [z.number(), NumInput] as const,
 ] as const; // 👈 `as const` is necessary
 
 
