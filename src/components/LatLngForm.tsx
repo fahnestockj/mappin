@@ -9,20 +9,23 @@ type IInputProps = {
 }
 const NumInput = (props: IInputProps) => {
   const { field, error } = useTsController<number>();
+  const border = error ? 'border-red-500' : 'border-gray-200';
   return (
     <div className={`px-3 mb-6  md:mb-0 flex flex-row items-center ${props.message === 'Lat: ' ? 'w-[230px]' : 'w-[250px]'} `}>
       <label className="tracking-wide text-gray-700 text-2xl mr-2">
         {props.message}
       </label>
-      <input className=" appearance-none block w-full  text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-        value={field.value ? field.value.toFixed(5) : ""} // conditional to prevent "uncontrolled to controlled" react warning
+      <input className={
+        border +
+        " appearance-none block w-full  text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+      }
+        value={field.value ? field.value : ""} // conditional to prevent "uncontrolled to controlled" react warning
         type="number"
         placeholder={props.placeholder}
         onChange={(e) => {
           field.onChange(e.target.valueAsNumber);
         }}
       />
-      {error?.errorMessage && <span>{error?.errorMessage}</span>}
     </div>
   )
 }
