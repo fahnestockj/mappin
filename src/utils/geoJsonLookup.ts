@@ -31,8 +31,27 @@ export function geoJsonLookup(markers: Array<IMarker>): Array<{
     // lat: 70, lng: -50 => [-200000, -2200000] in the locale projection EPSG:3413
     const cartesianCoordinate: [number, number] = appProj4("EPSG:4326", projection).forward([coordinate.lng, coordinate.lat])
 
-    const bool = checkIfCoordinateIsWithinBounds(cartesianCoordinate, features[0].properties.geometry_epsg.coordinates[0])
-    //TODO: handle if bool is false
+    const inBounds = checkIfCoordinateIsWithinBounds(cartesianCoordinate, features[0].properties.geometry_epsg.coordinates[0])
+    // console.log('marker', marker, 'is', inBounds);
+
+    if (!inBounds) {
+      //We have to search through the features using the cartesianCoordinate
+      //@ts-ignore
+      for (const feature of geoJsonFile.features) {
+        const inBounds = checkIfCoordinateIsWithinBounds(cartesianCoordinate, feature.properties.geometry_epsg.coordinates[0])
+        if (inBounds) {
+          // console.log('marker', marker, 'is in bounds of', feature.properties.zarr_url, 'but not', zarrUrl);
+          results.push({
+            marker,
+            zarrUrl: feature.properties.zarr_url,
+            cartesianCoordinate,
+          })
+          break
+        }
+      }
+      continue
+    }
+
 
     results.push({
       marker,
