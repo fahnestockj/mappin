@@ -10,7 +10,7 @@ import { findManyTimeseries } from "../utils/findManyTimeseries";
 import { useSearchParams } from "react-router-dom";
 import { urlParamsToMarkers } from "../utils/markerParamUtilities";
 import { BiShare } from "react-icons/bi";
-import { CopyButton } from "../components/CopyButton";
+import { ShareButton } from "../components/CopyButton";
 
 export type ITimeseries = {
   marker: IMarker
@@ -73,7 +73,7 @@ const ChartPage = (props: IProps) => {
 
           </div>
           <div className="mt-4">
-            <CopyButton />
+            <ShareButton />
           </div>
         </div>
 
