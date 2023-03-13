@@ -5,15 +5,17 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import L from 'leaflet'
 import { SvgCross } from '../SvgCross'
 import './LocationMarker.css'
+import { markersToUrlParams } from '../../utils/markerParamUtilities'
 
 type IProps = {
   markerProp: IMarker
   draggable: boolean
   markers?: Array<IMarker>
   setMarkers?: React.Dispatch<React.SetStateAction<IMarker[]>>
+  setSearchParams?: React.Dispatch<React.SetStateAction<any>>
 }
 const LocationMarker = (props: IProps) => {
-  const { draggable, markerProp, markers, setMarkers } = props
+  const { draggable, markerProp, markers, setMarkers, setSearchParams } = props
   const markerRef = useRef(null)
   const [position, setPosition] = useState(markerProp.latLng)
 
@@ -25,7 +27,7 @@ const LocationMarker = (props: IProps) => {
     shadowAnchor: [13, 28],
     className: 'transparent'
   })
-  if (!draggable || !markers || !setMarkers) return (
+  if (!draggable || !markers || !setMarkers || !setSearchParams) return (
 
     <Marker position={position}
       draggable={draggable}
@@ -43,7 +45,7 @@ const LocationMarker = (props: IProps) => {
       if (marker != null) {
         const newMarkers = [...markers]
         // @ts-ignore
-        const { lat, lng } = marker.getLatLng() as { lat: number, lng: number }
+        const { lat, lng } = marker.getLatLng() as { lat: number, lng: number } //a leaflet function for fetching latLng
         newMarkers[oldMarkerIndex] = {
           ...markerProp,
           latLng: {
@@ -52,6 +54,7 @@ const LocationMarker = (props: IProps) => {
           }
         }
         setMarkers(newMarkers)
+        setSearchParams(markersToUrlParams(newMarkers))
         //@ts-ignore
         setPosition(marker.getLatLng())
       }

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import BackButton from "../components/BackButton";
 import { CSVDownloadButton } from "../components/CSVDownloadButton";
 import LocationMarker from "../components/LocationMarker/LocationMarker";
@@ -7,6 +7,8 @@ import { ZoomingChart } from "../components/ZoomingChart";
 import ProgressBarWithTimer from "../components/ProgressBarWithTimer";
 import { MarkerTable } from "../components/MarkerTable";
 import { findManyTimeseries } from "../utils/findManyTimeseries";
+import { useSearchParams } from "react-router-dom";
+import { urlParamsToMarkers } from "../utils/markerParamUtilities";
 
 export type ITimeseries = {
   marker: IMarker
@@ -15,14 +17,15 @@ export type ITimeseries = {
 }
 
 type IProps = {
-  markers: Array<IMarker>
 }
 
 const ChartPage = (props: IProps) => {
   const [timeseriesArr, setTimeseriesArr] = React.useState<Array<ITimeseries>>([])
   const [progress, setProgress] = React.useState<number>(0)
 
-  const { markers } = props
+  const [params] = useSearchParams();
+  const initialMarkers = urlParamsToMarkers(params)
+  const [markers] = useState<Array<IMarker>>(initialMarkers)
 
   useEffect(() => {
     //NOTE: useEffect will run twice in development because of React.StrictMode this won't happen in production
@@ -48,7 +51,7 @@ const ChartPage = (props: IProps) => {
           <div className="w-[100%] h-[40%] ">
             <Velmap
               zoom={7}
-              center={[markers[0].latLng.lat, markers[0].latLng.lng]}
+              center={markers[0] ? [markers[0].latLng.lat, markers[0].latLng.lng] : [70, -50]}
               mapChildren={
                 <>
                   {
