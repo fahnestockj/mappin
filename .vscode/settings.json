@@ -1,5 +1,4 @@
 {
-  "python.formatting.provider": "black",
   "[typescript]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
   },
