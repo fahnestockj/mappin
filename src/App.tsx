@@ -1,3 +1,4 @@
+import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ChartPage from "./pages/ChartPage";
 import MapPage from "./pages/MapPage";
