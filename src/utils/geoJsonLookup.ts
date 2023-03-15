@@ -38,6 +38,7 @@ export function geoJsonLookup(markers: Array<IMarker>): Array<{
       //We have to search through the features using the cartesianCoordinate
       //@ts-ignore
       for (const feature of geoJsonFile.features) {
+        //@ts-ignore
         const inBounds = checkIfCoordinateIsWithinBounds(cartesianCoordinate, feature.properties.geometry_epsg.coordinates[0])
         if (inBounds) {
           // console.log('marker', marker, 'is in bounds of', feature.properties.zarr_url, 'but not', zarrUrl);
