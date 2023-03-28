@@ -23,7 +23,7 @@ export const CSVDownloadButton = (props: IProps) => {
 
         zip.generateAsync({ type: "blob" })
           .then(function (content) {
-            saveAs(content, 'itslive-date.zip');
+            saveAs(content, 'itslive-data.zip');
           });
       }}
     >
