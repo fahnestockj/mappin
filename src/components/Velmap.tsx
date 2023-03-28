@@ -47,14 +47,14 @@ const Velmap = (props: IProps) => {
               className='cursor-crosshair'
               attribution='Imagery provided by ESRI'
               url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.jpg"
-              maxNativeZoom={7}
+              maxNativeZoom={11}
               tileSize={256}
             />
             <Overlay checked name='Velocity Map'>
               <TileLayer
                 className='cursor-crosshair'
                 url="https://glacierflow.nyc3.digitaloceanspaces.com/webmaps/vel_map/{z}/{x}/{y}.png"
-                maxNativeZoom={7}
+                maxNativeZoom={11}
                 tileSize={256}
               />
             </Overlay>
