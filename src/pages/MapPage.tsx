@@ -8,11 +8,19 @@ import LatLngMapEventController from "../components/LatLngMapEventController";
 import LocationMarker from "../components/LocationMarker/LocationMarker";
 import Velmap, { IMarker } from "../components/Velmap";
 import { urlParamsToMarkers } from "../utils/markerParamUtilities";
+//@ts-ignore
+import { useBreakpoints } from 'react-breakpoints-hook'
 
 type IProps = {
 }
 
 function MapPage(props: IProps) {
+
+  let { sm, md, lg } = useBreakpoints({
+    sm: {min: 0, max: 860},
+    md: {min: 861, max: 1400},
+    lg: {min: 1401, max: null},
+  });
 
   const [params, setSearchParams] = useSearchParams();
   const initialMarkers = urlParamsToMarkers(params)
@@ -36,11 +44,12 @@ function MapPage(props: IProps) {
         />
       </div>
 
-      <div className='h-[15vh] w-full flex items-center'>
+      <div className='h-[15vh] w-full flex items-center justify-center'>
         <BottomBar
           form={form}
           setMarkers={setMarkers}
           markers={markers}
+          breakpoints={{ sm, md, lg }}
         />
       </div>
     </div>

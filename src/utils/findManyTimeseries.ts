@@ -14,7 +14,7 @@ export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Arr
   const geoJsonLookupRes = geoJsonLookup(markerArr)
   for (const { marker, zarrUrl, cartesianCoordinate } of geoJsonLookupRes) {
     
-    const url = 'https://mappin.itsliveiceflow.science/' + zarrUrl.replace('http', 'https')
+    const url = zarrUrl.replace('http', 'https')
     
     const store = new HTTPStore(url, { fetchOptions: {}, supportedMethods: ["GET" as HTTPMethod] });
 
