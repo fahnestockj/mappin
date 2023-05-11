@@ -1,9 +1,9 @@
 //@ts-ignore
 import GeoJsonGeometriesLookup from "geojson-geometries-lookup";
-import { IMarker } from "../components/Velmap";
 import geoJsonFile from "../geoJson/catalog_v02.json";
 import { checkIfCoordinateIsWithinBounds } from "./checkIfCoordinateIsWithinBounds";
 import { appProj4 } from "./proj4Projections";
+import { IMarker } from "../types";
 
 export function geoJsonLookup(markers: Array<IMarker>): Array<{
   marker: IMarker,

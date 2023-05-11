@@ -1,5 +1,5 @@
 import { createId } from "@paralleldrive/cuid2";
-import { IColor, IMarker } from "../components/Velmap";
+import { IColor, IMarker } from "../types";
 
 export function markersToUrlParams(markers: Array<IMarker>): URLSearchParams {
   const params = new URLSearchParams();

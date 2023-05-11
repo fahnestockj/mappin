@@ -5,10 +5,10 @@ import fetch, {
   Response
 } from 'node-fetch'
 import { geoJsonLookup } from './geoJsonLookup';
-import { ICoordinate, IMarker } from '../components/Velmap';
 import { createId } from '@paralleldrive/cuid2';
 import { appProj4 } from './proj4Projections';
 import { findClosestIndex } from './findClosestIndex';
+import { IMarker } from '../types';
 
 
 

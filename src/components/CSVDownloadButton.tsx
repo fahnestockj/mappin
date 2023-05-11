@@ -1,8 +1,8 @@
 import { BiDownload } from 'react-icons/bi';
 import { saveAs } from 'file-saver'
 import JSZip from 'jszip';
-import { ITimeseries } from '../pages/ChartPage';
 import { unparse } from 'papaparse';
+import { ITimeseries } from '../types';
 
 type IProps = {
   data: ITimeseries[]

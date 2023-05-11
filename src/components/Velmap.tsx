@@ -4,17 +4,6 @@ import { CRS } from 'leaflet'
 import catalogJson from '../geoJson/catalog_v02.json'
 import { GeoJsonObject } from 'geojson'
 
-export type IColor = 'green' | 'blue' | 'red' | 'yellow'
-
-export type ICoordinate = {
-  lat: number
-  lng: number
-}
-export type IMarker = {
-  id: string
-  color: IColor
-  latLng: ICoordinate
-}
 
 type IProps = {
   mapChildren?: React.ReactNode

@@ -1,5 +1,5 @@
+import { IMarker } from "../types"
 import { SvgCross } from "./SvgCross"
-import { IMarker } from "./Velmap"
 
 type IProps = {
   markers: Array<IMarker>

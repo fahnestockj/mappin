@@ -3,9 +3,9 @@ import { AiOutlineLineChart } from "react-icons/ai";
 import { BiTrash } from "react-icons/bi";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { LatLngForm } from "./LatLngForm";
-import { IMarker } from "./Velmap";
 import { MarkerTable } from "./MarkerTable";
 import { createMarker } from "../utils/createMarker";
+import { IMarker } from "../types";
 
 type IProps = {
   form: UseFormReturn<{

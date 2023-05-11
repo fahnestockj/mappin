@@ -6,10 +6,11 @@ import { BottomBar } from "../components/BottomBar";
 import { ZFormSchema } from "../components/LatLngForm";
 import LatLngMapEventController from "../components/LatLngMapEventController";
 import LocationMarker from "../components/LocationMarker/LocationMarker";
-import Velmap, { IMarker } from "../components/Velmap";
+import Velmap from "../components/Velmap";
 import { urlParamsToMarkers } from "../utils/markerParamUtilities";
 //@ts-ignore
 import { useBreakpoints } from 'react-breakpoints-hook'
+import { IMarker } from "../types";
 
 type IProps = {
 }

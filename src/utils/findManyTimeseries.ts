@@ -1,8 +1,7 @@
 import { HTTPStore, openArray } from "zarr";
-import { IMarker } from "../components/Velmap";
-import { ITimeseries } from "../pages/ChartPage";
 import { findClosestIndex } from "./findClosestIndex";
 import { geoJsonLookup } from "./geoJsonLookup";
+import { IMarker, ITimeseries } from "../types";
 
 declare enum HTTPMethod {
   GET = "GET",

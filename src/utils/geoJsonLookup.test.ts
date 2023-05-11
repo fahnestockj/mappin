@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { IMarker } from "../components/Velmap"
 import { geoJsonLookup } from "./geoJsonLookup"
+import { IMarker } from '../types'
 
 describe('geoJsonLookup', () => {
 

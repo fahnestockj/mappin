@@ -1,11 +1,11 @@
 import { useState, useRef } from 'react'
 import { Marker, Popup } from 'react-leaflet'
-import { IMarker } from '../Velmap'
 import { renderToStaticMarkup } from 'react-dom/server'
 import L from 'leaflet'
 import { SvgCross } from '../SvgCross'
 import './LocationMarker.css'
 import { markersToUrlParams } from '../../utils/markerParamUtilities'
+import { IMarker } from '../../types'
 
 type IProps = {
   markerProp: IMarker
