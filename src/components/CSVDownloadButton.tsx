@@ -18,7 +18,7 @@ export const CSVDownloadButton = (props: IProps) => {
       onClick={() => {
         data.forEach((timeseries) => {
           const csvStr = unparse([['mid_date', 'v [m/yr]'], [timeseries.data.midDateArray, timeseries.data.velocityArray]])
-          zip.file(`${timeseries.marker.latLng.lat}-${timeseries.marker.latLng.lng}.csv`, csvStr)
+          zip.file(`${timeseries.marker.latLon.lat}-${timeseries.marker.latLon.lon}.csv`, csvStr)
         })
 
         zip.generateAsync({ type: "blob" })

@@ -31,9 +31,9 @@ async function main() {
   const marker: IMarker = {
     id: createId(),
     color: 'blue',
-    latLng: {
+    latLon: {
       lat: 70,
-      lng: -50,
+      lon: -50,
     },
   }
   const markerArray = [marker]

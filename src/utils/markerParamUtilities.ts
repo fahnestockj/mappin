@@ -4,8 +4,8 @@ import { IColor, IMarker } from "../types";
 export function markersToUrlParams(markers: Array<IMarker>): URLSearchParams {
   const params = new URLSearchParams();
   markers.forEach((marker) => {
-    params.append('lat', marker.latLng.lat.toString());
-    params.append('lng', marker.latLng.lng.toString());
+    params.append('lat', marker.latLon.lat.toString());
+    params.append('lon', marker.latLon.lon.toString());
     params.append('c', colorToC(marker.color));
   });
   return params;
@@ -17,9 +17,9 @@ export function urlParamsToMarkers(params: URLSearchParams): Array<IMarker> {
       markers.push({
         id: createId(),
         color: cToColor(params.getAll('c')[i]),
-        latLng: {
+        latLon: {
           lat: parseFloat(params.getAll('lat')[i]),
-          lng: parseFloat(params.getAll('lng')[i])
+          lon: parseFloat(params.getAll('lon')[i])
         }
       })
     }

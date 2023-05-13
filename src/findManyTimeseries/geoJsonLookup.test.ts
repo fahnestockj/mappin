@@ -6,9 +6,9 @@ describe('geoJsonLookup', () => {
 
   it('finds the correct datacube for a given latitude longitude', () => {
     const marker: IMarker = {
-      latLng: {
+      latLon: {
         lat: 70,
-        lng: -50,
+        lon: -50,
       },
       id: 'test',
       color: 'red',
@@ -20,9 +20,9 @@ describe('geoJsonLookup', () => {
 
   it('should fail if we input an incorrect latitude longitude', () => {
     const marker: IMarker = {
-      latLng: {
+      latLon: {
         lat: 2000,
-        lng: -2000,
+        lon: -2000,
       },
       id: 'test',
       color: 'red',
@@ -42,9 +42,9 @@ describe('geoJsonLookup', () => {
   it('can handle a marker that changes datacubes after converting projections', () => {
 
     const marker: IMarker = {
-      latLng: {
+      latLon: {
         lat: 70.78328,
-        lng: -43.90137
+        lon: -43.90137
       },
       color: 'blue',
       id: 'test'

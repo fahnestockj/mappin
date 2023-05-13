@@ -6,9 +6,9 @@ export const malaspinaTimerseries: Array<ITimeseries> = [
     marker: {
       id: "blueMalaspinaTimeseries",
       color: "blue",
-      latLng: {
+      latLon: {
         lat: 60.11,
-        lng: -140.45
+        lon: -140.45
       }
     },
     data: {
@@ -20,9 +20,9 @@ export const malaspinaTimerseries: Array<ITimeseries> = [
     marker: {
       id: "greenMalaspinaTimeseries",
       color: "green",
-      latLng: {
+      latLon: {
         lat: 60.02,
-        lng: -140.54
+        lon: -140.54
       }
     },
     data: {
@@ -34,9 +34,9 @@ export const malaspinaTimerseries: Array<ITimeseries> = [
     marker: {
       id: "redMalaspinaTimeseries",
       color: "red",
-      latLng: {
+      latLon: {
         lat: 59.92,
-        lng: -140.65
+        lon: -140.65
       }
     },
     data: {
@@ -48,9 +48,9 @@ export const malaspinaTimerseries: Array<ITimeseries> = [
     marker: {
       id: "yellowMalaspinaTimeseries",
       color: "yellow",
-      latLng: {
+      latLon: {
         lat: 59.83,
-        lng: -140.78
+        lon: -140.78
       }
     },
     data: {

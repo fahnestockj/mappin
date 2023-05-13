@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { useSearchParams } from "react-router-dom";
 import { z } from "zod";
 import { ZFormSchema } from "../../components/BottomBar/LatLonForm";
-import LatLngMapEventController from "../../components/LatLngMapEventController";
 import LocationMarker from "../../components/LocationMarker/LocationMarker";
 import Velmap from "../../components/Velmap";
 import { urlParamsToMarkers } from "../../utils/markerParamUtilities";
@@ -11,6 +10,7 @@ import { urlParamsToMarkers } from "../../utils/markerParamUtilities";
 import { useBreakpoints } from 'react-breakpoints-hook'
 import { IMarker } from "../../types";
 import { BottomBar } from "../../components/BottomBar/BottomBar";
+import LatLonMapEventController from "../../components/LatLonMapEventController";
 
 type IProps = {
 }
@@ -33,10 +33,10 @@ function MapPage(props: IProps) {
     <div>
       <div className={`${sm ? "h-[65vh]": "h-[85vh]"} w-full`} >
         <Velmap
-          center={markers.length ? [markers[0].latLng.lat, markers[0].latLng.lng] : undefined}
+          center={markers.length ? [markers[0].latLon.lat, markers[0].latLon.lon] : undefined}
           mapChildren={
             <>
-              <LatLngMapEventController markers={markers} setMarkers={setMarkers} setSearchParams={setSearchParams} />
+              <LatLonMapEventController markers={markers} setMarkers={setMarkers} setSearchParams={setSearchParams} />
               {markers.map(marker => (
                 <LocationMarker key={`${marker.id}`} markerProp={marker} markers={markers} setMarkers={setMarkers} setSearchParams={setSearchParams} draggable={true} />
               ))}

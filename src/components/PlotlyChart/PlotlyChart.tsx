@@ -22,7 +22,7 @@ export const PlotlyChart = (props: IProps) => {
               type: 'scatter',
               mode: 'markers',
               marker: { color: timeseries.marker.color },
-              name: `Lat: ${timeseries.marker.latLng.lat.toFixed(2)}, Lon: ${timeseries.marker.latLng.lng.toFixed(2)}`
+              name: `Lat: ${timeseries.marker.latLon.lat.toFixed(2)}, Lon: ${timeseries.marker.latLon.lon.toFixed(2)}`
             }
           })
         }

@@ -14,7 +14,7 @@ type IProps = {
 }
 export function createMarker(props: IProps) {
   const { latitude, longitude, markers, setSearchParams, setMarkers } = props
-  // console.log('lat', latitude, 'lng', longitude);
+  // console.log('lat', latitude, 'lon', longitude);
 
   if (markers.length < 4) {
     const color = getColor(markers.length)
@@ -25,9 +25,9 @@ export function createMarker(props: IProps) {
       draft.push({
         id: createId(),
         color,
-        latLng: {
+        latLon: {
           lat: parseFloat(latitude.toFixed(5)),
-          lng: parseFloat(longitude.toFixed(5))
+          lon: parseFloat(longitude.toFixed(5))
         }
       })
     })

@@ -17,7 +17,7 @@ type IProps = {
 const LocationMarker = (props: IProps) => {
   const { draggable, markerProp, markers, setMarkers, setSearchParams } = props
   const markerRef = useRef(null)
-  const [position, setPosition] = useState(markerProp.latLng)
+  const [position, setPosition] = useState(markerProp.latLon)
 
   const icon = L.divIcon({
     html: renderToStaticMarkup(SvgCross(markerProp.color)),
@@ -29,12 +29,12 @@ const LocationMarker = (props: IProps) => {
   })
   if (!draggable || !markers || !setMarkers || !setSearchParams) return (
 
-    <Marker position={position}
+    <Marker position={{ lat: position.lat, lng: position.lon }}
       draggable={draggable}
       ref={markerRef}
       icon={icon}
     >
-      <Popup>Lat: {position.lat.toFixed(5)} Long: {position.lng.toFixed(5)}</Popup>
+      <Popup>Lat: {position.lat.toFixed(5)} Long: {position.lon.toFixed(5)}</Popup>
     </Marker>
   )
 
@@ -45,29 +45,29 @@ const LocationMarker = (props: IProps) => {
       if (marker != null) {
         const newMarkers = [...markers]
         // @ts-ignore
-        const { lat, lng } = marker.getLatLng() as { lat: number, lng: number } //a leaflet function for fetching latLng
+        const { lat, lon } = marker.getLatLon() as { lat: number, lon: number } //a leaflet function for fetching latLon
         newMarkers[oldMarkerIndex] = {
           ...markerProp,
-          latLng: {
+          latLon: {
             lat: parseFloat(lat.toFixed(5)),
-            lng: parseFloat(lng.toFixed(5))
+            lon: parseFloat(lon.toFixed(5))
           }
         }
         setMarkers(newMarkers)
         setSearchParams(markersToUrlParams(newMarkers))
         //@ts-ignore
-        setPosition(marker.getLatLng())
+        setPosition(marker.getLatLon())
       }
     }
   }
   return (
-    <Marker position={position}
+    <Marker position={{ lat: position.lat, lng: position.lon }}
       draggable={true}
       eventHandlers={eventHandlers}
       ref={markerRef}
       icon={icon}
     >
-      <Popup>Lat: {position.lat.toFixed(5)} Long: {position.lng.toFixed(5)}</Popup>
+      <Popup>Lat: {position.lat.toFixed(5)} Long: {position.lon.toFixed(5)}</Popup>
     </Marker>
   )
 }

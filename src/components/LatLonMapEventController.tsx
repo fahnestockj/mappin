@@ -7,7 +7,7 @@ type IProps = {
   setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>
   setSearchParams: (params: URLSearchParams) => void
 }
-const LatLngMapEventController = (props: IProps) => {
+const LatLonMapEventController = (props: IProps) => {
   const { markers, setMarkers, setSearchParams } = props
   useMapEvents({
     click(e) {
@@ -25,4 +25,4 @@ const LatLngMapEventController = (props: IProps) => {
   return null
 }
 
-export default LatLngMapEventController
+export default LatLonMapEventController

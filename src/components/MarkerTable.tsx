@@ -28,11 +28,11 @@ export function MarkerTable(props: IProps) {
               return (
                 <tr className="h-[10px]" key={`${marker.color}`}>
                   <td className="border border-slate-600">
-                    <div className="ml-2">{marker.latLng.lat}</div>
+                    <div className="ml-2">{marker.latLon.lat}</div>
                     </td>
 
                   <td className="border border-slate-600">
-                    <div className="ml-2">{marker.latLng.lng}</div>
+                    <div className="ml-2">{marker.latLon.lon}</div>
                     </td>
 
                   <td className="border border-slate-600">

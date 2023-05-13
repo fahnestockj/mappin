@@ -17,8 +17,8 @@ export function geoJsonLookup(markers: Array<IMarker>): Array<{
    * You can check if you're in the wrong cube, and then index through the geoJson to find the right one
    */
   for (const marker of markers) {
-    const coordinate = marker.latLng
-    const point = { type: "Point", coordinates: [coordinate.lng, coordinate.lat] };
+    const coordinate = marker.latLon
+    const point = { type: "Point", coordinates: [coordinate.lon, coordinate.lat] };
     const features = glookup.getContainers(point).features;
     // console.log(features);
     if (features.length === 0 || features.length > 1) {
@@ -27,9 +27,9 @@ export function geoJsonLookup(markers: Array<IMarker>): Array<{
     const zarrUrl = features[0].properties.zarr_url
     const projection = features[0].properties.data_epsg
 
-    //NOTE: EPSG:4326 is the projection of the lat lng coordinates
-    // lat: 70, lng: -50 => [-200000, -2200000] in the locale projection EPSG:3413
-    const cartesianCoordinate: [number, number] = appProj4("EPSG:4326", projection).forward([coordinate.lng, coordinate.lat])
+    //NOTE: EPSG:4326 is the projection of the lat lon coordinates
+    // lat: 70, lon: -50 => [-200000, -2200000] in the locale projection EPSG:3413
+    const cartesianCoordinate: [number, number] = appProj4("EPSG:4326", projection).forward([coordinate.lon, coordinate.lat])
 
     const inBounds = checkIfCoordinateIsWithinBounds(cartesianCoordinate, features[0].properties.geometry_epsg.coordinates[0])
     // console.log('marker', marker, 'is', inBounds);
