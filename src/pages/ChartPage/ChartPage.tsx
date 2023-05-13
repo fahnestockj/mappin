@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react"
-import BackButton from "../components/BackButton";
-import { CSVDownloadButton } from "../components/CSVDownloadButton";
-import LocationMarker from "../components/LocationMarker/LocationMarker";
-import Velmap  from "../components/Velmap";
-import { ZoomingChart } from "../components/PlotlyChart/PlotlyChart";
-import ProgressBarWithTimer from "../components/ProgressBarWithTimer";
-import { MarkerTable } from "../components/MarkerTable";
-import { findManyTimeseries } from "../utils/findManyTimeseries";
+import BackButton from "../../components/BackButton";
+import { CSVDownloadButton } from "../../components/CSVDownloadButton";
+import LocationMarker from "../../components/LocationMarker/LocationMarker";
+import Velmap  from "../../components/Velmap";
+import { PlotlyChart } from "../../components/PlotlyChart/PlotlyChart";
+import ProgressBarWithTimer from "../../components/ProgressBarWithTimer";
+import { MarkerTable } from "../../components/MarkerTable";
 import { useSearchParams } from "react-router-dom";
-import { urlParamsToMarkers } from "../utils/markerParamUtilities";
-import { ShareButton } from "../components/ShareButton";
+import { urlParamsToMarkers } from "../../utils/markerParamUtilities";
+import { ShareButton } from "../../components/ShareButton";
 //@ts-ignore
 import { useBreakpoints } from 'react-breakpoints-hook'
-import { IMarker, ITimeseries } from "../types";
+import { IMarker, ITimeseries } from "../../types";
+import { findManyTimeseries } from "../../findManyTimeseries/findManyTimeseries";
 
 
 type IProps = {
@@ -45,14 +45,13 @@ const ChartPage = (props: IProps) => {
 
   return (
     <>
-      {lg &&
         <div className="w-full h-[89vh]">
           <ProgressBarWithTimer numOfMarkers={markers.length} disabled={!(timeseriesArr.length === 0)} setProgress={setProgress} progress={progress} />
           <BackButton params={params} />
           <div className="w-full h-full grid grid-cols-3 grid-rows-1 gap-4">
 
             <div className="col-span-2">
-              <ZoomingChart timeseriesArr={timeseriesArr} />
+              <PlotlyChart timeseriesArr={timeseriesArr} />
             </div>
 
             <div className="mr-5">
@@ -90,7 +89,6 @@ const ChartPage = (props: IProps) => {
             </div>
           </div>
         </div>
-      }
       {/* 
       TODO: md and sm views
       {(md || sm) &&

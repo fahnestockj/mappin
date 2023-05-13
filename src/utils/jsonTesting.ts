@@ -1,4 +1,3 @@
-import { geoJsonLookup } from './geoJsonLookup';
 
 import fetch, {
   Headers,

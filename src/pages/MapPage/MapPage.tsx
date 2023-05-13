@@ -2,15 +2,15 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSearchParams } from "react-router-dom";
 import { z } from "zod";
-import { BottomBar } from "../components/BottomBar";
-import { ZFormSchema } from "../components/LatLngForm";
-import LatLngMapEventController from "../components/LatLngMapEventController";
-import LocationMarker from "../components/LocationMarker/LocationMarker";
-import Velmap from "../components/Velmap";
-import { urlParamsToMarkers } from "../utils/markerParamUtilities";
+import { ZFormSchema } from "../../components/BottomBar/LatLonForm";
+import LatLngMapEventController from "../../components/LatLngMapEventController";
+import LocationMarker from "../../components/LocationMarker/LocationMarker";
+import Velmap from "../../components/Velmap";
+import { urlParamsToMarkers } from "../../utils/markerParamUtilities";
 //@ts-ignore
 import { useBreakpoints } from 'react-breakpoints-hook'
-import { IMarker } from "../types";
+import { IMarker } from "../../types";
+import { BottomBar } from "../../components/BottomBar/BottomBar";
 
 type IProps = {
 }

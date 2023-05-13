@@ -52,7 +52,7 @@ type IProps = {
     longitude: number;
   }, any>
 }
-export const LatLngForm = (props: IProps) => {
+export const LatLonForm = (props: IProps) => {
 
   const { onSubmit, form } = props;
   return (

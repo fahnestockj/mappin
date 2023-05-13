@@ -1,19 +1,37 @@
-import { ITimeseries } from "../../types";
+import createPlotlyComponent from 'react-plotly.js/factory'
+import Plotly from 'plotly.js-basic-dist-min'
+import { blueX, blueY, greenX, greenY, redX, redY, yellowX, yellowY } from './mockData';
+import { ITimeseries } from '../../types';
+
+const Plot = createPlotlyComponent(Plotly)
 
 type IProps = {
-  timeseriesArr: ITimeseries[]
+  timeseriesArr: Array<ITimeseries>
 }
-
-export const ZoomingChart = (props: IProps) => {
-
-
+export const PlotlyChart = (props: IProps) => {
   const { timeseriesArr } = props
-
-  if ((timeseriesArr.length === 0)) return <></>
+  if (timeseriesArr.length === 0) return (<div />)
 
   return (
-    <div className="h-full w-full flex flex-col items-center">
-
+    <div className='w-full h-full'>
+      <Plot
+        data={
+          timeseriesArr.map(timeseries => {
+            return {
+              x: timeseries.data.map(d => d[0]),
+              y: timeseries.data.map(d => d[1]),
+              type: 'scatter',
+              mode: 'markers',
+              marker: { color: timeseries.marker.color },
+              name: `Lat: ${timeseries.marker.latLng.lat.toFixed(2)}, Lon: ${timeseries.marker.latLng.lng.toFixed(2)}`
+            }
+          })
+        }
+        layout={{ autosize: true, title: 'ITS_LIVE Ice Flow Speed m/yr', xaxis: { title: 'date', type: 'date' }, yaxis: { type: '-', title: 'speed (m/yr)' } }}
+        config={{ doubleClick: 'autosize', displaylogo: false, showTips: false, doubleClickDelay: 1000 }}
+        className='w-full h-full'
+      />
     </div>
-  );
-}
+  )
+};
+

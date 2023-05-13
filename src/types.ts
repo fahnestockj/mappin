@@ -12,6 +12,8 @@ export type IMarker = {
 
 export type ITimeseries = {
   marker: IMarker
-  //[datetimeString, velocity]
-  data: Array<[Date, number]>
+  data: {
+    middateArray: Date[]
+    velocityArray: number[]
+  }
 }
