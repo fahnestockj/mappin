@@ -1,48 +1,61 @@
 import { ITimeseries } from "../../types";
+import { blueX, blueY, greenX, greenY, redX, redY, yellowX, yellowY } from "./mockData";
 
-export const malaspinaTimeseries: ITimeseries = {
-  marker: {
-    id: "blueMalaspinaTimeseries",
-    color: "blue",
-    latLng: {
-      lat: 60.11,
-      lng: -140.45
+export const malaspinaTimerseries: Array<ITimeseries> = [
+  {
+    marker: {
+      id: "blueMalaspinaTimeseries",
+      color: "blue",
+      latLng: {
+        lat: 60.11,
+        lng: -140.45
+      }
+    },
+    data: {
+      midDateArray: blueX,
+      velocityArray: blueY
     }
   },
-  data: []
-}
-
-const fixtureChartlyPlots = [
   {
-    x: blueX,
-    y: blueY,
-    type: 'scatter',
-    mode: 'markers',
-    marker: { color: 'blue' },
-    name: 'Lat: 60.11, Lon: -140.45'
+    marker: {
+      id: "greenMalaspinaTimeseries",
+      color: "green",
+      latLng: {
+        lat: 60.02,
+        lng: -140.54
+      }
+    },
+    data: {
+      midDateArray: greenX,
+      velocityArray: greenY
+    }
   },
   {
-    x: greenX,
-    y: greenY,
-    type: 'scatter',
-    mode: 'markers',
-    marker: { color: 'green' },
-    name: 'Lat: 60.02, Lon: -140.54'
+    marker: {
+      id: "redMalaspinaTimeseries",
+      color: "red",
+      latLng: {
+        lat: 59.92,
+        lng: -140.65
+      }
+    },
+    data: {
+      midDateArray: redX,
+      velocityArray: redY
+    }
   },
   {
-    x: redX,
-    y: redY,
-    type: 'scatter',
-    mode: 'markers',
-    marker: { color: 'red' },
-    name: 'Lat: 59.92, Lon: -140.65',
-  },
-  {
-    x: yellowX,
-    y: yellowY,
-    type: 'scatter',
-    mode: 'markers',
-    marker: { color: 'yellow' },
-    name: 'Lat: 59.83, Lon: -140.78'
+    marker: {
+      id: "yellowMalaspinaTimeseries",
+      color: "yellow",
+      latLng: {
+        lat: 59.83,
+        lng: -140.78
+      }
+    },
+    data: {
+      midDateArray: yellowX,
+      velocityArray: yellowY
+    }
   },
 ]

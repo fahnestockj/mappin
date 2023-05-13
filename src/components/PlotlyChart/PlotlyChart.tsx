@@ -1,6 +1,5 @@
 import createPlotlyComponent from 'react-plotly.js/factory'
 import Plotly from 'plotly.js-basic-dist-min'
-import { blueX, blueY, greenX, greenY, redX, redY, yellowX, yellowY } from './mockData';
 import { ITimeseries } from '../../types';
 
 const Plot = createPlotlyComponent(Plotly)
@@ -18,8 +17,8 @@ export const PlotlyChart = (props: IProps) => {
         data={
           timeseriesArr.map(timeseries => {
             return {
-              x: timeseries.data.map(d => d[0]),
-              y: timeseries.data.map(d => d[1]),
+              x: timeseries.data.midDateArray,
+              y: timeseries.data.velocityArray,
               type: 'scatter',
               mode: 'markers',
               marker: { color: timeseries.marker.color },

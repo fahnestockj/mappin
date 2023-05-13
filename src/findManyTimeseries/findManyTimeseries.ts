@@ -12,9 +12,9 @@ export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Arr
 
   const geoJsonLookupRes = geoJsonLookup(markerArr)
   for (const { marker, zarrUrl, cartesianCoordinate } of geoJsonLookupRes) {
-    
+
     const url = zarrUrl.replace('http', 'https')
-    
+
     const store = new HTTPStore(url, { fetchOptions: {}, supportedMethods: ["GET" as HTTPMethod] });
 
     const xArrayZarr = await openArray({
@@ -56,7 +56,7 @@ export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Arr
       path: "/v",
       mode: "r"
     })
-    
+
     const timeseriesArr = await timeseriesArrZarr.get([null, yIndex, xIndex]).then(res => {
       if (typeof res === 'number') {
         throw new Error('data is a number')
@@ -76,16 +76,23 @@ export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Arr
       return res.data as Float64Array
     })
 
-    const timeseriesData: Array<[Date, number]> = []
+
+
+    const velocityArray: Array<number> = []
+    const midDateArray: Array<Date> = []
     for (let i = 0; i < timeseriesArr.length; i++) {
       if (timeseriesArr[i] === -32767) continue
-      timeseriesData.push([new Date(midDateArr[i] * 86400000), timeseriesArr[i]])
+      velocityArray.push(timeseriesArr[i])
+      midDateArray.push(new Date(midDateArr[i] * 86400000))
     }
-    
+
 
     results.push({
       marker,
-      data: timeseriesData,
+      data: {
+        midDateArray,
+        velocityArray
+      }
     })
   }
   return results
