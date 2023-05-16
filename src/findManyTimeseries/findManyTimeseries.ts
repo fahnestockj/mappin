@@ -10,7 +10,6 @@ declare enum HTTPMethod {
 
 export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Array<ITimeseries>> {
   const results: Array<ITimeseries> = []
-  return malaspinaTimerseries
   const geoJsonLookupRes = geoJsonLookup(markerArr)
   for (const { marker, zarrUrl, cartesianCoordinate } of geoJsonLookupRes) {
 
