@@ -19,8 +19,8 @@ function MapPage(props: IProps) {
 
   let { sm, md, lg } = useBreakpoints({
     sm: {min: 0, max: 860},
-    md: {min: 861, max: 1400},
-    lg: {min: 1401, max: null},
+    md: { min: 861, max: 1384 },
+    lg: { min: 1384, max: null },
   });
 
   const [params, setSearchParams] = useSearchParams();
