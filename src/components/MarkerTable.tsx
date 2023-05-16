@@ -8,7 +8,7 @@ type IProps = {
 export function MarkerTable(props: IProps) {
 
   return (
-    <div className="w-full flex flex-row justify-center">
+    <div className="w-full flex flex-row justify-left">
       <table className="border-spacing-2 border border-slate-500 w-4/5 table-fixed">
         <tbody>
           <tr className="bg-slate-500">
