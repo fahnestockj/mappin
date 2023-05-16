@@ -31,7 +31,7 @@ function MapPage(props: IProps) {
 
   return (
     <div>
-      <div className={`${sm ? "h-[65vh]": "h-[85vh]"} w-full`} >
+      <div className={`${sm ? "h-[75vh]": "h-[85vh]"} w-full`} >
         <Velmap
           center={markers.length ? [markers[0].latLon.lat, markers[0].latLon.lon] : undefined}
           mapChildren={

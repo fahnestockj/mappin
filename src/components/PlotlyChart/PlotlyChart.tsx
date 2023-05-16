@@ -28,7 +28,7 @@ export const PlotlyChart = (props: IProps) => {
         }
         layout={{ autosize: true, title: 'ITS_LIVE Ice Flow Speed m/yr', xaxis: { title: 'date', type: 'date' }, yaxis: { type: '-', title: 'speed (m/yr)' } }}
         config={{ doubleClick: 'reset+autosize', displaylogo: false, showTips: false, responsive: true }}
-        className='w-full h-full'
+        className='w-full h-full min-h-[400px]'
       />
     </div>
   )
