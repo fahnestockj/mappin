@@ -44,7 +44,7 @@ const ChartPage = (props: IProps) => {
   }, [markers])
 
   return (
-    <div className="h-full w-full">
+    <div className={`${lg ? 'h-[100vh]' : 'h-full'} w-full`}>
       <div className="w-full h-[90%]">
         <ProgressBarWithTimer numOfMarkers={markers.length} disabled={!(timeseriesArr.length === 0)} setProgress={setProgress} progress={progress} />
         <BackButton params={params} />
