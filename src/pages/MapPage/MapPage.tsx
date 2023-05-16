@@ -19,7 +19,7 @@ function MapPage(props: IProps) {
 
   let { sm, md, lg } = useBreakpoints({
     sm: {min: 0, max: 860},
-    md: { min: 861, max: 1384 },
+    md: { min: 861, max: 1383 },
     lg: { min: 1384, max: null },
   });
 
