@@ -5,7 +5,7 @@ import L from 'leaflet'
 import { SvgCross } from '../SvgCross'
 import './LocationMarker.css'
 import { markersToUrlParams } from '../../utils/markerParamUtilities'
-import { IMarker } from '../../types'
+import { ICoordinate, IMarker } from '../../types'
 
 type IProps = {
   markerProp: IMarker
@@ -14,10 +14,11 @@ type IProps = {
   setMarkers?: React.Dispatch<React.SetStateAction<IMarker[]>>
   setSearchParams?: React.Dispatch<React.SetStateAction<any>>
 }
+//TODO: This NEEDS some typing, remember leaflet uses lat and lng, not lon
 const LocationMarker = (props: IProps) => {
   const { draggable, markerProp, markers, setMarkers, setSearchParams } = props
   const markerRef = useRef(null)
-  const [position, setPosition] = useState(markerProp.latLon)
+  const [position, setPosition] = useState<ICoordinate>(markerProp.latLon)
 
   const icon = L.divIcon({
     html: renderToStaticMarkup(SvgCross(markerProp.color)),
@@ -45,7 +46,7 @@ const LocationMarker = (props: IProps) => {
       if (marker != null) {
         const newMarkers = [...markers]
         // @ts-ignore
-        const { lat, lon } = marker.getLatLon() as { lat: number, lon: number } //a leaflet function for fetching latLon
+        const { lat, lng: lon} = marker.getLatLng() as { lat: number, lng: number } //a leaflet function for fetching latLon
         newMarkers[oldMarkerIndex] = {
           ...markerProp,
           latLon: {
@@ -56,7 +57,7 @@ const LocationMarker = (props: IProps) => {
         setMarkers(newMarkers)
         setSearchParams(markersToUrlParams(newMarkers))
         //@ts-ignore
-        setPosition(marker.getLatLon())
+        setPosition({ lat, lon })
       }
     }
   }

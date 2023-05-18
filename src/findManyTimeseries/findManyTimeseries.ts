@@ -63,7 +63,6 @@ export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Arr
       }
       return res.data as Int16Array
     })
-    // console.log(timeseriesArr);
 
     /** 
      * NOTE: Mid date array is in days since 1970-01-01 (EPOCH) which the Date constructor cannot handle

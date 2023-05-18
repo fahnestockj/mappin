@@ -26,7 +26,7 @@ const Velmap = (props: IProps) => {
         crossOrigin="" />
 
       <div className="w-full h-full m-auto " >
-        <MapContainer className='h-[100%] cursor-crosshair' crs={CRS.EPSG3857} center={center || [70.3, -49.5]} zoom={zoom || 6} maxZoom={10} minZoom={2} scrollWheelZoom={true}  >
+        <MapContainer className='h-[100%] cursor-crosshair' crs={CRS.EPSG3857} center={center || [70.3, -49.5]} zoom={zoom || 6} maxZoom={10} minZoom={2} scrollWheelZoom={true} maxBounds={[[-90, -1440], [90, 1440]]} worldCopyJump={true} >
           <LayersControl >
             <Overlay name='GeoJSON'>
               {/* @ts-ignore */}

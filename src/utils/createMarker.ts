@@ -12,13 +12,14 @@ type IProps = {
   setSearchParams: (params: URLSearchParams) => void
 
 }
+/**
+ * Reponsible for creating a marker and updating the url params
+ */
 export function createMarker(props: IProps) {
   const { latitude, longitude, markers, setSearchParams, setMarkers } = props
-  // console.log('lat', latitude, 'lon', longitude);
 
   if (markers.length < 4) {
     const color = getColor(markers.length)
-
 
     //Immer produce for immutability
     const updatedMarkers = produce(markers, draft => {
