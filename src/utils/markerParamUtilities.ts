@@ -13,13 +13,19 @@ export function markersToUrlParams(markers: Array<IMarker>): URLSearchParams {
 
 export function urlParamsToMarkers(params: URLSearchParams): Array<IMarker> {
     const markers: Array<IMarker> = [];
+    //NOTE: we need this to support the old url format
+    let lonArr = params.getAll('lon');
+    if(lonArr.length === 0) {
+      lonArr = params.getAll('lng');
+    }
+
     for (let i = 0; i < params.getAll('lat').length; i++) {
       markers.push({
         id: createId(),
         color: cToColor(params.getAll('c')[i]),
         latLon: {
           lat: parseFloat(params.getAll('lat')[i]),
-          lon: parseFloat(params.getAll('lon')[i])
+          lon: parseFloat(lonArr[i])
         }
       })
     }
