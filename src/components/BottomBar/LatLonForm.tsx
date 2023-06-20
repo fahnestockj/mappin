@@ -15,7 +15,8 @@ const NumInput = (props: IInputProps) => {
       <label className="tracking-wide text-gray-700 text-2xl mr-2">
         {props.message}
       </label>
-      <input className={
+      <input 
+      className={
         border +
         " appearance-none block w-full  text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
       }
@@ -25,6 +26,7 @@ const NumInput = (props: IInputProps) => {
         onChange={(e) => {
           field.onChange(e.target.valueAsNumber);
         }}
+        step='any'
       />
     </div>
   )
@@ -38,7 +40,7 @@ const mapping = [
 
 
 const MyForm = createTsForm(mapping);
-//@ts-ignore
+
 export const ZFormSchema = z.object({
   latitude: z.number(),
   longitude: z.number(),
