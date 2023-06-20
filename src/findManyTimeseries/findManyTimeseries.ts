@@ -2,7 +2,6 @@ import { HTTPStore, openArray } from "zarr";
 import { findClosestIndex } from "./findClosestIndex";
 import { geoJsonLookup } from "./geoJsonLookup";
 import { IMarker, ITimeseries } from "../types";
-import { malaspinaTimerseries } from "../components/PlotlyChart/mockTimeseries";
 
 declare enum HTTPMethod {
   GET = "GET",
