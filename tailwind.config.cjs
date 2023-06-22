@@ -5,7 +5,10 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      'mappin-blue': '#0081A1',
+      'mappin-blue-hover': '#4c7f8c'
+    },
   },
   plugins: [],
   important: true,
