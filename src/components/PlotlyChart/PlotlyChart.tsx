@@ -16,9 +16,9 @@ export const PlotlyChart = (props: IProps) => {
     if (timeseriesArr.length === 0) return [];
     const epochTime = new Date(0).getTime();
     return timeseriesArr.map((timeseries) => {
-      const filteredMidDateArray = [];
-      const filteredVelocityArray = [];
-      const filteredDateDtArray = [];
+      const filteredMidDateArray: Date[] = [];
+      const filteredVelocityArray: number[] = [];
+      const filteredDateDtArray: Date[] = [];
 
       for (let i = 0; i < timeseries.data.velocityArray.length; i++) {
         const dt = timeseries.data.dateDeltaArray[i].getTime() - epochTime;
