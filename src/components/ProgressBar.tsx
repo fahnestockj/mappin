@@ -3,15 +3,15 @@ import LoadingBar from 'react-top-loading-bar'
 
 type IProps = {
   disabled: boolean
-  setProgress: React.Dispatch<React.SetStateAction<number>>
-  progress: number
+  setProgressBarPercentage: React.Dispatch<React.SetStateAction<number>>
+  progressBarPercentage: number
   numOfMarkers: number
 }
 
 let progressInterval: any;
 
-const ProgressBarWithTimer = (props: IProps) => {
-  const { disabled, setProgress, progress, numOfMarkers } = props
+const ProgressBar = (props: IProps) => {
+  const { disabled, setProgressBarPercentage, progressBarPercentage, numOfMarkers } = props
 
   const getIntervalFromNumOfMarkers = (numOfMarkers: number) => {
     switch (numOfMarkers) {
@@ -29,22 +29,22 @@ const ProgressBarWithTimer = (props: IProps) => {
   useEffect(() => {
     if (!disabled) {
       progressInterval = setInterval(() => {
-        setProgress(prev => prev + 1);
+        setProgressBarPercentage(prev => prev + 1);
       }, getIntervalFromNumOfMarkers(numOfMarkers));
     }
-  }, [disabled, numOfMarkers, setProgress]);
+  }, [disabled, numOfMarkers, setProgressBarPercentage]);
 
   useEffect(() => {
-    if (progress >= 100) {
+    if (progressBarPercentage >= 100) {
       clearInterval(progressInterval);
       //@ts-ignore
       clearInterval(progressInterval - 1);
     }
-  }, [progress]);
+  }, [progressBarPercentage]);
 
   return (
-    <LoadingBar color='rgb(79 70 229)' progress={progress} onLoaderFinished={() => setProgress(0)} />
+    <LoadingBar color='rgb(79 70 229)' progress={progressBarPercentage} onLoaderFinished={() => setProgressBarPercentage(0)} />
   )
 };
 
-export default ProgressBarWithTimer;
+export default ProgressBar;

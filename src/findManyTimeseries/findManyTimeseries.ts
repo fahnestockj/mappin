@@ -8,15 +8,15 @@ declare enum HTTPMethod {
 }
 
 export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Array<ITimeseries>> {
+
   const results: Array<ITimeseries> = []
   const geoJsonLookupRes = geoJsonLookup(markerArr)
+
   for (const { marker, zarrUrl, cartesianCoordinate } of geoJsonLookupRes) {
 
     const url = zarrUrl.replace('http', 'https')
-    //TODO: fix before prod
-    const localUrl = 'http://localhost:5000/' + zarrUrl
 
-    const store = new HTTPStore(localUrl, { fetchOptions: {}, supportedMethods: ["GET" as HTTPMethod] });
+    const store = new HTTPStore(url, { fetchOptions: {}, supportedMethods: ["GET" as HTTPMethod] });
 
     const xArrayZarr = await openArray({
       store,
