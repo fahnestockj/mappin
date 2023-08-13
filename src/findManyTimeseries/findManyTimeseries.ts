@@ -15,9 +15,8 @@ export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Arr
   for (const { marker, zarrUrl, cartesianCoordinate } of geoJsonLookupRes) {
 
     const url = zarrUrl.replace('http', 'https')
-    const tempLocalhost = 'http://localhost:5000/'
 
-    const store = new HTTPStore(tempLocalhost + url, { fetchOptions: {}, supportedMethods: ["GET" as HTTPMethod] });
+    const store = new HTTPStore(url, { fetchOptions: {}, supportedMethods: ["GET" as HTTPMethod] });
 
     const xArrayZarr = await openArray({
       store,
