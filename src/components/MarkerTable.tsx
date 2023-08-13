@@ -26,7 +26,7 @@ export function MarkerTable(props: IProps) {
           {
             props.markers.map(marker => {
               return (
-                <tr className="h-[10px]" key={`${marker.color}`}>
+                <tr className="h-[10px]" key={`${marker.id}`}>
                   <td className="border border-slate-600">
                     <div className="ml-2">{marker.latLon.lat}</div>
                     </td>
@@ -37,7 +37,7 @@ export function MarkerTable(props: IProps) {
 
                   <td className="border border-slate-600">
                     <div className="h-5 flex flex-col justify-middle">
-                      {SvgCross(marker.color, ' ')}
+                      {SvgCross(marker.color)}
                     </div>
                   </td>
                 </tr>

@@ -28,7 +28,7 @@ function MapPage(props: IProps) {
   const form = useForm<z.infer<typeof ZFormSchema>>();
 
   return (
-    <div>
+    <div className="overflow-hidden">
       <div className={`${sm ? "h-[75vh]" : "h-[85vh]"} w-full`}>
         <Velmap
           center={

@@ -26,7 +26,7 @@ const Velmap = (props: IProps) => {
         crossOrigin="" />
 
       <div className="w-full h-full m-auto " >
-        <MapContainer className='h-[100%] cursor-crosshair' crs={CRS.EPSG3857} center={center || [70.3, -49.5]} zoom={zoom || 6} maxZoom={15} minZoom={2} scrollWheelZoom={true} maxBounds={[[-90, -1440], [90, 1440]]} worldCopyJump={true} >
+        <MapContainer className='h-[100%] cursor-crosshair' crs={CRS.EPSG3857} center={center || [70.3, -49.5]} zoom={zoom || 10} maxZoom={15} minZoom={2} scrollWheelZoom={true} maxBounds={[[-90, -1440], [90, 1440]]} worldCopyJump={true} >
           <LayersControl >
             <Overlay name='GeoJSON'>
               {/* @ts-ignore */}
@@ -39,7 +39,7 @@ const Velmap = (props: IProps) => {
               maxNativeZoom={15} 
               tileSize={256}
             />
-            <Overlay checked name='Velocity Map'>
+            <Overlay checked={false} name='Velocity Map'>
               <TileLayer
                 className='cursor-crosshair'
                 url="https://glacierflow.nyc3.digitaloceanspaces.com/webmaps/vel_map/{z}/{x}/{y}.png"

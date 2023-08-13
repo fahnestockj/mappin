@@ -1,6 +1,6 @@
 import createPlotlyComponent from "react-plotly.js/factory";
 import Plotly from "plotly.js-basic-dist-min";
-import { ITimeseries } from "../../types";
+import { ITimeseries, colorHexDict } from "../../types";
 import { useMemo } from "react";
 
 const Plot = createPlotlyComponent(Plotly);
@@ -68,10 +68,8 @@ export const PlotlyChart = (props: IProps) => {
             y: timeseries.data.velocityArray,
             type: "scatter",
             mode: "markers",
-            marker: { color: timeseries.marker.color },
-            name: `Lat: ${timeseries.marker.latLon.lat.toFixed(
-              2
-            )}, Lon: ${timeseries.marker.latLon.lon.toFixed(2)}`,
+            marker: { color: colorHexDict[timeseries.marker.color] },
+            name: `Lat: ${timeseries.marker.latLon.lat.toFixed(2)}, Lon: ${timeseries.marker.latLon.lon.toFixed(2)}`,
           };
         })}
         layout={{

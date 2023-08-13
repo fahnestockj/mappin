@@ -45,7 +45,7 @@ const ChartPage = (props: IProps) => {
   }, [markers]);
 
   return (
-    <div className={`${lg ? "h-[100vh]" : "h-full"} w-full`}>
+    <div className={`${lg ? "h-[100vh]" : "h-full"} w-full overflow-hidden`}>
       <div className="w-full h-[90%]">
         <ProgressBar
           numOfMarkers={markers.length}
@@ -64,7 +64,7 @@ const ChartPage = (props: IProps) => {
             <div className="mr-5">
               <div className="w-[100%] h-[40%] ">
                 <Velmap
-                  zoom={7}
+                  zoom={9}
                   center={
                     markers[0]
                       ? [markers[0].latLon.lat, markers[0].latLon.lon]
