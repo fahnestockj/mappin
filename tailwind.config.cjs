@@ -11,7 +11,6 @@ module.exports = {
     },
   },
   plugins: [],
-  important: true,
   typeRoots: [
     "src/customModuleTypes",
     "node_modules/@types",

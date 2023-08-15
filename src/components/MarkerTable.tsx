@@ -1,15 +1,17 @@
 import { IMarker } from "../types"
 import { SvgCross } from "./SvgCross"
+import cn from "classnames";
 
 type IProps = {
   markers: Array<IMarker>
+  className?: string
 }
 
 export function MarkerTable(props: IProps) {
 
   return (
-    <div className="w-full flex flex-row justify-left">
-      <table className="border-spacing-2 border border-slate-500 w-4/5 table-fixed">
+    <div className='w-full' >
+      <table className={cn('border-spacing-2 border border-slate-500 w-4/5 table-fixed', props.className)}>
         <tbody>
           <tr className="bg-slate-500">
             <th className="border border-slate-600 text-white">Latitude</th>

@@ -108,6 +108,9 @@ const ChartPage = (props: IProps) => {
           <div className="w-full h-full flex flex-col items-center ">
             <PlotlyChart timeseriesArr={timeseriesArr} intervalDays={intervalDays} />
             <div className="my-2">
+              <MarkerTable markers={markers} className="m-auto" />
+            </div>
+            <div className="my-2">
               <CSVDownloadButton data={timeseriesArr} />
             </div>
             <div className="my-2">

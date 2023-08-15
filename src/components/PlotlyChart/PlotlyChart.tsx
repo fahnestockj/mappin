@@ -69,11 +69,11 @@ export const PlotlyChart = (props: IProps) => {
             type: "scatter",
             mode: "markers",
             marker: { color: colorHexDict[timeseries.marker.color] },
-            name: `Lat: ${timeseries.marker.latLon.lat.toFixed(2)}, Lon: ${timeseries.marker.latLon.lon.toFixed(2)}`,
           };
         })}
         layout={{
           autosize: true,
+          showlegend: false,
           title: "ITS_LIVE Ice Flow Speed m/yr",
           xaxis: { title: "date", type: "date" },
           yaxis: { type: "-", title: "speed (m/yr)" },

@@ -73,6 +73,4 @@ const LocationMarker = (props: IProps) => {
   )
 }
 
-
-
 export default LocationMarker
