@@ -1,5 +1,5 @@
 import createPlotlyComponent from "react-plotly.js/factory";
-import Plotly from "plotly.js-basic-dist-min";
+import Plotly from 'plotly.js-gl2d-dist-min'
 import { ITimeseries, colorHexDict } from "../../types";
 import { useMemo } from "react";
 
@@ -66,7 +66,7 @@ export const PlotlyChart = (props: IProps) => {
           return {
             x: timeseries.data.midDateArray,
             y: timeseries.data.velocityArray,
-            type: "scatter",
+            type: "scattergl",
             mode: "markers",
             marker: { color: colorHexDict[timeseries.marker.color] },
           };
