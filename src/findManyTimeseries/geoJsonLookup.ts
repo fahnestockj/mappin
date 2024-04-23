@@ -1,9 +1,22 @@
 //@ts-ignore
 import GeoJsonGeometriesLookup from "geojson-geometries-lookup";
-import geoJsonFile from "../geoJson/catalog_v02.json";
 import { checkIfCoordinateIsWithinBounds } from "./checkIfCoordinateIsWithinBounds";
 import { appProj4 } from "./proj4Projections";
 import { IMarker } from "../types";
+type ICatalogGeoJson = {
+  "features": Array<{
+    properties: {
+      zarr_url: string,
+      epsg: string,
+      geometry_epsg: {
+        type: string,
+        coordinates: Array<[[number, number], [number, number], [number, number], [number, number]]>
+      }
+    }
+  }>
+}
+// @ts-ignore
+const geoJsonFile: ICatalogGeoJson = await (import("../geoJson/catalog_v02.json"));
 
 export function geoJsonLookup(markers: Array<IMarker>): Array<{
   marker: IMarker,
@@ -19,24 +32,25 @@ export function geoJsonLookup(markers: Array<IMarker>): Array<{
   for (const marker of markers) {
     const coordinate = marker.latLon
     const point = { type: "Point", coordinates: [coordinate.lon, coordinate.lat] };
-    const features = glookup.getContainers(point).features;
+    const features: ICatalogGeoJson["features"] = glookup.getContainers(point).features;
+
     if (features.length === 0 || features.length > 1) {
       throw new Error("No features found or more than one feature found")
     }
     const zarrUrl = features[0].properties.zarr_url
-    const projection = features[0].properties.data_epsg
+    const projection = `EPSG:${features[0].properties.epsg}`
 
     //NOTE: EPSG:4326 is the projection of the lat lon coordinates
     // lat: 70, lon: -50 => [-200000, -2200000] in the locale projection EPSG:3413
+    
     const cartesianCoordinate: [number, number] = appProj4("EPSG:4326", projection).forward([coordinate.lon, coordinate.lat])
-
+    
     const inBounds = checkIfCoordinateIsWithinBounds(cartesianCoordinate, features[0].properties.geometry_epsg.coordinates[0])
 
     if (!inBounds) {
       //We have to search through the features using the cartesianCoordinate
-      //@ts-ignore
+      // @ts-ignore
       for (const feature of geoJsonFile.features) {
-        //@ts-ignore
         const inBounds = checkIfCoordinateIsWithinBounds(cartesianCoordinate, feature.properties.geometry_epsg.coordinates[0])
         if (inBounds) {
           results.push({

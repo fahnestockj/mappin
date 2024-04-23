@@ -64,11 +64,11 @@ const ChartPage = (props: IProps) => {
             <div className="mr-5">
               <div className="w-[100%] h-[40%] ">
                 <Velmap
-                  zoom={9}
+                  zoom={5}
                   center={
                     markers[0]
                       ? [markers[0].latLon.lat, markers[0].latLon.lon]
-                      : [70, -50]
+                      : [69.198, -49.103]
                   }
                   mapChildren={
                     <>
