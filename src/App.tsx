@@ -1,19 +1,115 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import ChartPage from "./pages/ChartPage/ChartPage";
-import MapPage from "./pages/MapPage/MapPage";
+import { SetStateAction, useEffect, useState } from "react";
+import { CSVDownloadButton } from "./components/CSVDownloadButton";
+import LocationMarker from "./components/LocationMarker/LocationMarker";
+import { MarkerTable } from "./components/MarkerTable";
+import { PlotlyChart } from "./components/PlotlyChart/PlotlyChart";
+import ProgressBar from "./components/ProgressBar";
+import RangeSlider from "./components/RangeSlider";
+import { ShareButton } from "./components/ShareButton";
+import Velmap from "./components/Velmap";
+import { findManyTimeseries } from "./findManyTimeseries/findManyTimeseries";
+import { ITimeseries, IMarker } from "./types";
+import { urlParamsToMarkers } from "./utils/markerParamUtilities";
+import { useSearchParams } from "react-router-dom";
+import LatLonMapEventController from "./components/LatLonMapEventController";
+import { set } from "immer/dist/internal";
 
+function App() {
+  const [timeseriesArr, setTimeseriesArr] = useState<Array<ITimeseries>>([]);
+  const [progressBarPercentage, setProgressBarPercentage] = useState<number>(0);
 
-const App = () => {
+  const [params, setSearchParams] = useSearchParams();
+  const initialMarkers = urlParamsToMarkers(params);
+  const [markers, setMarkers] = useState<Array<IMarker>>(initialMarkers);
 
+  const [intervalDays, setIntervalDays] = useState<Array<number>>([1, 120]);
+
+  useEffect(() => {
+    setProgressBarPercentage(0);
+    //NOTE: useEffect will run twice in development because of React.StrictMode this won't happen in production
+    findManyTimeseries(markers)
+      .then((timeseriesArr) => {
+        setTimeseriesArr(timeseriesArr);
+        setProgressBarPercentage(100);
+      })
+      .catch((err) => {
+        console.error(err);
+        setProgressBarPercentage(100);
+      });
+  }, [markers]);
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<MapPage />} />
-        <Route path="/chart" element={<ChartPage />} />
-      </Routes>
-    </BrowserRouter>
-  )
-};
-export default App
+    <div className="h-[100vh] w-full overflow-hidden">
+      <div className="w-full h-[90%]">
+        <ProgressBar
+          numOfMarkers={markers.length}
+          setProgressBarPercentage={setProgressBarPercentage}
+          progressBarPercentage={progressBarPercentage}
+        />
+        <div className="w-full h-full grid grid-cols-3 grid-rows-1 gap-4">
+          <div className="col-span-2 w-full h-[90%] flex flex-col items-center">
+            <PlotlyChart
+              timeseriesArr={timeseriesArr}
+              intervalDays={intervalDays}
+            />
+          </div>
+
+          <div className="mr-5">
+            <div className="w-[100%] h-[40%] ">
+              <Velmap
+                zoom={5}
+                center={
+                  markers[0]
+                    ? [markers[0].latLon.lat, markers[0].latLon.lon]
+                    : [69.198, -49.103]
+                }
+                mapChildren={
+                  <>
+                    <LatLonMapEventController
+                      markers={markers}
+                      setMarkers={setMarkers}
+                      setSearchParams={setSearchParams}
+                    />
+                    {markers.map((marker) => (
+                      <LocationMarker
+                        key={`${marker.id}`}
+                        markerProp={marker}
+                        markers={markers}
+                        setMarkers={setMarkers}
+                        setSearchParams={setSearchParams}
+                      />
+                    ))}
+                  </>
+                }
+              />
+            </div>
+            <div className="my-5 ">
+              <MarkerTable markers={markers} />
+            </div>
+            <div className="my-5 flex ">
+              <CSVDownloadButton data={timeseriesArr} />
+              <ShareButton />
+            </div>
+            <div className="my-5 flex items-center  ">
+              <div className="text-md mr-2 font-semibold">Interval (days)</div>
+              <RangeSlider
+                className="w-[19rem] h-10"
+                defaultValue={[1, 120]}
+                min={1}
+                max={565}
+                onAfterChange={(value) => setIntervalDays(value)}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="w-full h-[10%] flex flex-row justify-center items-center m-4">
+        <div className="">
+          Velocity data generated using auto-RIFT (Gardner et al., 2018) and
+          provided by the NASA MEaSUREs ITS_LIVE project (Gardner et al., 20XX).
+        </div>
+      </div>
+    </div>
+  );
+}
+export default App;
