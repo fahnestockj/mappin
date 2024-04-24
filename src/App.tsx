@@ -11,44 +11,38 @@ import { findManyTimeseries } from "./findManyTimeseries/findManyTimeseries";
 import { ITimeseries, IMarker } from "./types";
 import { urlParamsToMarkers } from "./utils/markerParamUtilities";
 import { useSearchParams } from "react-router-dom";
-import MapEventController from "./components/LatLonMapEventController";
 
 function App() {
   const [timeseriesArr, setTimeseriesArr] = useState<Array<ITimeseries>>([]);
-  const [progressBarPercentage, setProgressBarPercentage] = useState<number>(0);
-
   const [params, setSearchParams] = useSearchParams();
   const initialMarkers = urlParamsToMarkers(params);
   const [markers, setMarkers] = useState<Array<IMarker>>(initialMarkers);
-
   const [intervalDays, setIntervalDays] = useState<Array<number>>([1, 120]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  console.log("markers", markers);
 
   useEffect(() => {
-    setProgressBarPercentage(0);
+    setIsLoading(true);
     //NOTE: useEffect will run twice in development because of React.StrictMode this won't happen in production
     findManyTimeseries(markers)
       .then((timeseriesArr) => {
         setTimeseriesArr(timeseriesArr);
-        setProgressBarPercentage(100);
+        setIsLoading(false);
       })
       .catch((err) => {
         console.error(err);
-        setProgressBarPercentage(100);
+        setIsLoading(false);
       });
   }, [markers]);
 
   return (
     <div className="h-[100vh] w-full overflow-hidden">
       <div className="w-full h-[90%]">
-        <ProgressBar
-          numOfMarkers={markers.length}
-          setProgressBarPercentage={setProgressBarPercentage}
-          progressBarPercentage={progressBarPercentage}
-        />
+        <ProgressBar numOfMarkers={markers.length} isLoading={isLoading} />
         <div className="w-full h-full grid grid-cols-3 grid-rows-1 gap-4">
           <div className="col-span-2 w-full h-[90%] flex flex-col items-center">
             <PlotlyChart
-              loading={progressBarPercentage < 100}
+              loading={isLoading}
               timeseriesArr={timeseriesArr}
               intervalDays={intervalDays}
             />
@@ -57,30 +51,10 @@ function App() {
           <div className="mr-5">
             <div className="w-[100%] h-[40%] ">
               <Velmap
+                markers={markers}
+                setMarkers={setMarkers}
+                setSearchParams={setSearchParams}
                 zoom={5}
-                center={
-                  markers[0]
-                    ? [markers[0].latLon.lat, markers[0].latLon.lon]
-                    : [69.198, -49.103]
-                }
-                mapChildren={
-                  <>
-                    <MapEventController
-                      markers={markers}
-                      setMarkers={setMarkers}
-                      setSearchParams={setSearchParams}
-                    />
-                    {markers.map((marker) => (
-                      <LocationMarker
-                        key={`${marker.id}`}
-                        markerProp={marker}
-                        markers={markers}
-                        setMarkers={setMarkers}
-                        setSearchParams={setSearchParams}
-                      />
-                    ))}
-                  </>
-                }
               />
             </div>
             <div className="my-5 ">

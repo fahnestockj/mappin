@@ -18,7 +18,6 @@ const LocationMarker = (props: IProps) => {
   const { markerProp, markers, setMarkers, setSearchParams } = props;
   const markerRef = useRef(null);
   const [position, setPosition] = useState<ICoordinate>(markerProp.latLon);
-  console.log("NEW MARKER");
   const icon = L.divIcon({
     html: renderToStaticMarkup(SvgCross(markerProp.color)),
     iconSize: [26, 26],

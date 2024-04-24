@@ -1,17 +1,28 @@
-import React from "react";
+import React, { memo, useEffect, useRef } from "react";
 import { MapContainer, TileLayer, LayersControl, GeoJSON } from "react-leaflet";
 import { CRS } from "leaflet";
 import catalogJson from "../geoJson/catalog_v02.json";
 import { GeoJsonObject } from "geojson";
+import { IMarker } from "../types";
+import MapEventController from "./LatLonMapEventController";
+import LocationMarker from "./LocationMarker/LocationMarker";
 
 type IProps = {
-  mapChildren?: React.ReactNode;
-  center: [number, number];
   zoom: number;
+  markers: IMarker[];
+  setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>;
+  setSearchParams: (params: URLSearchParams) => void;
 };
 
-const Velmap = (props: IProps) => {
-  const { center, zoom } = props;
+const Velmap = memo(function Velmap(props: IProps) {
+  console.log("rendering Velmap");
+
+  const { zoom, markers, setMarkers, setSearchParams } = props;
+
+  const center: [number, number] = markers[0]
+    ? [markers[0].latLon.lat, markers[0].latLon.lon]
+    : [69.198, -49.103];
+
   const { Overlay } = LayersControl;
 
   return (
@@ -63,11 +74,24 @@ const Velmap = (props: IProps) => {
               />
             </Overlay>
           </LayersControl>
-          {props.mapChildren}
+          <MapEventController
+            markers={markers}
+            setMarkers={setMarkers}
+            setSearchParams={setSearchParams}
+          />
+          {markers.map((marker) => (
+            <LocationMarker
+              key={`${marker.id}`}
+              markerProp={marker}
+              markers={markers}
+              setMarkers={setMarkers}
+              setSearchParams={setSearchParams}
+            />
+          ))}
         </MapContainer>
       </div>
     </div>
   );
-};
+});
 
 export default Velmap;
