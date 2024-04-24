@@ -11,8 +11,7 @@ import { findManyTimeseries } from "./findManyTimeseries/findManyTimeseries";
 import { ITimeseries, IMarker } from "./types";
 import { urlParamsToMarkers } from "./utils/markerParamUtilities";
 import { useSearchParams } from "react-router-dom";
-import LatLonMapEventController from "./components/LatLonMapEventController";
-import { set } from "immer/dist/internal";
+import MapEventController from "./components/LatLonMapEventController";
 
 function App() {
   const [timeseriesArr, setTimeseriesArr] = useState<Array<ITimeseries>>([]);
@@ -49,6 +48,7 @@ function App() {
         <div className="w-full h-full grid grid-cols-3 grid-rows-1 gap-4">
           <div className="col-span-2 w-full h-[90%] flex flex-col items-center">
             <PlotlyChart
+              loading={progressBarPercentage < 100}
               timeseriesArr={timeseriesArr}
               intervalDays={intervalDays}
             />
@@ -65,7 +65,7 @@ function App() {
                 }
                 mapChildren={
                   <>
-                    <LatLonMapEventController
+                    <MapEventController
                       markers={markers}
                       setMarkers={setMarkers}
                       setSearchParams={setSearchParams}

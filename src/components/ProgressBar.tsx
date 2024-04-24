@@ -10,11 +10,8 @@ type IProps = {
 let progressInterval: any;
 
 const ProgressBar = (props: IProps) => {
-  const {
-    setProgressBarPercentage,
-    progressBarPercentage,
-    numOfMarkers,
-  } = props;
+  const { setProgressBarPercentage, progressBarPercentage, numOfMarkers } =
+    props;
 
   const disabled = progressBarPercentage >= 100;
 
