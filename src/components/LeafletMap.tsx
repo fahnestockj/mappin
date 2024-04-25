@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, LayersControl, GeoJSON } from "react-leaflet";
 import { CRS } from "leaflet";
 import catalogJson from "../geoJson/catalog_v02.json";
 import { GeoJsonObject } from "geojson";
-import { IMarker } from "../types";
+import { IMarker, ISetSearchParams } from "../types";
 import MapEventController from "./LatLonMapEventController";
 import LocationMarker from "./LocationMarker/LocationMarker";
 
@@ -11,7 +11,7 @@ type IProps = {
   zoom: number;
   markers: IMarker[];
   setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>;
-  setSearchParams: (params: URLSearchParams) => void;
+  setSearchParams: ISetSearchParams
 };
 
 const LeafletMap = memo(function Velmap(props: IProps) {

@@ -1,11 +1,11 @@
 import { useMapEvents } from "react-leaflet"
 import { createMarker } from "../utils/createMarker";
-import { IMarker } from "../types";
+import { IMarker, ISetSearchParams } from "../types";
 
 type IProps = {
   markers: Array<IMarker>
   setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>
-  setSearchParams: (params: URLSearchParams) => void
+  setSearchParams: ISetSearchParams
 }
 const MapEventController = (props: IProps) => {
   const { markers, setMarkers, setSearchParams } = props

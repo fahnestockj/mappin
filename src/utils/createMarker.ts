@@ -1,14 +1,14 @@
 import { createId } from "@paralleldrive/cuid2"
 import produce from "immer"
 import { markersToUrlParams } from "./markerParamUtilities"
-import { IColor, IMarker } from "../types"
+import { IColor, IMarker, ISetSearchParams } from "../types"
 
 type IProps = {
   latitude: number
   longitude: number
   markers: IMarker[]
   setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>
-  setSearchParams: (params: URLSearchParams) => void
+  setSearchParams: ISetSearchParams
 
 }
 /**
@@ -31,7 +31,7 @@ export function createMarker(props: IProps) {
     })
 
     const urlParams = markersToUrlParams(updatedMarkers)
-    setSearchParams(urlParams)
+    setSearchParams(urlParams, { replace: true })
     setMarkers(updatedMarkers)
   }
 }

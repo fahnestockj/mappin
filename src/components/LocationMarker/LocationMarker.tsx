@@ -5,13 +5,13 @@ import L from "leaflet";
 import { SvgCross } from "../SvgCross";
 import "./LocationMarker.css";
 import { markersToUrlParams } from "../../utils/markerParamUtilities";
-import { ICoordinate, IMarker } from "../../types";
+import { ICoordinate, IMarker, ISetSearchParams } from "../../types";
 
 type IProps = {
   markerProp: IMarker;
   markers: Array<IMarker>;
   setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>;
-  setSearchParams: React.Dispatch<React.SetStateAction<any>>;
+  setSearchParams: ISetSearchParams
 };
 //TODO: This NEEDS some typing, remember leaflet uses lat and lng, not lon
 const LocationMarker = (props: IProps) => {
@@ -50,7 +50,7 @@ const LocationMarker = (props: IProps) => {
               lon: parseFloat(lon.toFixed(5)),
             },
           };
-          setSearchParams(markersToUrlParams(newMarkers));
+          setSearchParams(markersToUrlParams(newMarkers), { replace: true });
           setPosition({ lat, lon });
           console.log("DONE");
           setMarkers(newMarkers);

@@ -30,3 +30,5 @@ export type ITimeseries = {
     velocityArray: number[]
   }
 }
+
+export type ISetSearchParams = (params: URLSearchParams, options?: Object) => void
