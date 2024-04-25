@@ -14,7 +14,7 @@ type IProps = {
   setSearchParams: (params: URLSearchParams) => void;
 };
 
-const Velmap = memo(function Velmap(props: IProps) {
+const LeafletMap = memo(function Velmap(props: IProps) {
   console.log("rendering Velmap");
 
   const { zoom, markers, setMarkers, setSearchParams } = props;
@@ -94,4 +94,4 @@ const Velmap = memo(function Velmap(props: IProps) {
   );
 });
 
-export default Velmap;
+export default LeafletMap;

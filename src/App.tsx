@@ -1,12 +1,11 @@
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { CSVDownloadButton } from "./components/CSVDownloadButton";
-import LocationMarker from "./components/LocationMarker/LocationMarker";
 import { MarkerTable } from "./components/MarkerTable";
 import { PlotlyChart } from "./components/PlotlyChart/PlotlyChart";
 import ProgressBar from "./components/ProgressBar";
 import RangeSlider from "./components/RangeSlider";
 import { ShareButton } from "./components/ShareButton";
-import Velmap from "./components/Velmap";
+import LeafletMap from "./components/LeafletMap";
 import { findManyTimeseries } from "./findManyTimeseries/findManyTimeseries";
 import { ITimeseries, IMarker } from "./types";
 import { urlParamsToMarkers } from "./utils/markerParamUtilities";
@@ -50,7 +49,7 @@ function App() {
 
           <div className="mr-5">
             <div className="w-[100%] h-[40%] ">
-              <Velmap
+              <LeafletMap
                 markers={markers}
                 setMarkers={setMarkers}
                 setSearchParams={setSearchParams}

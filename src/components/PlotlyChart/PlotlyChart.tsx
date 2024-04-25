@@ -14,10 +14,7 @@ type IProps = {
 };
 export const PlotlyChart = (props: IProps) => {
   const { timeseriesArr, intervalDays, loading } = props;
-  console.log("Rendering PlotlyChart");
-  const layoutRef = useRef<Exclude<Figure["layout"], null> | undefined>(
-    undefined
-  );
+  const layoutRef = useRef<Figure["layout"]>();
 
   const filteredTimeseries = useMemo<ITimeseries[]>(() => {
     const epochTime = new Date(0).getTime();
@@ -55,7 +52,6 @@ export const PlotlyChart = (props: IProps) => {
     <div className={classNames("w-full h-full", loading && "animate-pulse")}>
       <Plot
         onUpdate={(figure) => {
-          console.log("setting frames", figure);
           layoutRef.current = figure.layout
         }}
         data={filteredTimeseries.map((timeseries) => {
@@ -98,7 +94,7 @@ export const PlotlyChart = (props: IProps) => {
 
 function EmptyChartLoadingSkeleton() {
   return (
-    <div className="w-full h-full animate-pulse">
+    <div className="w-full h-full">
       <Plot
         data={[]}
         layout={{
