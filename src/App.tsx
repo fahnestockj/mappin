@@ -35,8 +35,8 @@ function App() {
   }, [markers]);
 
   return (
-    <div className="h-full w-full">
-      <div className="w-full md:h-[400px] h-[300px] ">
+    <div className=" w-full h-screen">
+      <div className="w-full md:h-[450px] h-[300px] shadow-md">
         <LeafletMap
           markers={markers}
           setMarkers={setMarkers}
@@ -45,40 +45,38 @@ function App() {
         />
       </div>
       <div className="flex my-4">
-        <div className="w-full md:h-[400px] h-[300px] max-w-[70%] border-2 overflow-hidden rounded-lg mx-4">
+        <div className="w-full md:h-[400px] h-[300px] max-w-[70%] border-[#e5e7eb] border-2 overflow-hidden rounded-lg mx-4 shadow-md">
           <PlotlyChart
             loading={isLoading}
             timeseriesArr={timeseriesArr}
             intervalDays={intervalDays}
           />
         </div>
-        <div className="max-w-[30%] w-full h-fit mx-4 ">
-          <MarkerTable markers={markers} />
-        </div>
-      </div>
+        <div className="max-w-[30%] w-full  mx-4 flex flex-col">
+          <div className="h-[168px]">
+            <MarkerTable markers={markers} setMarkers={setMarkers} />
+          </div>
 
-      <div className="h-[10%] flex items-center mx-4">
-        <div className="mx-4">
-          <CSVDownloadButton data={timeseriesArr} />
-        </div>
-        <div className="mx-4">
-          <ShareButton />
-        </div>
-        <div className="align-end my-5 flex items-center mx-4">
-          <div className="text-md mr-2 font-semibold">Interval (days)</div>
-          <RangeSlider
-            className="w-[19rem] h-10"
-            defaultValue={[1, 120]}
-            min={1}
-            max={565}
-            onAfterChange={(value) => setIntervalDays(value)}
-          />
-        </div>
-      </div>
-      <div className="w-full h-[10%] flex flex-row justify-center items-center m-4">
-        <div>
-          Velocity data generated using auto-RIFT (Gardner et al., 2018) and
-          provided by the NASA MEaSUREs ITS_LIVE project (Gardner et al., 20XX).
+          <div className="w-full my-4 shadow-md border-[#e5e7eb] border-2 overflow-hidden rounded-lg p-4">
+            <div className="align-end my-5 flex items-center mx-4">
+              <div className="text-md mr-4 font-semibold">
+                Interval <br /> (days)
+              </div>
+              <RangeSlider
+                className="w-[19rem] h-10"
+                defaultValue={[1, 120]}
+                min={1}
+                max={565}
+                onAfterChange={(value) => setIntervalDays(value)}
+              />
+            </div>
+            <div className="flex justify-between">
+              <div className="mr-4">
+                <CSVDownloadButton data={timeseriesArr} />
+              </div>
+              <ShareButton />
+            </div>
+          </div>
         </div>
       </div>
     </div>

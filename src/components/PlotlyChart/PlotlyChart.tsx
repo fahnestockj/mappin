@@ -61,11 +61,15 @@ export const PlotlyChart = (props: IProps) => {
         })}
         layout={
           layoutRef.current || {
+            margin: { t: 40, b: 40, l: 80, r: 80 },
             autosize: true,
             showlegend: false,
-            title: "ITS_LIVE Ice Flow Speed m/yr",
-            xaxis: { title: "date", type: "date" },
-            yaxis: { type: "-", title: "speed (m/yr)" },
+            // title: "ITS_LIVE Ice Flow Speed m/yr",
+            xaxis: { type: "date" },
+            yaxis: {
+              type: "-",
+              title: "Ice Flow Speed (m/yr)",
+            },
           }
         }
         config={{
