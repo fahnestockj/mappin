@@ -1,7 +1,8 @@
 import createPlotlyComponent from "react-plotly.js/factory";
+import { Figure } from "react-plotly.js/index";
 import Plotly from "plotly.js-gl2d-dist-min";
 import { ITimeseries, colorHexDict } from "../../types";
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 
 const Plot = createPlotlyComponent(Plotly);
@@ -13,6 +14,10 @@ type IProps = {
 };
 export const PlotlyChart = (props: IProps) => {
   const { timeseriesArr, intervalDays, loading } = props;
+  console.log("Rendering PlotlyChart");
+  const layoutRef = useRef<Exclude<Figure["layout"], null> | undefined>(
+    undefined
+  );
 
   const filteredTimeseries = useMemo<ITimeseries[]>(() => {
     const epochTime = new Date(0).getTime();
@@ -49,6 +54,10 @@ export const PlotlyChart = (props: IProps) => {
   return (
     <div className={classNames("w-full h-full", loading && "animate-pulse")}>
       <Plot
+        onUpdate={(figure) => {
+          console.log("setting frames", figure);
+          layoutRef.current = figure.layout
+        }}
         data={filteredTimeseries.map((timeseries) => {
           return {
             x: timeseries.data.midDateArray,
@@ -58,7 +67,7 @@ export const PlotlyChart = (props: IProps) => {
             marker: { color: colorHexDict[timeseries.marker.color] },
           };
         })}
-        layout={{
+        layout={layoutRef.current || {
           autosize: true,
           showlegend: false,
           title: "ITS_LIVE Ice Flow Speed m/yr",
