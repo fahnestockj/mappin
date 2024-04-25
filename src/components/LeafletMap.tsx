@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef } from "react";
+import React, { memo } from "react";
 import { MapContainer, TileLayer, LayersControl, GeoJSON } from "react-leaflet";
 import { CRS } from "leaflet";
 import catalogJson from "../geoJson/catalog_v02.json";
@@ -11,7 +11,7 @@ type IProps = {
   zoom: number;
   markers: IMarker[];
   setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>;
-  setSearchParams: ISetSearchParams
+  setSearchParams: ISetSearchParams;
 };
 
 const LeafletMap = memo(function Velmap(props: IProps) {
