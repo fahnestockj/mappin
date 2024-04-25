@@ -44,15 +44,11 @@ export const PlotlyChart = (props: IProps) => {
     });
   }, [timeseriesArr, intervalDays]);
 
-  if (filteredTimeseries.length === 0) {
-    return EmptyChartLoadingSkeleton();
-  }
-
   return (
     <div className={classNames("w-full h-full", loading && "animate-pulse")}>
       <Plot
         onUpdate={(figure) => {
-          layoutRef.current = figure.layout
+          layoutRef.current = figure.layout;
         }}
         data={filteredTimeseries.map((timeseries) => {
           return {
@@ -63,13 +59,15 @@ export const PlotlyChart = (props: IProps) => {
             marker: { color: colorHexDict[timeseries.marker.color] },
           };
         })}
-        layout={layoutRef.current || {
-          autosize: true,
-          showlegend: false,
-          title: "ITS_LIVE Ice Flow Speed m/yr",
-          xaxis: { title: "date", type: "date" },
-          yaxis: { type: "-", title: "speed (m/yr)" },
-        }}
+        layout={
+          layoutRef.current || {
+            autosize: true,
+            showlegend: false,
+            title: "ITS_LIVE Ice Flow Speed m/yr",
+            xaxis: { title: "date", type: "date" },
+            yaxis: { type: "-", title: "speed (m/yr)" },
+          }
+        }
         config={{
           modeBarButtonsToRemove: [
             "select2d",
@@ -86,30 +84,8 @@ export const PlotlyChart = (props: IProps) => {
           showTips: false,
           responsive: true,
         }}
-        className="w-full h-full min-h-[400px]"
+        className="w-full h-full"
       />
     </div>
   );
 };
-
-function EmptyChartLoadingSkeleton() {
-  return (
-    <div className="w-full h-full">
-      <Plot
-        data={[]}
-        layout={{
-          autosize: true,
-          title: "ITS_LIVE Ice Flow Speed m/yr",
-          xaxis: {
-            title: "date",
-            type: "date",
-            range: [new Date("1990-01-01"), new Date("2022-01-01")],
-          },
-          yaxis: { type: "-", title: "speed (m/yr)", range: [0, 1000] },
-        }}
-        config={{ displaylogo: false, showTips: false, responsive: true }}
-        className="w-full h-full min-h-[400px]"
-      />
-    </div>
-  );
-}

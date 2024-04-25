@@ -14,15 +14,22 @@ export const CSVDownloadButton = (props: IProps) => {
   return (
     <button
       disabled={data.length === 0}
-      className="cursor-pointer inline-flex items-center rounded-md border border-transparent bg-sky-700 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+      className="
+      h-[3rem]
+      cursor-pointer inline-flex 
+      items-center rounded-md border border-transparent bg-sky-700 
+      px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-sky-800 
+      focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
       onClick={() => {
         data.forEach((timeseries) => {
           let csvStr = "mid_date, v [m/yr]\n";
           timeseries.data.midDateArray.forEach(
             (midDate, index) =>
-              (csvStr += `${midDate.toDateString()},${timeseries.data.velocityArray[index]}\n`)
+              (csvStr += `${midDate.toDateString()},${
+                timeseries.data.velocityArray[index]
+              }\n`)
           );
-          
+
           zip.file(
             `lat_${timeseries.marker.latLon.lat}_lon_${timeseries.marker.latLon.lon}.csv`,
             csvStr

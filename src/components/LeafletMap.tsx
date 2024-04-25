@@ -55,7 +55,7 @@ const LeafletMap = memo(function Velmap(props: IProps) {
           worldCopyJump={true}
         >
           <LayersControl>
-            <Overlay name="GeoJSON">
+            <Overlay name="Datacube Boundaries">
               <GeoJSON data={catalogJson as GeoJsonObject} />
             </Overlay>
             <TileLayer
