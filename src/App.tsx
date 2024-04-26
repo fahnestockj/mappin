@@ -10,7 +10,6 @@ import { findManyTimeseries } from "./findManyTimeseries/findManyTimeseries";
 import { ITimeseries, IMarker } from "./types";
 import { urlParamsToMarkers } from "./utils/markerParamUtilities";
 import { useSearchParams } from "react-router-dom";
-
 function App() {
   const [timeseriesArr, setTimeseriesArr] = useState<Array<ITimeseries>>([]);
   const [params, setSearchParams] = useSearchParams();
@@ -52,7 +51,7 @@ function App() {
             intervalDays={intervalDays}
           />
         </div>
-        <div className="max-w-[30%] w-full  mx-4 flex flex-col">
+        <div className="max-w-[30%] w-full  mx-4 flex flex-col items-center">
           <div className="h-[168px]">
             <MarkerTable markers={markers} setMarkers={setMarkers} />
           </div>
@@ -70,6 +69,7 @@ function App() {
                 onAfterChange={(value) => setIntervalDays(value)}
               />
             </div>
+
             <div className="flex justify-between">
               <div className="mr-4">
                 <CSVDownloadButton data={timeseriesArr} />

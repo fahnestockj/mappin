@@ -4,7 +4,7 @@ import Plotly from "plotly.js-gl2d-dist-min";
 import { ITimeseries, colorHexDict } from "../../types";
 import { useMemo, useRef, useState } from "react";
 import classNames from "classnames";
-
+import { ITS_LIVE_LOGO_SVG } from "../../utils/ITS_LIVE_LOGO_SVG";
 const Plot = createPlotlyComponent(Plotly);
 
 type IProps = {
@@ -45,7 +45,12 @@ export const PlotlyChart = (props: IProps) => {
   }, [timeseriesArr, intervalDays]);
 
   return (
-    <div className={classNames("w-full h-full", loading && "animate-pulse")}>
+    <div className={classNames("w-full h-[325px]", loading && "animate-pulse")}>
+      <div className="w-full flex justify-center my-4">
+        <a href="https://its-live.jpl.nasa.gov/">
+          <ITS_LIVE_LOGO_SVG />
+        </a>
+      </div>
       <Plot
         onUpdate={(figure) => {
           layoutRef.current = figure.layout;
@@ -61,7 +66,7 @@ export const PlotlyChart = (props: IProps) => {
         })}
         layout={
           layoutRef.current || {
-            margin: { t: 40, b: 40, l: 80, r: 80 },
+            margin: { t: 0, b: 40, l: 80, r: 80 },
             autosize: true,
             showlegend: false,
             // title: "ITS_LIVE Ice Flow Speed m/yr",
