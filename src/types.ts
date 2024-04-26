@@ -1,16 +1,19 @@
 import { z } from "zod"
-
-export type IColor = 'll' | 'reb' | 'cpg' | 'c' | 'dg'
-
-export const colorHexDict: { [key in IColor]: string } = {
-  ll: '#2660a4ff', // 'lapis-lazuli'
-  reb: '#55dde0ff', // 'robin-egg-blue'
-  cpg: '#28502eff', // 'cal-poly-green
-  c: '#c47335ff', // 'copper'
-  dg: '#7b7263ff', // 'dim-gray'
+enum ColorByHex {
+  '#2660a4ff',// 'lapis-lazuli'
+  '#55dde0ff',// 'robin-egg-blue'
+  '#28502eff',// 'cal-poly-green
+  '#c47335ff',// 'copper'
+  '#7b7263ff',// 'dim-gray'
+  "#5B666F",// 'paynes-gray'
+  "#F17300", // 'safety-orange'
+  "#A1C181", // 'olivine'
+  "#233D4D", // 'charcoal'
+  "#F6F7EB", // 'ivory'
 }
+export type IColor = keyof typeof ColorByHex
+export const colorHexArr = Object.values(ColorByHex) as Array<IColor> // ew TS enums
 
-export const ZColor = z.enum(['ll', 'reb', 'cpg', 'c', 'dg'])
 
 export type ICoordinate = {
   lat: number

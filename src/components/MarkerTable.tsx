@@ -15,7 +15,7 @@ export function MarkerTable(props: IProps) {
           <th
             className={classNames(
               cellClassName,
-              "font-semibold overflow-hidden"
+              "font-semibold overflow-hidden sticky top-0"
             )}
           >
             Latitude
@@ -23,14 +23,14 @@ export function MarkerTable(props: IProps) {
           <th
             className={classNames(
               cellClassName,
-              "font-semibold overflow-hidden"
+              "font-semibold overflow-hidden sticky top-0"
             )}
           >
             Longitude
           </th>
           <th
             className={classNames(
-              "border-b-2 border-slate-600",
+              "border-b-2 border-slate-600 sticky top-0",
               "font-semibold"
             )}
           >

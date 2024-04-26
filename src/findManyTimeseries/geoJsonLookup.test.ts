@@ -11,10 +11,10 @@ describe('geoJsonLookup', () => {
         lon: -50,
       },
       id: 'test',
-      color: 'll',
+      color: '#2660a4ff',
     }
     const res = geoJsonLookup([marker])
-    expect(res[0].zarrUrl).toEqual('http://its-live-data.s3.amazonaws.com/datacubes/v02/N70W040/ITS_LIVE_vel_EPSG3413_G0120_X-150000_Y-2150000.zarr')
+    expect(res[0].zarrUrl).toEqual('http://its-live-data.s3.amazonaws.com/datacubes/v2/N70W040/ITS_LIVE_vel_EPSG3413_G0120_X-150000_Y-2150000.zarr')
 
   })
 
@@ -25,7 +25,7 @@ describe('geoJsonLookup', () => {
         lon: -2000,
       },
       id: 'test',
-      color: 'll',
+      color: '#2660a4ff',
     }
 
     const err = new Error("No features found or more than one feature found")
@@ -46,11 +46,11 @@ describe('geoJsonLookup', () => {
         lat: 70.78328,
         lon: -43.90137
       },
-      color: 'cpg',
+      color: '#2660a4ff',
       id: 'test'
     }
     const res = geoJsonLookup([marker])
-    expect(res[0].zarrUrl).toEqual('http://its-live-data.s3.amazonaws.com/datacubes/v02/N70W040/ITS_LIVE_vel_EPSG3413_G0120_X50000_Y-2150000.zarr')
+    expect(res[0].zarrUrl).toEqual('http://its-live-data.s3.amazonaws.com/datacubes/v2/N70W040/ITS_LIVE_vel_EPSG3413_G0120_X50000_Y-2150000.zarr')
 
 
 

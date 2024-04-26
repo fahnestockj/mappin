@@ -1,7 +1,7 @@
 import { createId } from "@paralleldrive/cuid2"
 import produce from "immer"
 import { markersToUrlParams } from "./markerParamUtilities"
-import { IColor, IMarker, ISetSearchParams } from "../types"
+import { IMarker, ISetSearchParams, colorHexArr } from "../types"
 
 type IProps = {
   latitude: number
@@ -17,12 +17,12 @@ type IProps = {
 export function createMarker(props: IProps) {
   const { latitude, longitude, markers, setSearchParams, setMarkers } = props
 
-  if (markers.length < 4) {
+  if (markers.length < 11) {
     //Immer produce for immutability
     const updatedMarkers = produce(markers, draft => {
       draft.push({
         id: createId(),
-        color: getColor(markers.length),
+        color: colorHexArr[markers.length], //TODO: ?? is this right
         latLon: {
           lat: parseFloat(latitude.toFixed(5)),
           lon: parseFloat(longitude.toFixed(5))
@@ -33,19 +33,5 @@ export function createMarker(props: IProps) {
     const urlParams = markersToUrlParams(updatedMarkers)
     setSearchParams(urlParams, { replace: true })
     setMarkers(updatedMarkers)
-  }
-}
-const getColor = (num: number): IColor => {
-  switch (num) {
-    case 0:
-      return 'll'
-    case 1:
-      return 'cpg'
-    case 2:
-      return 'reb'
-    case 3:
-      return 'c'
-    default:
-      return 'dg'
   }
 }

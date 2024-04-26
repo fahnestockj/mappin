@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { CSVDownloadButton } from "./components/CSVDownloadButton";
 import { MarkerTable } from "./components/MarkerTable";
 import { PlotlyChart } from "./components/PlotlyChart/PlotlyChart";
-import ProgressBar from "./components/ProgressBar";
 import RangeSlider from "./components/RangeSlider";
 import { ShareButton } from "./components/ShareButton";
 import LeafletMap from "./components/LeafletMap";
@@ -17,7 +16,6 @@ function App() {
   const [markers, setMarkers] = useState<Array<IMarker>>(initialMarkers);
   const [intervalDays, setIntervalDays] = useState<Array<number>>([1, 120]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  console.log("markers", markers);
 
   useEffect(() => {
     setIsLoading(true);
@@ -52,7 +50,7 @@ function App() {
           />
         </div>
         <div className="max-w-[30%] w-full  mx-4 flex flex-col items-center">
-          <div className="h-[168px]">
+          <div className="h-[196px]">
             <MarkerTable markers={markers} setMarkers={setMarkers} />
           </div>
 

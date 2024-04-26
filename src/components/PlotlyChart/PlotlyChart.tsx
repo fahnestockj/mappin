@@ -1,7 +1,7 @@
 import createPlotlyComponent from "react-plotly.js/factory";
 import { Figure } from "react-plotly.js/index";
 import Plotly from "plotly.js-gl2d-dist-min";
-import { ITimeseries, colorHexDict } from "../../types";
+import { ITimeseries } from "../../types";
 import { useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 import { ITS_LIVE_LOGO_SVG } from "../../utils/ITS_LIVE_LOGO_SVG";
@@ -61,7 +61,7 @@ export const PlotlyChart = (props: IProps) => {
             y: timeseries.data.velocityArray,
             type: "scattergl",
             mode: "markers",
-            marker: { color: colorHexDict[timeseries.marker.color] },
+            marker: { color: timeseries.marker.color },
           };
         })}
         layout={
