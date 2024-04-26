@@ -33,12 +33,6 @@ const LeafletMap = memo(function Velmap(props: IProps) {
         integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
         crossOrigin=""
       />
-      <script
-        src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-        crossOrigin=""
-      />
-
       <div className="w-full h-full m-auto ">
         <MapContainer
           className="h-[100%] !cursor-crosshair"
@@ -55,7 +49,7 @@ const LeafletMap = memo(function Velmap(props: IProps) {
           worldCopyJump={true}
         >
           <LayersControl>
-            <Overlay name="GeoJSON">
+            <Overlay name="Datacube Boundaries">
               <GeoJSON data={catalogJson as GeoJsonObject} />
             </Overlay>
             <TileLayer
@@ -67,7 +61,7 @@ const LeafletMap = memo(function Velmap(props: IProps) {
             />
             <Overlay checked={false} name="Velocity Map">
               <TileLayer
-                className="!cursor-crosshair"
+                className="!cursor-crosshair !opacity-50"
                 url="https://glacierflow.nyc3.digitaloceanspaces.com/webmaps/vel_map/{z}/{x}/{y}.png"
                 maxNativeZoom={15}
                 tileSize={256}
