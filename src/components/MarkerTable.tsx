@@ -9,13 +9,23 @@ type IProps = {
 const cellClassName = "border-r-2 border-b-2 border-slate-600";
 export function MarkerTable(props: IProps) {
   return (
-    <table className="table-fixed w-full overflow-hidden border-spacing-0 rounded-lg border-2 border-separate border-slate-600 shadow-md">
-      <thead className="bg-[#B4D2E7]">
-        <tr>
+    <table
+      className="table-fixed overflow-hidden border-spacing-0 rounded-lg border-2 border-separate border-slate-600 shadow-md
+      block 
+    "
+    >
+      <thead
+        className={classNames(
+          "bg-[#B4D2E7] block relative w-full overflow-y-scroll",
+          props.markers.length > 4 && "shadow-lg"
+        )}
+        style={{ overflowAnchor: "none" }}
+      >
+        <tr className="w-full flex">
           <th
             className={classNames(
               cellClassName,
-              "font-semibold overflow-hidden sticky top-0"
+              "font-semibold overflow-hidden basis-full grow-[2] block p-1"
             )}
           >
             Latitude
@@ -23,14 +33,14 @@ export function MarkerTable(props: IProps) {
           <th
             className={classNames(
               cellClassName,
-              "font-semibold overflow-hidden sticky top-0"
+              "font-semibold overflow-hidden basis-full grow-[2] block p-1"
             )}
           >
             Longitude
           </th>
           <th
             className={classNames(
-              "border-b-2 border-slate-600 sticky top-0",
+              "border-b-2 border-slate-600 basis-full grow-[2] block p-1",
               "font-semibold"
             )}
           >
@@ -38,19 +48,36 @@ export function MarkerTable(props: IProps) {
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody className="block relative w-full overflow-y-scroll max-h-[134px] border-b-2 border-slate-600">
         {props.markers.map((marker, i) => {
           return (
-            <tr className="h-[10px]" key={`${marker.id}`}>
-              <td className={cellClassName}>
+            <tr className="w-full flex" key={`${marker.id}`}>
+              <td
+                className={classNames(
+                  cellClassName,
+                  "basis-full grow-[2] block p-1",
+                  i === props.markers.length - 1 && "border-b-0"
+                )}
+              >
                 <div className="ml-2 overflow-hidden">{marker.latLon.lat}</div>
               </td>
 
-              <td className={cellClassName}>
+              <td
+                className={classNames(
+                  cellClassName,
+                  "basis-full grow-[2] block p-1",
+                  i === props.markers.length - 1 && "border-b-0"
+                )}
+              >
                 <div className="ml-2 overflow-hidden">{marker.latLon.lon}</div>
               </td>
 
-              <td className={"border-b-2 border-slate-600"}>
+              <td
+                className={classNames(
+                  "border-b-2 border-slate-600 basis-full grow-[2] block p-1",
+                  i === props.markers.length - 1 && "border-b-0"
+                )}
+              >
                 <div className="h-5 flex flex-col justify-middle overflow-hidden">
                   {SvgCross(marker.color)}
                 </div>
@@ -59,9 +86,9 @@ export function MarkerTable(props: IProps) {
           );
         })}
       </tbody>
-      <tfoot>
+      <tfoot className="w-full block">
         <tr
-          className="h-[24px] w-full cursor-pointer hover:bg-slate-100"
+          className="h-[24px] block w-full cursor-pointer hover:bg-slate-100"
           onClick={() => props.setMarkers([])}
         >
           <td

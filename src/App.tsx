@@ -50,7 +50,7 @@ function App() {
           />
         </div>
         <div className="max-w-[30%] w-full  mx-4 flex flex-col items-center">
-          <div className="h-[196px]">
+          <div className="h-[196px] w-full">
             <MarkerTable markers={markers} setMarkers={setMarkers} />
           </div>
 
