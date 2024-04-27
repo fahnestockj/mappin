@@ -51,7 +51,7 @@ function App() {
         </div>
         <div className="max-w-[30%] w-full  mx-4 flex flex-col items-center">
           <div className="h-[196px] w-full">
-            <MarkerTable markers={markers} setMarkers={setMarkers} />
+            <MarkerTable markers={markers} setMarkers={setMarkers} setSearchParams={setSearchParams} />
           </div>
 
           <div className="w-full my-4 shadow-md border-[#e5e7eb] border-2 overflow-hidden rounded-lg p-4">

@@ -1,10 +1,11 @@
 import classNames from "classnames";
-import { IMarker } from "../types";
+import { IMarker, ISetSearchParams } from "../types";
 import { SvgCross } from "./SvgCross";
 
 type IProps = {
   markers: Array<IMarker>;
   setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>;
+  setSearchParams: ISetSearchParams
 };
 const cellClassName = "border-r-2 border-b-2 border-slate-600";
 export function MarkerTable(props: IProps) {
@@ -89,7 +90,11 @@ export function MarkerTable(props: IProps) {
       <tfoot className="w-full block">
         <tr
           className="h-[24px] block w-full cursor-pointer hover:bg-slate-100"
-          onClick={() => props.setMarkers([])}
+          onClick={() => {
+            props.setMarkers([]);
+            // const emptySearchP
+            props.setSearchParams(new URLSearchParams())
+          }}
         >
           <td
             colSpan={3}
