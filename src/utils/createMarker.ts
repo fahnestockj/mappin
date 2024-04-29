@@ -1,6 +1,6 @@
 import { createId } from "@paralleldrive/cuid2"
 import produce from "immer"
-import { markersToUrlParams } from "./paramUtilities"
+import { addMarkerToUrlParams } from "./paramUtilities"
 import { IMarker, ISetSearchParams, colorHexArr } from "../types"
 
 type IProps = {
@@ -17,21 +17,21 @@ type IProps = {
 export function createMarker(props: IProps) {
   const { latitude, longitude, markers, setSearchParams, setMarkers } = props
 
-  if (markers.length < 11) {
+  if (markers.length <= 10) {
+    const newMarker: IMarker = {
+      id: createId(),
+      color: colorHexArr[markers.length],
+      latLon: {
+        lat: parseFloat(latitude.toFixed(4)),
+        lon: parseFloat(longitude.toFixed(4))
+      }
+    }
     //Immer produce for immutability
     const updatedMarkers = produce(markers, draft => {
-      draft.push({
-        id: createId(),
-        color: colorHexArr[markers.length], //TODO: ?? is this right
-        latLon: {
-          lat: parseFloat(latitude.toFixed(4)),
-          lon: parseFloat(longitude.toFixed(4))
-        }
-      })
+      draft.push(newMarker)
     })
 
-    const urlParams = markersToUrlParams(updatedMarkers)
-    setSearchParams(urlParams, { replace: true })
+    setSearchParams((prevUrlParams => addMarkerToUrlParams(prevUrlParams, newMarker)), { replace: true })
     setMarkers(updatedMarkers)
   }
 }

@@ -107,8 +107,12 @@ export function MarkerTable(props: IProps) {
           className="h-[24px] block w-full cursor-pointer hover:bg-slate-100"
           onClick={() => {
             props.setMarkers([]);
-            // const emptySearchP
-            props.setSearchParams(new URLSearchParams());
+            props.setSearchParams(prevParams => {
+              const newParams = new URLSearchParams(prevParams);
+              newParams.delete("lat");
+              newParams.delete("lon");
+              return newParams;
+            }, { replace: true });
           }}
         >
           <td

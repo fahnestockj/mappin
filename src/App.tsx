@@ -13,7 +13,7 @@ function App() {
   const [timeseriesArr, setTimeseriesArr] = useState<Array<ITimeseries>>([]);
   const [params, setSearchParams] = useSearchParams();
   const initialState = getStateFromUrlParams(params)
-  const [markers, setMarkers] = useState<Array<IMarker>>(initialState.markers || []);
+  const [markers, setMarkers] = useState<Array<IMarker>>(initialState.markers);
   const [intervalDays, setIntervalDays] = useState<Array<number>>([1, 120]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -47,7 +47,7 @@ function App() {
             loading={isLoading}
             timeseriesArr={timeseriesArr}
             intervalDays={intervalDays}
-            initialLayout={initialState.layout}
+            plotBounds={initialState.plotBounds}
             setSearchParams={setSearchParams}
           />
         </div>

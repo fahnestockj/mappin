@@ -4,14 +4,17 @@ import { renderToStaticMarkup } from "react-dom/server";
 import L from "leaflet";
 import { SvgCross } from "../SvgCross";
 import "./LocationMarker.css";
-import { markersToUrlParams } from "../../utils/paramUtilities";
 import { ICoordinate, IMarker, ISetSearchParams } from "../../types";
+import {
+  addMarkerToUrlParams,
+  clearMarkersFromUrlParams,
+} from "../../utils/paramUtilities";
 
 type IProps = {
   markerProp: IMarker;
   markers: Array<IMarker>;
   setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>;
-  setSearchParams: ISetSearchParams
+  setSearchParams: ISetSearchParams;
 };
 //TODO: This NEEDS some typing, remember leaflet uses lat and lng, not lon
 const LocationMarker = (props: IProps) => {
@@ -48,7 +51,18 @@ const LocationMarker = (props: IProps) => {
               lon: parseFloat(lon.toFixed(4)),
             },
           };
-          setSearchParams(markersToUrlParams(newMarkers), { replace: true });
+          setSearchParams(
+            (prevParams) => {
+              // remove all markers from the url
+              let params = clearMarkersFromUrlParams(prevParams);
+              // then add our newMarkers as params
+              newMarkers.forEach((marker) => {
+                params = addMarkerToUrlParams(params, marker);
+              });
+              return params;
+            },
+            { replace: true }
+          );
           setPosition({ lat, lon });
           setMarkers(newMarkers);
         }
