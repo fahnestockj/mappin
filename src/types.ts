@@ -1,15 +1,17 @@
-import { z } from "zod"
+import { NavigateOptions, URLSearchParamsInit } from 'react-router-dom'
+
 enum ColorByHex {
   '#2660a4ff',// 'lapis-lazuli'
   '#55dde0ff',// 'robin-egg-blue'
   '#28502eff',// 'cal-poly-green
   '#c47335ff',// 'copper'
   '#7b7263ff',// 'dim-gray'
-  "#5B666F",// 'paynes-gray'
   "#F17300", // 'safety-orange'
   "#A1C181", // 'olivine'
   "#233D4D", // 'charcoal'
   "#F6F7EB", // 'ivory'
+  "#C60F7B", // 'magenta dye'
+  "#FE4A49", // 'tomato'
 }
 export type IColor = keyof typeof ColorByHex
 export const colorHexArr = Object.values(ColorByHex) as Array<IColor> // ew TS enums
@@ -34,4 +36,4 @@ export type ITimeseries = {
   }
 }
 
-export type ISetSearchParams = (params: URLSearchParams, options?: Object) => void
+export type ISetSearchParams = (nextInit?: URLSearchParamsInit | ((prev: URLSearchParams) => URLSearchParamsInit), navigateOpts?: NavigateOptions) => void;

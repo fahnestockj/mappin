@@ -7,13 +7,13 @@ import { ShareButton } from "./components/ShareButton";
 import LeafletMap from "./components/LeafletMap";
 import { findManyTimeseries } from "./findManyTimeseries/findManyTimeseries";
 import { ITimeseries, IMarker } from "./types";
-import { urlParamsToMarkers } from "./utils/markerParamUtilities";
 import { useSearchParams } from "react-router-dom";
+import { getStateFromUrlParams } from "./utils/paramUtilities";
 function App() {
   const [timeseriesArr, setTimeseriesArr] = useState<Array<ITimeseries>>([]);
   const [params, setSearchParams] = useSearchParams();
-  const initialMarkers = urlParamsToMarkers(params);
-  const [markers, setMarkers] = useState<Array<IMarker>>(initialMarkers);
+  const initialState = getStateFromUrlParams(params)
+  const [markers, setMarkers] = useState<Array<IMarker>>(initialState.markers || []);
   const [intervalDays, setIntervalDays] = useState<Array<number>>([1, 120]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -47,6 +47,8 @@ function App() {
             loading={isLoading}
             timeseriesArr={timeseriesArr}
             intervalDays={intervalDays}
+            initialLayout={initialState.layout}
+            setSearchParams={setSearchParams}
           />
         </div>
         <div className="max-w-[30%] w-full  mx-4 flex flex-col items-center">

@@ -1,20 +1,41 @@
 import createPlotlyComponent from "react-plotly.js/factory";
 import { Figure } from "react-plotly.js/index";
 import Plotly from "plotly.js-gl2d-dist-min";
-import { ITimeseries } from "../../types";
-import { useMemo, useRef, useState } from "react";
+import { ISetSearchParams, ITimeseries } from "../../types";
+import { useMemo, useRef } from "react";
 import classNames from "classnames";
 import { ITS_LIVE_LOGO_SVG } from "../../utils/ITS_LIVE_LOGO_SVG";
+import { IPlotLayout } from "../../utils/paramUtilities";
+import { init } from "@paralleldrive/cuid2";
 const Plot = createPlotlyComponent(Plotly);
 
 type IProps = {
   timeseriesArr: Array<ITimeseries>;
   intervalDays: Array<number>;
   loading: boolean;
+  initialLayout: IPlotLayout | undefined;
+  setSearchParams: ISetSearchParams;
 };
 export const PlotlyChart = (props: IProps) => {
-  const { timeseriesArr, intervalDays, loading } = props;
-  const layoutRef = useRef<Figure["layout"]>();
+  const {
+    timeseriesArr,
+    intervalDays,
+    loading,
+    setSearchParams,
+    initialLayout,
+  } = props;
+
+  const layoutRef = useRef<Figure["layout"] | null>(
+    initialLayout ? {
+      "xaxis.range": initialLayout.x,
+      "yaxis.range": initialLayout.y,
+    } : null
+  );
+
+  if (layoutRef.current) {
+    console.log(layoutRef.current.xaxis);
+    console.log(layoutRef.current.yaxis);
+  }
 
   const filteredTimeseries = useMemo<ITimeseries[]>(() => {
     const epochTime = new Date(0).getTime();
@@ -53,7 +74,15 @@ export const PlotlyChart = (props: IProps) => {
       </div>
       <Plot
         onUpdate={(figure) => {
+          console.log("Updating the layout");
+          
           layoutRef.current = figure.layout;
+          setSearchParams((prevParams) => {
+            return {
+              ...prevParams,
+              layout: 
+            };
+          });
         }}
         data={filteredTimeseries.map((timeseries) => {
           return {
@@ -78,13 +107,24 @@ export const PlotlyChart = (props: IProps) => {
           }
         }
         config={{
+          modeBarButtonsToAdd: [
+            {
+              // we remove then re-add this button purely for styling
+              // - for some reason this stops the modebar from wrapping vertically
+              name: "pan2d",
+              title: "Pan",
+              icon: Plotly.Icons.pan,
+              click: function (gd) {
+                Plotly.relayout(gd, { dragmode: "pan" });
+              },
+            },
+          ],
           modeBarButtonsToRemove: [
             "select2d",
             "lasso2d",
             "resetScale2d",
             "pan2d",
             "toImage",
-            "zoom2d",
             "zoomIn2d",
             "zoomOut2d",
           ],

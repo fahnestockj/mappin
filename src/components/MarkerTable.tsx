@@ -1,14 +1,28 @@
 import classNames from "classnames";
 import { IMarker, ISetSearchParams } from "../types";
 import { SvgCross } from "./SvgCross";
+import { useEffect, useRef } from "react";
 
 type IProps = {
   markers: Array<IMarker>;
   setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>;
-  setSearchParams: ISetSearchParams
+  setSearchParams: ISetSearchParams;
 };
+// TODO: clean up these classnames
 const cellClassName = "border-r-2 border-b-2 border-slate-600";
 export function MarkerTable(props: IProps) {
+  const bottomRowRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (bottomRowRef.current) {
+      bottomRowRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+        inline: "nearest",
+      });
+    }
+  }, [props.markers]);
+
   return (
     <table
       className="table-fixed overflow-hidden border-spacing-0 rounded-lg border-2 border-separate border-slate-600 shadow-md
@@ -86,6 +100,7 @@ export function MarkerTable(props: IProps) {
             </tr>
           );
         })}
+        <div ref={bottomRowRef} />
       </tbody>
       <tfoot className="w-full block">
         <tr
@@ -93,7 +108,7 @@ export function MarkerTable(props: IProps) {
           onClick={() => {
             props.setMarkers([]);
             // const emptySearchP
-            props.setSearchParams(new URLSearchParams())
+            props.setSearchParams(new URLSearchParams());
           }}
         >
           <td

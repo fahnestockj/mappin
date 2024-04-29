@@ -1,6 +1,6 @@
 import { createId } from "@paralleldrive/cuid2"
 import produce from "immer"
-import { markersToUrlParams } from "./markerParamUtilities"
+import { markersToUrlParams } from "./paramUtilities"
 import { IMarker, ISetSearchParams, colorHexArr } from "../types"
 
 type IProps = {
@@ -24,8 +24,8 @@ export function createMarker(props: IProps) {
         id: createId(),
         color: colorHexArr[markers.length], //TODO: ?? is this right
         latLon: {
-          lat: parseFloat(latitude.toFixed(5)),
-          lon: parseFloat(longitude.toFixed(5))
+          lat: parseFloat(latitude.toFixed(4)),
+          lon: parseFloat(longitude.toFixed(4))
         }
       })
     })

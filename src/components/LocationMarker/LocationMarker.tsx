@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import L from "leaflet";
 import { SvgCross } from "../SvgCross";
 import "./LocationMarker.css";
-import { markersToUrlParams } from "../../utils/markerParamUtilities";
+import { markersToUrlParams } from "../../utils/paramUtilities";
 import { ICoordinate, IMarker, ISetSearchParams } from "../../types";
 
 type IProps = {
@@ -30,8 +30,6 @@ const LocationMarker = (props: IProps) => {
   const eventHandlers = useMemo(
     () => ({
       dragend() {
-        console.log("DRAGGING");
-
         const oldMarkerIndex = markers.findIndex(
           (marker) => marker.id === markerProp.id
         );
@@ -46,13 +44,12 @@ const LocationMarker = (props: IProps) => {
           newMarkers[oldMarkerIndex] = {
             ...markerProp,
             latLon: {
-              lat: parseFloat(lat.toFixed(5)),
-              lon: parseFloat(lon.toFixed(5)),
+              lat: parseFloat(lat.toFixed(4)),
+              lon: parseFloat(lon.toFixed(4)),
             },
           };
           setSearchParams(markersToUrlParams(newMarkers), { replace: true });
           setPosition({ lat, lon });
-          console.log("DONE");
           setMarkers(newMarkers);
         }
       },
@@ -68,7 +65,7 @@ const LocationMarker = (props: IProps) => {
       icon={icon}
     >
       <Popup>
-        Lat: {position.lat.toFixed(5)} Long: {position.lon.toFixed(5)}
+        Lat: {position.lat.toFixed(4)} Long: {position.lon.toFixed(4)}
       </Popup>
     </Marker>
   );
