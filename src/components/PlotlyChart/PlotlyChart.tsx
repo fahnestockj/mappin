@@ -24,19 +24,6 @@ export const PlotlyChart = (props: IProps) => {
   const { timeseriesArr, intervalDays, loading, setSearchParams, plotBounds } =
     props;
 
-  useTraceUpdate(props);
-
-  // const layoutRef = useRef<Figure["layout"] | null>(
-  //   initialLayout ? {
-  //     "xaxis.range": initialLayout.x,
-  //     "yaxis.range": initialLayout.y,
-  //   } : null
-  // );
-
-  // if (layoutRef.current) {
-  //   console.log(layoutRef.current.xaxis);
-  //   console.log(layoutRef.current.yaxis);
-  // }
   const chartLayout = useMemo(() => {
     console.log("recomputing layout");
 
@@ -173,7 +160,7 @@ export const PlotlyChart = (props: IProps) => {
             "zoomIn2d",
             "zoomOut2d",
           ],
-          doubleClick: "reset+autosize",
+          doubleClick: "autosize",
           displaylogo: false,
           showTips: false,
           responsive: true,

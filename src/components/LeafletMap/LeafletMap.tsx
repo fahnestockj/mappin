@@ -1,11 +1,12 @@
 import React, { memo } from "react";
 import { MapContainer, TileLayer, LayersControl, GeoJSON } from "react-leaflet";
 import { CRS } from "leaflet";
-import catalogJson from "../geoJson/catalog_v02.json";
+import catalogJson from "../../geoJson/catalog_v02.json";
 import { GeoJsonObject } from "geojson";
-import { IMarker, ISetSearchParams } from "../types";
-import MapEventController from "./LatLonMapEventController";
-import LocationMarker from "./LocationMarker/LocationMarker";
+import { IMarker, ISetSearchParams } from "../../types";
+import MapEventController from "../LatLonMapEventController";
+import LocationMarker from "../LocationMarker/LocationMarker";
+import './leaflet.css'
 
 type IProps = {
   zoom: number;
@@ -27,15 +28,10 @@ const LeafletMap = memo(function Velmap(props: IProps) {
 
   return (
     <div className="w-full h-full">
-      <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-        crossOrigin=""
-      />
       <div className="w-full h-full m-auto ">
         <MapContainer
           className="h-[100%] !cursor-crosshair"
+          attributionControl={true}
           crs={CRS.EPSG3857}
           center={center}
           zoom={zoom}

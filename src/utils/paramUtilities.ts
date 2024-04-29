@@ -40,8 +40,8 @@ export interface IPlotBounds {
 }
 function getBoundsFromParams(params: URLSearchParams): IPlotBounds {
   const defaultPlotBounds: IPlotBounds = {
-    x: [new Date("2000-01-01"), new Date("2024-01-01")],
-    y: [0, 1000]
+    x: [new Date("1985-01-01"), new Date("2024-01-01")],
+    y: [-500, 10000]
   }
   const x = params.getAll('x')
   const y = params.getAll('y')
@@ -87,8 +87,8 @@ export function setPlotBoundsInUrlParams(prevParams: URLSearchParams, plotBounds
   newParams.delete('y');
   newParams.append('x', dayjs(plotBounds.x[0]).format('YYYY-MM-DD'));
   newParams.append('x', dayjs(plotBounds.x[1]).format('YYYY-MM-DD'));
-  newParams.append('y', plotBounds.y[0].toString());
-  newParams.append('y', plotBounds.y[1].toString());
+  newParams.append('y', plotBounds.y[0].toFixed(0));
+  newParams.append('y', plotBounds.y[1].toFixed(0));
   return newParams;
 }
 

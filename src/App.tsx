@@ -4,7 +4,7 @@ import { MarkerTable } from "./components/MarkerTable";
 import { PlotlyChart } from "./components/PlotlyChart/PlotlyChart";
 import RangeSlider from "./components/RangeSlider";
 import { ShareButton } from "./components/ShareButton";
-import LeafletMap from "./components/LeafletMap";
+import LeafletMap from "./components/LeafletMap/LeafletMap";
 import { findManyTimeseries } from "./findManyTimeseries/findManyTimeseries";
 import { ITimeseries, IMarker } from "./types";
 import { useSearchParams } from "react-router-dom";
