@@ -24,7 +24,6 @@ const RangeSlider =
       renderTrack={(props, state) => {
         const numPoints = Array.isArray(state.value) ? state.value.length : null;
         const isMulti = numPoints && numPoints > 0;
-        //So is last is true when the index is the last index of the array?? but its indexed from 0 
         const isFirst = state.index === 0;
         const isLast = isMulti && (state.index === numPoints - 1);
         

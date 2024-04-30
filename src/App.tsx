@@ -32,8 +32,8 @@ function App() {
   }, [markers]);
 
   return (
-    <div className=" w-full h-screen">
-      <div className="w-full md:h-[450px] h-[300px] shadow-md">
+    <div className="w-full h-screen">
+      <div className="w-full h-[55%] shadow-md">
         <LeafletMap
           markers={markers}
           setMarkers={setMarkers}
@@ -41,8 +41,8 @@ function App() {
           zoom={initialState.mapZoom}
         />
       </div>
-      <div className="flex my-4">
-        <div className="w-full md:h-[400px] h-[300px] max-w-[70%] border-[#e5e7eb] border-2 overflow-hidden rounded-lg mx-4 shadow-md">
+      <div className="h-[45%] flex py-4">
+        <div className="w-full h-full max-w-[70%] border-[#e5e7eb] border-2 overflow-hidden rounded-lg mx-4 shadow-md">
           <PlotlyChart
             loading={isLoading}
             timeseriesArr={timeseriesArr}
@@ -62,7 +62,7 @@ function App() {
                 Interval <br /> (days)
               </div>
               <RangeSlider
-                className="w-[19rem] h-10"
+                className="w-[90%] h-10"
                 defaultValue={[1, 120]}
                 min={1}
                 max={565}

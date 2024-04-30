@@ -35,10 +35,6 @@ export const PlotlyChart = (props: IProps) => {
       margin: { t: 0, b: 40, l: 80, r: 80 },
       autosize: true,
       showlegend: false,
-      // "xaxis.autorange": false,
-      // "yaxis.autorange": false,
-
-      // title: "ITS_LIVE Ice Flow Speed m/yr",
       xaxis: { type: "date", range: xBounds, autorange: false },
       yaxis: {
         range: yBounds,
@@ -79,7 +75,7 @@ export const PlotlyChart = (props: IProps) => {
   }, [timeseriesArr, intervalDays]);
 
   return (
-    <div className={classNames("w-full h-[325px]", loading && "animate-pulse")}>
+    <div className={classNames("w-full h-4/5", loading && "animate-pulse")}>
       <div className="w-full flex justify-center my-4">
         <a href="https://its-live.jpl.nasa.gov/">
           <ITS_LIVE_LOGO_SVG />

@@ -24,7 +24,7 @@ const MapEventController = (props: IProps) => {
         const newParams = new URLSearchParams(oldParams);
         newParams.set("z", e.target.getZoom().toString());
         return newParams;
-      });
+      }, { replace: true });
     },
   });
 

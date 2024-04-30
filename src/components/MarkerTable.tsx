@@ -11,7 +11,7 @@ type IProps = {
 // TODO: clean up these classnames
 const cellClassName = "border-r-2 border-b-2 border-slate-600";
 export function MarkerTable(props: IProps) {
-  const bottomRowRef = useRef<HTMLDivElement>(null);
+  const bottomRowRef = useRef<HTMLTableRowElement>(null);
 
   useEffect(() => {
     if (bottomRowRef.current) {
@@ -100,19 +100,22 @@ export function MarkerTable(props: IProps) {
             </tr>
           );
         })}
-        <div ref={bottomRowRef} />
+        <tr ref={bottomRowRef} />
       </tbody>
       <tfoot className="w-full block">
         <tr
           className="h-[24px] block w-full cursor-pointer hover:bg-slate-100"
           onClick={() => {
             props.setMarkers([]);
-            props.setSearchParams(prevParams => {
-              const newParams = new URLSearchParams(prevParams);
-              newParams.delete("lat");
-              newParams.delete("lon");
-              return newParams;
-            }, { replace: true });
+            props.setSearchParams(
+              (prevParams) => {
+                const newParams = new URLSearchParams(prevParams);
+                newParams.delete("lat");
+                newParams.delete("lon");
+                return newParams;
+              },
+              { replace: true }
+            );
           }}
         >
           <td

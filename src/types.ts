@@ -6,12 +6,12 @@ enum ColorByHex {
   '#28502eff',// 'cal-poly-green
   '#c47335ff',// 'copper'
   '#7b7263ff',// 'dim-gray'
-  "#F17300", // 'safety-orange'
   "#A1C181", // 'olivine'
   "#233D4D", // 'charcoal'
   "#F6F7EB", // 'ivory'
   "#C60F7B", // 'magenta dye'
   "#FE4A49", // 'tomato'
+  "#F17300", // 'safety-orange'
 }
 export type IColor = keyof typeof ColorByHex
 export const colorHexArr = Object.values(ColorByHex) as Array<IColor> // ew TS enums
