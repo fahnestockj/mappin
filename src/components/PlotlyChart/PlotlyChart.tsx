@@ -2,7 +2,7 @@ import createPlotlyComponent from "react-plotly.js/factory";
 import { Figure } from "react-plotly.js/index";
 import Plotly from "plotly.js-gl2d-dist-min";
 import { ISetSearchParams, ITimeseries } from "../../types";
-import { useMemo, useRef } from "react";
+import { useMemo, useState } from "react";
 import classNames from "classnames";
 import { ITS_LIVE_LOGO_SVG } from "../../utils/ITS_LIVE_LOGO_SVG";
 import {
@@ -21,16 +21,15 @@ type IProps = {
 export const PlotlyChart = (props: IProps) => {
   const { timeseriesArr, intervalDays, loading, setSearchParams, plotBounds } =
     props;
+  const [dragmode, setDragmode] = useState<"pan" | "zoom">("zoom");
 
   const chartLayout = useMemo(() => {
-    console.log("recomputing layout");
-
-    const xBounds = plotBounds.x.slice(); // Needed to ensure the props don't get mutated
+    const xBounds = plotBounds.x.slice(); // Needed to ensure immutability (the props don't get mutated)
     const yBounds = plotBounds.y.slice();
 
     const chartLayout: Pick<
       Plotly.Layout,
-      "margin" | "autosize" | "showlegend" | "xaxis" | "yaxis"
+      "margin" | "autosize" | "showlegend" | "xaxis" | "yaxis" | "dragmode"
     > = {
       margin: { t: 0, b: 40, l: 80, r: 80 },
       autosize: true,
@@ -42,6 +41,7 @@ export const PlotlyChart = (props: IProps) => {
         title: "Ice Flow Speed (m/yr)",
         autorange: false,
       },
+      dragmode,
     };
     return chartLayout;
   }, [plotBounds]);
@@ -85,7 +85,12 @@ export const PlotlyChart = (props: IProps) => {
         onUpdate={(figure) => {
           // this callback gets called a lot including when the user is dragging a zoom box
           // in that time we need to be careful to ignore all changes except for those that actually change the x and y axis range
-          // console.log("Updating the layout");
+
+          // check dragmode
+          if (figure.layout.dragmode !== dragmode) {
+            setDragmode(figure.layout.dragmode as "pan" | "zoom");
+          }
+
           const plotXBounds = figure.layout.xaxis!.range! as [string, string];
           const plotXBoundsDate = plotXBounds.map((date) => new Date(date)) as [
             Date,
@@ -97,7 +102,6 @@ export const PlotlyChart = (props: IProps) => {
               plotXBoundsDate[0].toISOString() === plotBounds.x[0].toISOString()
             )
           ) {
-            console.log("xaxis range are not the same");
             const currentPlotBounds: IPlotBounds = {
               x: plotXBoundsDate,
               y: plotYBounds,
@@ -118,34 +122,32 @@ export const PlotlyChart = (props: IProps) => {
             marker: { color: timeseries.marker.color },
           };
         })}
-        layout={
-          chartLayout
-          // layoutRef.current || {
-          //   margin: { t: 0, b: 40, l: 80, r: 80 },
-          //   autosize: true,
-          //   showlegend: false,
-          //   // title: "ITS_LIVE Ice Flow Speed m/yr",
-          //   xaxis: { type: "date" },
-          //   yaxis: {
-          //     type: "-",
-          //     title: "Ice Flow Speed (m/yr)",
-          //   },
-          // }
-        }
+        layout={chartLayout}
         config={{
           modeBarButtonsToAdd: [
             {
               // we remove then re-add this button purely for styling
               // - for some reason this stops the modebar from wrapping vertically
+              name: "zoom2d",
+              title: "Zoom",
+              icon: Plotly.Icons.zoombox,
+              click: function (gd) {
+                // setDragmode("pan");
+                Plotly.relayout(gd, { dragmode: "zoom" });
+              },
+            },
+            {
               name: "pan2d",
               title: "Pan",
               icon: Plotly.Icons.pan,
               click: function (gd) {
+                setDragmode("pan");
                 Plotly.relayout(gd, { dragmode: "pan" });
               },
             },
           ],
           modeBarButtonsToRemove: [
+            "zoom2d",
             "select2d",
             "lasso2d",
             "resetScale2d",
