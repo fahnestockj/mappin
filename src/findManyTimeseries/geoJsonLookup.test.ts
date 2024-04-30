@@ -51,11 +51,5 @@ describe('geoJsonLookup', () => {
     }
     const res = geoJsonLookup([marker])
     expect(res[0].zarrUrl).toEqual('http://its-live-data.s3.amazonaws.com/datacubes/v2/N70W040/ITS_LIVE_vel_EPSG3413_G0120_X50000_Y-2150000.zarr')
-
-
-
-
   })
-
-
 })

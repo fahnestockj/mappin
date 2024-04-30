@@ -64,6 +64,13 @@ export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Arr
       mode: "r"
     })
 
+    const satellteZarr = await openArray({
+      store,
+      path: "satellite_img1",
+      mode: "r",
+      dtype: "<u2"
+    })
+
     const timeseriesArr = await timeseriesArrZarr.get([null, yIndex, xIndex]).then(res => {
       if (typeof res === 'number') {
         throw new Error('data is a number')
@@ -89,11 +96,20 @@ export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Arr
       }
       return res.data as Float64Array
     })
+    const satelliteArr = await satellteZarr.getRaw(null).then(res => {
+      if (typeof res === 'number') {
+        throw new Error('data is a number')
+      }
+      return res.data as Uint16Array
+    })
+
+    console.log(satelliteArr);
+    
 
     const velocityArray: Array<number> = []
     const midDateArray: Array<Date> = []
     const dateDeltaArray: Array<Date> = []
-    // TODO: compare to performance of each seperated into it's own loop
+
     for (let i = 0; i < timeseriesArr.length; i++) {
       if (timeseriesArr[i] === -32767) continue
       velocityArray.push(timeseriesArr[i])
