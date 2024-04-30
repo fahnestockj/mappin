@@ -157,6 +157,7 @@ export const PlotlyChart = (props: IProps) => {
             "zoomOut2d",
           ],
           doubleClick: "autosize",
+          doubleClickDelay: 600,
           displaylogo: false,
           showTips: false,
           responsive: true,
