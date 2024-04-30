@@ -8,7 +8,7 @@ import { ICoordinate, IMarker, ISetSearchParams } from "../../types";
 import {
   addMarkerToUrlParams,
   clearMarkersFromUrlParams,
-} from "../../utils/paramUtilities";
+} from "../../utils/searchParamUtilities";
 
 type IProps = {
   markerProp: IMarker;

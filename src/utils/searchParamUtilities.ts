@@ -68,7 +68,7 @@ function getBoundsFromParams(params: URLSearchParams): IPlotBounds {
 }
 
 function getMapZoomFromParams(params: URLSearchParams): number {
-  return parseFloat(params.get('z') || '1');
+  return parseFloat(params.get('z') || '7');
 }
 
 

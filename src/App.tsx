@@ -8,7 +8,7 @@ import LeafletMap from "./components/LeafletMap/LeafletMap";
 import { findManyTimeseries } from "./findManyTimeseries/findManyTimeseries";
 import { ITimeseries, IMarker } from "./types";
 import { useSearchParams } from "react-router-dom";
-import { getStateFromUrlParams } from "./utils/paramUtilities";
+import { getStateFromUrlParams } from "./utils/searchParamUtilities";
 function App() {
   const [timeseriesArr, setTimeseriesArr] = useState<Array<ITimeseries>>([]);
   const [params, setSearchParams] = useSearchParams();
@@ -38,7 +38,7 @@ function App() {
           markers={markers}
           setMarkers={setMarkers}
           setSearchParams={setSearchParams}
-          zoom={5}
+          zoom={initialState.mapZoom}
         />
       </div>
       <div className="flex my-4">

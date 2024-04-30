@@ -8,9 +8,7 @@ import { ITS_LIVE_LOGO_SVG } from "../../utils/ITS_LIVE_LOGO_SVG";
 import {
   IPlotBounds,
   setPlotBoundsInUrlParams,
-} from "../../utils/paramUtilities";
-import { useTraceUpdate } from "../../utils/debugProps";
-import { randomBytes } from "crypto";
+} from "../../utils/searchParamUtilities";
 const Plot = createPlotlyComponent(Plotly);
 
 type IProps = {

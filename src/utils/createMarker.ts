@@ -1,6 +1,6 @@
 import { createId } from "@paralleldrive/cuid2"
 import produce from "immer"
-import { addMarkerToUrlParams } from "./paramUtilities"
+import { addMarkerToUrlParams } from "./searchParamUtilities"
 import { IMarker, ISetSearchParams, colorHexArr } from "../types"
 
 type IProps = {
