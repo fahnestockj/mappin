@@ -26,13 +26,13 @@ export function MarkerTable(props: IProps) {
   return (
     <table
       className="table-fixed overflow-hidden border-spacing-0 rounded-lg border-2 border-separate border-slate-600 shadow-md
-      block 
+      block
     "
     >
       <thead
         className={classNames(
           "bg-[#B4D2E7] block relative w-full overflow-y-scroll",
-          props.markers.length > 4 && "shadow-lg"
+          props.markers.length > 3 && "shadow-lg"
         )}
         style={{ overflowAnchor: "none" }}
       >
@@ -63,7 +63,7 @@ export function MarkerTable(props: IProps) {
           </th>
         </tr>
       </thead>
-      <tbody className="block relative w-full overflow-y-scroll max-h-[134px] border-b-2 border-slate-600">
+      <tbody className="block relative w-full overflow-y-scroll max-h-[104px] border-b border-slate-600">
         {props.markers.map((marker, i) => {
           return (
             <tr className="w-full flex" key={`${marker.id}`}>

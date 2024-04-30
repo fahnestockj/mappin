@@ -1,12 +1,12 @@
 import React, { memo } from "react";
 import { MapContainer, TileLayer, LayersControl, GeoJSON } from "react-leaflet";
-import { CRS } from "leaflet";
+import { CRS, marker } from "leaflet";
 import catalogJson from "../../geoJson/catalog_v02.json";
 import { GeoJsonObject } from "geojson";
 import { IMarker, ISetSearchParams } from "../../types";
 import MapEventController from "../LatLonMapEventController";
 import LocationMarker from "../LocationMarker/LocationMarker";
-import './leaflet.css'
+import "./leaflet.css";
 
 type IProps = {
   zoom: number;
@@ -16,13 +16,15 @@ type IProps = {
 };
 
 const LeafletMap = memo(function Velmap(props: IProps) {
-  console.log("rendering Velmap");
-
   const { zoom, markers, setMarkers, setSearchParams } = props;
-
-  const center: [number, number] = markers[0]
-    ? [markers[0].latLon.lat, markers[0].latLon.lon]
-    : [69.198, -49.103];
+  const middleMarkerIdx = Math.floor((markers.length - 1) / 2);
+  const center: [number, number] =
+    middleMarkerIdx > 0
+      ? [
+          markers[middleMarkerIdx].latLon.lat,
+          markers[middleMarkerIdx].latLon.lon,
+        ]
+      : [69.198, -49.103];
 
   const { Overlay } = LayersControl;
 

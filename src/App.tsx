@@ -51,21 +51,21 @@ function App() {
             setSearchParams={setSearchParams}
           />
         </div>
-        <div className="max-w-[30%] w-full  mx-4 flex flex-col items-center">
-          <div className="h-[196px] w-full">
+        <div className="max-w-[30%] w-full h-full  mx-4 flex flex-col items-center">
+          <div className="h-min w-full">
             <MarkerTable markers={markers} setMarkers={setMarkers} setSearchParams={setSearchParams} />
           </div>
 
-          <div className="w-full my-4 shadow-md border-[#e5e7eb] border-2 overflow-hidden rounded-lg p-4">
+          <div className="w-full mt-4 shadow-md border-[#e5e7eb] border-2 rounded-lg p-4 overflow-auto h-full">
             <div className="align-end my-5 flex items-center mx-4">
               <div className="text-md mr-4 font-semibold">
                 Interval <br /> (days)
               </div>
               <RangeSlider
-                className="w-[90%] h-10"
+                className="w-[100%] h-10"
                 defaultValue={[1, 120]}
                 min={1}
-                max={565}
+                max={500}
                 onAfterChange={(value) => setIntervalDays(value)}
               />
             </div>
