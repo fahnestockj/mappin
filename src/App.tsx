@@ -52,11 +52,11 @@ function App() {
           />
         </div>
         <div className="max-w-[30%] w-full h-full  mx-4 flex flex-col items-center">
-          <div className="h-min w-full">
+          <div className="h-[165px] w-full">
             <MarkerTable markers={markers} setMarkers={setMarkers} setSearchParams={setSearchParams} />
           </div>
 
-          <div className="w-full mt-4 shadow-md border-[#e5e7eb] border-2 rounded-lg p-4 overflow-auto h-full">
+          <div className="w-full mt-4 shadow-md border-[#e5e7eb] border-2 rounded-lg p-4 overflow-auto h-content">
             <div className="align-end my-5 flex items-center mx-4">
               <div className="text-md mr-4 font-semibold">
                 Interval <br /> (days)
@@ -69,8 +69,7 @@ function App() {
                 onAfterChange={(value) => setIntervalDays(value)}
               />
             </div>
-
-            <div className="flex justify-between">
+            <div className="flex justify-between max-w-[1/2]">
               <div className="mr-4">
                 <CSVDownloadButton data={timeseriesArr} />
               </div>

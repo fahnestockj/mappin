@@ -25,16 +25,15 @@ export function MarkerTable(props: IProps) {
 
   return (
     <table
-      className="table-fixed overflow-hidden border-spacing-0 rounded-lg border-2 border-separate border-slate-600 shadow-md
-      block
+      className="table-fixed border-spacing-0 rounded-lg border-2 border-separate border-slate-600 shadow-md overflow-hidden
+      block min-w-[362px]
     "
     >
       <thead
         className={classNames(
-          "bg-[#B4D2E7] block relative w-full overflow-y-scroll",
+          "bg-[#B4D2E7] block relative w-full",
           props.markers.length > 3 && "shadow-lg"
         )}
-        style={{ overflowAnchor: "none" }}
       >
         <tr className="w-full flex">
           <th
@@ -63,7 +62,13 @@ export function MarkerTable(props: IProps) {
           </th>
         </tr>
       </thead>
-      <tbody className="block relative w-full overflow-y-scroll max-h-[104px] border-b border-slate-600">
+      <tbody
+        className={classNames(
+          "block relative w-full max-h-[104px] border-b border-slate-600 overflow-auto",
+          props.markers.length > 3 && "overflow-y-scroll"
+
+        )}
+      >
         {props.markers.map((marker, i) => {
           return (
             <tr className="w-full flex" key={`${marker.id}`}>
@@ -89,8 +94,9 @@ export function MarkerTable(props: IProps) {
 
               <td
                 className={classNames(
-                  "border-b-2 border-slate-600 basis-full grow-[2] block p-1",
-                  i === props.markers.length - 1 && "border-b-0"
+                  "border-b-2 border-slate-600 basis-full grow-[2] block p-1 ",
+                  i === props.markers.length - 1 && "border-b-0",
+                  props.markers.length > 3 && "max-w-[calc(34.35%-15px)]"
                 )}
               >
                 <div className="h-5 flex flex-col justify-middle overflow-hidden">
