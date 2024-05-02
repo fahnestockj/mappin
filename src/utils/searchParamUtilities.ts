@@ -47,8 +47,6 @@ function getBoundsFromParams(params: URLSearchParams): IPlotBounds {
   const y = params.getAll('y')
   // need a few guard clauses
   if (x.length != 2 || y.length != 2) {
-    console.log("not enough params 2 or 2");
-
     return defaultPlotBounds;
   }
 
