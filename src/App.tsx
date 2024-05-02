@@ -42,7 +42,7 @@ function App() {
         />
       </div>
       <div className="h-[45%] flex py-4">
-        <div className="w-full h-full max-w-[70%] border-[#e5e7eb] border-2 overflow-hidden rounded-lg mx-4 shadow-md">
+        <div className="w-full h-full border-[#e5e7eb] border-2 overflow-hidden rounded-lg mx-4 shadow-md">
           <PlotlyChart
             loading={isLoading}
             timeseriesArr={timeseriesArr}
@@ -51,7 +51,7 @@ function App() {
             setSearchParams={setSearchParams}
           />
         </div>
-        <div className="max-w-[30%] w-full h-full  mx-4 flex flex-col items-center">
+        <div className="max-w-[400px] w-full h-full  mx-4 flex flex-col items-center">
           <div className="h-[165px] w-full">
             <MarkerTable markers={markers} setMarkers={setMarkers} setSearchParams={setSearchParams} />
           </div>
@@ -69,7 +69,7 @@ function App() {
                 onAfterChange={(value) => setIntervalDays(value)}
               />
             </div>
-            <div className="flex justify-between max-w-[1/2]">
+            <div className="flex justify-between">
               <div className="mr-4">
                 <CSVDownloadButton data={timeseriesArr} />
               </div>
