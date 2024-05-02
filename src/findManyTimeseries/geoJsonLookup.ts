@@ -3,6 +3,7 @@ import GeoJsonGeometriesLookup from "geojson-geometries-lookup";
 import { checkIfCoordinateIsWithinBounds } from "./checkIfCoordinateIsWithinBounds";
 import { appProj4 } from "./proj4Projections";
 import { IMarker } from "../types";
+import geoJsonFile from "../geoJson/catalog_v02.json";
 type ICatalogGeoJson = {
   "features": Array<{
     properties: {
@@ -15,8 +16,6 @@ type ICatalogGeoJson = {
     }
   }>
 }
-// @ts-ignore
-const geoJsonFile: ICatalogGeoJson = await (import("../geoJson/catalog_v02.json"));
 
 export function geoJsonLookup(markers: Array<IMarker>): Array<{
   marker: IMarker,
@@ -42,15 +41,16 @@ export function geoJsonLookup(markers: Array<IMarker>): Array<{
 
     //NOTE: EPSG:4326 is the projection of the lat lon coordinates
     // lat: 70, lon: -50 => [-200000, -2200000] in the locale projection EPSG:3413
-    
+
     const cartesianCoordinate: [number, number] = appProj4("EPSG:4326", projection).forward([coordinate.lon, coordinate.lat])
-    
+
     const inBounds = checkIfCoordinateIsWithinBounds(cartesianCoordinate, features[0].properties.geometry_epsg.coordinates[0])
 
     if (!inBounds) {
       //We have to search through the features using the cartesianCoordinate
       // @ts-ignore
       for (const feature of geoJsonFile.features) {
+        // @ts-ignore
         const inBounds = checkIfCoordinateIsWithinBounds(cartesianCoordinate, feature.properties.geometry_epsg.coordinates[0])
         if (inBounds) {
           results.push({

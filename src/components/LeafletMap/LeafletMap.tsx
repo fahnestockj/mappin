@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { MapContainer, TileLayer, LayersControl, GeoJSON } from "react-leaflet";
-import { CRS, marker } from "leaflet";
+import { CRS } from "leaflet";
 import catalogJson from "../../geoJson/catalog_v02.json";
 import { GeoJsonObject } from "geojson";
 import { IMarker, ISetSearchParams } from "../../types";
