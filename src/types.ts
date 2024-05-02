@@ -8,7 +8,7 @@ enum ColorByHex {
   '#7b7263ff',// 'dim-gray'
   "#A1C181", // 'olivine'
   "#233D4D", // 'charcoal'
-  "#F6F7EB", // 'ivory'
+  "#391D0C", // 'dark brown'
   "#C60F7B", // 'magenta dye'
   "#FE4A49", // 'tomato'
   "#F17300", // 'safety-orange'

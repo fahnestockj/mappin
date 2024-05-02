@@ -1,9 +1,7 @@
 import { createId } from "@paralleldrive/cuid2";
-import { IColor, IMarker, colorHexArr } from "../types";
+import { IMarker, colorHexArr } from "../types";
 import { z } from "zod";
 import dayjs from "dayjs";
-
-
 
 export function getStateFromUrlParams(params: URLSearchParams): { markers: Array<IMarker>, mapZoom: number, plotBounds: IPlotBounds } {
   return {
