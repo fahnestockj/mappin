@@ -12,6 +12,10 @@ type IProps = {
 const cellClassName = "border-r-2 border-b-2 border-slate-600";
 export function MarkerTable(props: IProps) {
   const bottomRowRef = useRef<HTMLTableRowElement>(null);
+  const tableBodyRef = useRef<HTMLTableSectionElement>(null);
+  const tableHasPaddingRight = tableBodyRef.current
+    ? window.getComputedStyle(tableBodyRef.current).paddingRight !== "0px"
+    : false;
 
   useEffect(() => {
     if (bottomRowRef.current) {
@@ -25,8 +29,8 @@ export function MarkerTable(props: IProps) {
 
   return (
     <table
-      className="table-fixed border-spacing-0 rounded-lg border-2 border-separate border-slate-600 shadow-md overflow-hidden
-      block min-w-[362px]
+      className="table-fixed border-spacing-0 rounded-lg border-2 border-separate border-slate-600 shadow-md
+      block min-w-[362px] overflow-hidden
     "
     >
       <thead
@@ -63,10 +67,10 @@ export function MarkerTable(props: IProps) {
         </tr>
       </thead>
       <tbody
+        id="table-body"
+        ref={tableBodyRef}
         className={classNames(
-          "block relative w-full max-h-[104px] border-b border-slate-600 overflow-auto",
-          props.markers.length > 3 && "overflow-y-scroll"
-
+          "block relative w-full max-h-[104px] border-b border-slate-600 overflow-y-scroll"
         )}
       >
         {props.markers.map((marker, i) => {
@@ -96,7 +100,7 @@ export function MarkerTable(props: IProps) {
                 className={classNames(
                   "border-b-2 border-slate-600 basis-full grow-[2] block p-1 ",
                   i === props.markers.length - 1 && "border-b-0",
-                  props.markers.length > 3 && "max-w-[calc(34.35%-15px)]"
+                  tableHasPaddingRight && "max-w-[calc(34.35%-15px)]"
                 )}
               >
                 <div className="h-5 flex flex-col justify-middle overflow-hidden">
