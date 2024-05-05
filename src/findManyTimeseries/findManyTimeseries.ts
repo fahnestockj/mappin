@@ -13,9 +13,7 @@ export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Arr
   const geoJsonLookupRes = geoJsonLookup(markerArr)
 
   for (const { marker, zarrUrl, cartesianCoordinate } of geoJsonLookupRes) {
-
     const url = zarrUrl.replace('http', 'https')
-
     const store = new HTTPStore(url, { fetchOptions: {}, supportedMethods: ["GET" as HTTPMethod] });
 
     const xArrayZarr = await openArray({
@@ -68,7 +66,7 @@ export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Arr
       store,
       path: "satellite_img1",
       mode: "r",
-      dtype: "<u2"
+      // dtype: "<u2"
     })
 
     const timeseriesArr = await timeseriesArrZarr.get([null, yIndex, xIndex]).then(res => {
@@ -103,7 +101,7 @@ export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Arr
       return res.data as Uint16Array
     })
 
-    console.log(satelliteArr);
+    // console.log(satelliteArr);
     
 
     const velocityArray: Array<number> = []
