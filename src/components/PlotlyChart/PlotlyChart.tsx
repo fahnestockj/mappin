@@ -125,6 +125,19 @@ export const PlotlyChart = (props: IProps) => {
         layout={chartLayout}
         config={{
           modeBarButtonsToAdd: [
+            // {
+            //   name: "downloadSVG",
+            //   title: "Download as SVG",
+            //   icon: Plotly.Icons.camera,
+            //   click: function (gd) {
+            //     Plotly.downloadImage(gd, {
+            //       format: "svg",
+            //       filename: "plot",
+            //       width: 1000,
+            //       height: 500,
+            //     });
+            //   },
+            // },
             {
               // we remove then re-add this button purely for styling
               // - for some reason this stops the modebar from wrapping vertically
