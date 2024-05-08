@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { IMarker, ISetSearchParams } from "../types";
 import { SvgCross } from "./SvgCross";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type IProps = {
   markers: Array<IMarker>;
@@ -11,11 +11,14 @@ type IProps = {
 // TODO: clean up these classnames
 const cellClassName = "border-r-2 border-b-2 border-slate-600";
 export function MarkerTable(props: IProps) {
+  const [scrollBarGutterPresent, setScrollBarGutterPresent] = useState(false);
   const bottomRowRef = useRef<HTMLTableRowElement>(null);
-  const tableBodyRef = useRef<HTMLTableSectionElement>(null);
-  const tableHasPaddingRight = tableBodyRef.current
-    ? window.getComputedStyle(tableBodyRef.current).paddingRight !== "0px"
-    : false;
+  const tableBodyRef = useCallback((node: HTMLTableSectionElement) => {
+    if (node !== null) {
+      setScrollBarGutterPresent(node.offsetWidth - node.clientWidth > 0);
+    }
+  }, []);
+
 
   useEffect(() => {
     if (bottomRowRef.current) {
@@ -100,7 +103,7 @@ export function MarkerTable(props: IProps) {
                 className={classNames(
                   "border-b-2 border-slate-600 basis-full grow-[2] block p-1 ",
                   i === props.markers.length - 1 && "border-b-0",
-                  tableHasPaddingRight && "max-w-[calc(34.35%-15px)]"
+                  scrollBarGutterPresent && "max-w-[calc(34.35%-15px)]"
                 )}
               >
                 <div className="h-5 flex flex-col justify-middle overflow-hidden">
