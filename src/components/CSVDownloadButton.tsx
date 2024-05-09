@@ -1,7 +1,6 @@
 import { BiDownload } from "react-icons/bi";
 import { saveAs } from "file-saver";
 import JSZip from "jszip";
-import { unparse } from "papaparse";
 import { ITimeseries } from "../types";
 
 type IProps = {
@@ -18,16 +17,17 @@ export const CSVDownloadButton = (props: IProps) => {
       h-[3rem]
       cursor-pointer inline-flex 
       items-center rounded-md border border-transparent bg-sky-700 
-      px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-sky-800 
-      focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+      px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-sky-800"
       onClick={() => {
         data.forEach((timeseries) => {
-          let csvStr = "mid_date, v [m/yr]\n";
+          let csvStr = "mid_date, v [m/yr], satellite, dt (days)\n";
           timeseries.data.midDateArray.forEach(
             (midDate, index) =>
-              (csvStr += `${midDate.toDateString()},${
+              (csvStr += `${midDate.toISOString()},${
                 timeseries.data.velocityArray[index]
-              }\n`)
+              }, ${timeseries.data.satelliteArray[index]}, ${
+                Math.floor((timeseries.data.dateDeltaArray[index].getTime() - new Date(0).getTime()) / (1000 * 3600 * 24))
+              } \n`)
           );
 
           zip.file(
