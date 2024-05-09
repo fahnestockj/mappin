@@ -107,7 +107,7 @@ export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Arr
     const midDateArray: Array<Date> = []
     const dateDeltaArray: Array<Date> = []
     const satelliteArray: Array<string> = []
-    // TODO: compare to performance of each seperated into it's own loop
+
     for (let i = 0; i < timeseriesArr.length; i++) {
       if (timeseriesArr[i] === -32767) continue
       velocityArray.push(timeseriesArr[i])

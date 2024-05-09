@@ -9,10 +9,11 @@ import { findManyTimeseries } from "./findManyTimeseries/findManyTimeseries";
 import { ITimeseries, IMarker } from "./types";
 import { useSearchParams } from "react-router-dom";
 import { getStateFromUrlParams } from "./utils/searchParamUtilities";
+import { SatelliteSvg } from "./utils/SatelliteSvg";
 function App() {
   const [timeseriesArr, setTimeseriesArr] = useState<Array<ITimeseries>>([]);
   const [params, setSearchParams] = useSearchParams();
-  const initialState = getStateFromUrlParams(params)
+  const initialState = getStateFromUrlParams(params);
   const [markers, setMarkers] = useState<Array<IMarker>>(initialState.markers);
   const [intervalDays, setIntervalDays] = useState<Array<number>>([1, 120]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -53,7 +54,11 @@ function App() {
         </div>
         <div className="max-w-[400px] w-full h-full  mx-4 flex flex-col items-center">
           <div className="h-[165px] w-full">
-            <MarkerTable markers={markers} setMarkers={setMarkers} setSearchParams={setSearchParams} />
+            <MarkerTable
+              markers={markers}
+              setMarkers={setMarkers}
+              setSearchParams={setSearchParams}
+            />
           </div>
 
           <div className="w-full mt-4 shadow-md border-[#e5e7eb] border-2 rounded-lg p-4 overflow-auto h-content">

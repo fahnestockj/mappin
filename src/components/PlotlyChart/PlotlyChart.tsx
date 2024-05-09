@@ -9,6 +9,9 @@ import {
   IPlotBounds,
   setPlotBoundsInUrlParams,
 } from "../../utils/searchParamUtilities";
+import { satelliteSvgString } from "../../utils/SatelliteSvg";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 const Plot = createPlotlyComponent(Plotly);
 
 type IProps = {
@@ -180,13 +183,35 @@ export const PlotlyChart = (props: IProps) => {
             [],
             [
               {
-                // we remove then re-add this button purely for styling
-                // - for some reason this stops the modebar from wrapping vertically
+                name: "satelliteView",
+                title: "Satellite View",
+                icon: {
+                  svg: satelliteSvgString,
+                  name: "satellite",
+                },
+                click: function () {
+                  setSatelliteView((prev) => !prev);
+                },
+              },
+
+              {
+                name: "downloadImage",
+                title: "Download Plot JPEG",
+                icon: Plotly.Icons.camera,
+                click: function (gd) {
+                  Plotly.downloadImage(gd, {
+                    format: "jpeg",
+                    filename: "plot",
+                    height: 600,
+                    width: 1500,
+                  });
+                },
+              },
+              {
                 name: "zoom2d",
                 title: "Zoom",
                 icon: Plotly.Icons.zoombox,
                 click: function (gd) {
-                  // setDragmode("pan");
                   Plotly.relayout(gd, { dragmode: "zoom" });
                 },
               },
@@ -197,14 +222,6 @@ export const PlotlyChart = (props: IProps) => {
                 click: function (gd) {
                   setDragmode("pan");
                   Plotly.relayout(gd, { dragmode: "pan" });
-                },
-              },
-              {
-                name: "satelliteView",
-                title: "Satellite View",
-                icon: Plotly.Icons.movie,
-                click: function () {
-                  setSatelliteView((prev) => !prev);
                 },
               },
               {
