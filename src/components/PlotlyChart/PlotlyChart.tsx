@@ -10,8 +10,6 @@ import {
   setPlotBoundsInUrlParams,
 } from "../../utils/searchParamUtilities";
 import { satelliteSvgString } from "../../utils/SatelliteSvg";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 const Plot = createPlotlyComponent(Plotly);
 
 type IProps = {
@@ -196,11 +194,11 @@ export const PlotlyChart = (props: IProps) => {
 
               {
                 name: "downloadImage",
-                title: "Download Plot JPEG",
+                title: "Download Plot PNG",
                 icon: Plotly.Icons.camera,
                 click: function (gd) {
                   Plotly.downloadImage(gd, {
-                    format: "jpeg",
+                    format: "png",
                     filename: "plot",
                     height: 600,
                     width: 1500,
