@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.modebar-btn {
+  margin-bottom: 20px !important;
+}
+
+.modebar-group {
+  margin-right: 7.5px !important;
+}

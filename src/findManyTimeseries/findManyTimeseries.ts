@@ -1,4 +1,4 @@
-import { HTTPStore, openArray } from "zarr";
+import { HTTPStore, openArray } from "@fahnestockj/zarr-fork";
 import { findClosestIndex } from "./findClosestIndex";
 import { geoJsonLookup } from "./geoJsonLookup";
 import { IMarker, ITimeseries } from "../types";
@@ -64,6 +64,12 @@ export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Arr
       mode: "r"
     })
 
+    const satellteZarr = await openArray({
+      store,
+      path: "satellite_img1",
+      mode: "r",
+    });
+
     const timeseriesArr = await timeseriesArrZarr.get([null, yIndex, xIndex]).then(res => {
       if (typeof res === 'number') {
         throw new Error('data is a number')
@@ -90,26 +96,61 @@ export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Arr
       return res.data as Float64Array
     })
 
+    const satelliteArr = await satellteZarr.get(null).then((res) => {
+      if (typeof res === "number") {
+        throw new Error("data is a number");
+      }
+      return res.data as Float64Array;
+    });
+
     const velocityArray: Array<number> = []
     const midDateArray: Array<Date> = []
     const dateDeltaArray: Array<Date> = []
+    const satelliteArray: Array<string> = []
     // TODO: compare to performance of each seperated into it's own loop
     for (let i = 0; i < timeseriesArr.length; i++) {
       if (timeseriesArr[i] === -32767) continue
       velocityArray.push(timeseriesArr[i])
       midDateArray.push(new Date(midDateArr[i] * 86400000))
       dateDeltaArray.push(new Date(dateDeltaArr[i] * 86400000))
+
+      const offset = i * 8
+      const eightBytes = satelliteArr.buffer.slice(offset, offset + 8);
+      const uintArray = new Uint8Array(eightBytes);
+      let satelliteShorthand = "";
+      for (const byte of uintArray) {
+        const char = String.fromCharCode(byte);
+        if (char !== "\u0000") {
+          satelliteShorthand = satelliteShorthand.concat(String.fromCharCode(byte));
+        }
+      }
+
+      const satelliteString = satelliteStrDict[satelliteShorthand as keyof typeof satelliteStrDict];
+      satelliteArray.push(satelliteString);
     }
-    
+
     results.push({
       marker,
       data: {
         midDateArray,
         velocityArray,
-        dateDeltaArray
+        dateDeltaArray,
+        satelliteArray,
       }
     })
   }
   return results
 
+}
+
+const satelliteStrDict = {
+  "1A": "Sentinel-1A",
+  "1B": "Sentinel-1B",
+  "2A": "Sentinel-2A",
+  "2B": "Sentinel-2B",
+  "4": "Landsat 4",
+  "5": "Landsat 5",
+  "7": "Landsat 7",
+  "8": "Landsat 8",
+  "9": "Landsat 9",
 }

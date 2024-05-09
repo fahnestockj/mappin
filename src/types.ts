@@ -33,6 +33,7 @@ export type ITimeseries = {
     midDateArray: Date[]
     dateDeltaArray: Date[]
     velocityArray: number[]
+    satelliteArray: string[]
   }
 }
 

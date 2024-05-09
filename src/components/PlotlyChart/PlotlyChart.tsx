@@ -1,7 +1,7 @@
 import createPlotlyComponent from "react-plotly.js/factory";
 import { Figure } from "react-plotly.js/index";
 import Plotly from "plotly.js-gl2d-dist-min";
-import { ISetSearchParams, ITimeseries } from "../../types";
+import { ISetSearchParams, ITimeseries, colorHexArr } from "../../types";
 import { useMemo, useState } from "react";
 import classNames from "classnames";
 import { ITS_LIVE_LOGO_SVG } from "../../utils/ITS_LIVE_LOGO_SVG";
@@ -22,6 +22,7 @@ export const PlotlyChart = (props: IProps) => {
   const { timeseriesArr, intervalDays, loading, setSearchParams, plotBounds } =
     props;
   const [dragmode, setDragmode] = useState<"pan" | "zoom">("zoom");
+  const [satelliteView, setSatelliteView] = useState<boolean>(false);
 
   const chartLayout = useMemo(() => {
     const xBounds = plotBounds.x.slice(); // Needed to ensure immutability (the props don't get mutated)
@@ -29,11 +30,18 @@ export const PlotlyChart = (props: IProps) => {
 
     const chartLayout: Pick<
       Plotly.Layout,
-      "margin" | "autosize" | "showlegend" | "xaxis" | "yaxis" | "dragmode"
+      | "margin"
+      | "autosize"
+      | "showlegend"
+      | "xaxis"
+      | "yaxis"
+      | "dragmode"
+      | "legend"
+      | "modebar"
     > = {
-      margin: { t: 0, b: 40, l: 80, r: 80 },
+      margin: { t: 0, b: 40, l: 80, r: satelliteView ? 140 : 80 },
       autosize: true,
-      showlegend: false,
+      showlegend: satelliteView,
       xaxis: { type: "date", range: xBounds, autorange: false },
       yaxis: {
         range: yBounds,
@@ -42,16 +50,25 @@ export const PlotlyChart = (props: IProps) => {
         autorange: false,
       },
       dragmode,
+      legend: {
+        title: { text: "Satellite Names" },
+        x: 0.98,
+      },
+      modebar: {
+        orientation: "v",
+        color: "rgb(71 85 105)",
+      },
     };
     return chartLayout;
-  }, [plotBounds]);
+  }, [plotBounds, satelliteView]);
 
-  const filteredTimeseries = useMemo<ITimeseries[]>(() => {
+  const data = useMemo<Figure["data"]>(() => {
     const epochTime = new Date(0).getTime();
-    return timeseriesArr.map((timeseries) => {
+    let filteredTimeseries = timeseriesArr.map((timeseries) => {
       const filteredMidDateArray: Date[] = [];
       const filteredVelocityArray: number[] = [];
       const filteredDateDtArray: Date[] = [];
+      const filtertedSatelliteArray: string[] = [];
 
       for (let i = 0; i < timeseries.data.velocityArray.length; i++) {
         const dt = timeseries.data.dateDeltaArray[i].getTime() - epochTime;
@@ -61,6 +78,7 @@ export const PlotlyChart = (props: IProps) => {
           filteredMidDateArray.push(timeseries.data.midDateArray[i]);
           filteredVelocityArray.push(timeseries.data.velocityArray[i]);
           filteredDateDtArray.push(timeseries.data.dateDeltaArray[i]);
+          filtertedSatelliteArray.push(timeseries.data.satelliteArray[i]);
         }
       }
       return {
@@ -69,10 +87,52 @@ export const PlotlyChart = (props: IProps) => {
           midDateArray: filteredMidDateArray,
           velocityArray: filteredVelocityArray,
           dateDeltaArray: filteredDateDtArray,
+          satelliteArray: filtertedSatelliteArray,
         },
       };
     });
-  }, [timeseriesArr, intervalDays]);
+
+    if (satelliteView) {
+      // we need to regroup our timeseries by satellite
+      // get all unique satellites - make a dict
+
+      const satelliteDict: Record<string, Partial<Plotly.PlotData>> = {};
+
+      let colorIndex = 0;
+      for (const timeseries of filteredTimeseries) {
+        for (let i = 0; i < timeseries.data.velocityArray.length; i++) {
+          const satellite = timeseries.data.satelliteArray[i];
+
+          if (!satelliteDict[satellite]) {
+            satelliteDict[satellite] = {
+              x: [],
+              y: [],
+              type: "scattergl",
+              mode: "markers",
+              name: satellite,
+              marker: { color: colorHexArr[colorIndex] },
+            };
+            colorIndex++;
+          }
+          // @ts-ignore
+          satelliteDict[satellite].x.push(timeseries.data.midDateArray[i]);
+          // @ts-ignore
+          satelliteDict[satellite].y.push(timeseries.data.velocityArray[i]);
+        }
+      }
+      return Object.values(satelliteDict);
+    }
+
+    return filteredTimeseries.map((timeseries) => {
+      return {
+        x: timeseries.data.midDateArray,
+        y: timeseries.data.velocityArray,
+        type: "scattergl",
+        mode: "markers",
+        marker: { color: timeseries.marker.color },
+      };
+    });
+  }, [timeseriesArr, intervalDays, satelliteView]);
 
   return (
     <div className={classNames("w-full h-4/5", loading && "animate-pulse")}>
@@ -113,67 +173,59 @@ export const PlotlyChart = (props: IProps) => {
             );
           }
         }}
-        data={filteredTimeseries.map((timeseries) => {
-          return {
-            x: timeseries.data.midDateArray,
-            y: timeseries.data.velocityArray,
-            type: "scattergl",
-            mode: "markers",
-            marker: { color: timeseries.marker.color },
-          };
-        })}
+        data={data}
         layout={chartLayout}
         config={{
-          modeBarButtonsToAdd: [
-            // {
-            //   name: "downloadSVG",
-            //   title: "Download as SVG",
-            //   icon: Plotly.Icons.camera,
-            //   click: function (gd) {
-            //     Plotly.downloadImage(gd, {
-            //       format: "svg",
-            //       filename: "plot",
-            //       width: 1000,
-            //       height: 500,
-            //     });
-            //   },
-            // },
-            {
-              // we remove then re-add this button purely for styling
-              // - for some reason this stops the modebar from wrapping vertically
-              name: "zoom2d",
-              title: "Zoom",
-              icon: Plotly.Icons.zoombox,
-              click: function (gd) {
-                // setDragmode("pan");
-                Plotly.relayout(gd, { dragmode: "zoom" });
+          modeBarButtons: [
+            [],
+            [
+              {
+                // we remove then re-add this button purely for styling
+                // - for some reason this stops the modebar from wrapping vertically
+                name: "zoom2d",
+                title: "Zoom",
+                icon: Plotly.Icons.zoombox,
+                click: function (gd) {
+                  // setDragmode("pan");
+                  Plotly.relayout(gd, { dragmode: "zoom" });
+                },
               },
-            },
-            {
-              name: "pan2d",
-              title: "Pan",
-              icon: Plotly.Icons.pan,
-              click: function (gd) {
-                setDragmode("pan");
-                Plotly.relayout(gd, { dragmode: "pan" });
+              {
+                name: "pan2d",
+                title: "Pan",
+                icon: Plotly.Icons.pan,
+                click: function (gd) {
+                  setDragmode("pan");
+                  Plotly.relayout(gd, { dragmode: "pan" });
+                },
               },
-            },
-          ],
-          modeBarButtonsToRemove: [
-            "zoom2d",
-            "select2d",
-            "lasso2d",
-            "resetScale2d",
-            "pan2d",
-            "toImage",
-            "zoomIn2d",
-            "zoomOut2d",
+              {
+                name: "satelliteView",
+                title: "Satellite View",
+                icon: Plotly.Icons.movie,
+                click: function () {
+                  setSatelliteView((prev) => !prev);
+                },
+              },
+              {
+                name: "autoscale2d",
+                title: "Reset Axes",
+                icon: Plotly.Icons.autoscale,
+                click: function (gd) {
+                  Plotly.relayout(gd, {
+                    "xaxis.autorange": true,
+                    "yaxis.autorange": true,
+                  });
+                },
+              },
+            ],
           ],
           doubleClick: "autosize",
           doubleClickDelay: 600,
           displaylogo: false,
           showTips: false,
           responsive: true,
+          displayModeBar: true,
         }}
         className="w-full h-full"
       />
