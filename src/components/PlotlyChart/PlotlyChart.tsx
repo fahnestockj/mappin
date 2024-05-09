@@ -54,7 +54,7 @@ export const PlotlyChart = (props: IProps) => {
       },
       dragmode,
       legend: {
-        title: { text: "Satellite Names" },
+        title: { text: "  Satellites", font: { size: 15} },
         x: 0.98,
       },
       modebar: {
