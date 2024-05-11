@@ -83,6 +83,7 @@ export function setPlotBoundsInUrlParams(prevParams: URLSearchParams, plotBounds
   newParams.delete('y');
   newParams.append('x', dayjs(plotBounds.x[0]).format('YYYY-MM-DD'));
   newParams.append('x', dayjs(plotBounds.x[1]).format('YYYY-MM-DD'));
+  // Y DOESNT WORKKKKK!!
   newParams.append('y', plotBounds.y[0].toFixed(0));
   newParams.append('y', plotBounds.y[1].toFixed(0));
   return newParams;

@@ -52,7 +52,7 @@ export const PlotlyChart = (props: IProps) => {
       },
       dragmode,
       legend: {
-        title: { text: "  Satellites", font: { size: 15} },
+        title: { text: "  Satellites", font: { size: 15 } },
         x: 0.98,
       },
       modebar: {
@@ -96,14 +96,11 @@ export const PlotlyChart = (props: IProps) => {
     if (satelliteView) {
       // we need to regroup our timeseries by satellite
       // get all unique satellites - make a dict
-
       const satelliteDict: Record<string, Partial<Plotly.PlotData>> = {};
 
-      let colorIndex = 0;
       for (const timeseries of filteredTimeseries) {
         for (let i = 0; i < timeseries.data.velocityArray.length; i++) {
           const satellite = timeseries.data.satelliteArray[i];
-
           if (!satelliteDict[satellite]) {
             satelliteDict[satellite] = {
               x: [],
@@ -111,9 +108,13 @@ export const PlotlyChart = (props: IProps) => {
               type: "scattergl",
               mode: "markers",
               name: satellite,
-              marker: { color: colorHexArr[colorIndex] },
+              marker: {
+                color:
+                  satelliteColorDict[
+                    satellite as keyof typeof satelliteColorDict
+                  ],
+              },
             };
-            colorIndex++;
           }
           // @ts-ignore
           satelliteDict[satellite].x.push(timeseries.data.midDateArray[i]);
@@ -121,7 +122,11 @@ export const PlotlyChart = (props: IProps) => {
           satelliteDict[satellite].y.push(timeseries.data.velocityArray[i]);
         }
       }
-      return Object.values(satelliteDict);
+      return Object.values(satelliteDict).sort(
+        (a, b) =>
+          (parseInt(a.name![a.name!.length - 1]) || 0) -
+          (parseInt(b.name![b.name!.length - 1]) || 0)
+      );
     }
 
     return filteredTimeseries.map((timeseries) => {
@@ -246,4 +251,14 @@ export const PlotlyChart = (props: IProps) => {
       />
     </div>
   );
+};
+
+const satelliteColorDict = {
+  "Sentinel 1": "#28502eff",
+  "Sentinel 2": "#c47335ff",
+  "Landsat 4": "#2660a4ff",
+  "Landsat 5": "#A1C181",
+  "Landsat 7": "#55dde0ff",
+"Landsat 8": "#2660a4ff",
+  "Landsat 9": "#C60F7B",
 };

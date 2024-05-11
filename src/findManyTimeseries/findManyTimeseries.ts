@@ -144,10 +144,10 @@ export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Arr
 }
 
 const satelliteStrDict = {
-  "1A": "Sentinel-1",
-  "1B": "Sentinel-1",
-  "2A": "Sentinel-2",
-  "2B": "Sentinel-2",
+  "1A": "Sentinel 1",
+  "1B": "Sentinel 1",
+  "2A": "Sentinel 2",
+  "2B": "Sentinel 2",
   "4": "Landsat 4",
   "5": "Landsat 5",
   "7": "Landsat 7",
