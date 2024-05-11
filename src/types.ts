@@ -31,7 +31,7 @@ export type ITimeseries = {
   marker: IMarker
   data: {
     midDateArray: Date[]
-    dateDeltaArray: Date[]
+    daysDeltaArray: number[]
     velocityArray: number[]
     satelliteArray: string[]
   }

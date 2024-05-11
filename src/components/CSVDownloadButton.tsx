@@ -26,7 +26,7 @@ export const CSVDownloadButton = (props: IProps) => {
               (csvStr += `${midDate.toISOString()},${
                 timeseries.data.velocityArray[index]
               }, ${timeseries.data.satelliteArray[index]}, ${
-                Math.floor((timeseries.data.dateDeltaArray[index].getTime() - new Date(0).getTime()) / (1000 * 3600 * 24))
+                timeseries.data.daysDeltaArray[index]
               } \n`)
           );
 

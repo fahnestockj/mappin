@@ -9,7 +9,7 @@ import { findManyTimeseries } from "./findManyTimeseries/findManyTimeseries";
 import { ITimeseries, IMarker } from "./types";
 import { useSearchParams } from "react-router-dom";
 import { getStateFromUrlParams } from "./utils/searchParamUtilities";
-import { SatelliteSvg } from "./utils/SatelliteSvg";
+
 function App() {
   const [timeseriesArr, setTimeseriesArr] = useState<Array<ITimeseries>>([]);
   const [params, setSearchParams] = useSearchParams();

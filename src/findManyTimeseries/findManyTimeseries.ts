@@ -105,15 +105,14 @@ export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Arr
 
     const velocityArray: Array<number> = []
     const midDateArray: Array<Date> = []
-    const dateDeltaArray: Array<Date> = []
+    const daysDeltaArray: Array<number> = []
     const satelliteArray: Array<string> = []
 
     for (let i = 0; i < timeseriesArr.length; i++) {
       if (timeseriesArr[i] === -32767) continue
       velocityArray.push(timeseriesArr[i])
       midDateArray.push(new Date(midDateArr[i] * 86400000))
-      dateDeltaArray.push(new Date(dateDeltaArr[i] * 86400000)) // TODO: no need to alter this data
-      // make it into a number array
+      daysDeltaArray.push(Math.round(dateDeltaArr[i]))
 
       const offset = i * 8
       const eightBytes = satelliteArr.buffer.slice(offset, offset + 8);
@@ -135,7 +134,7 @@ export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Arr
       data: {
         midDateArray,
         velocityArray,
-        dateDeltaArray,
+        daysDeltaArray,
         satelliteArray,
       }
     })

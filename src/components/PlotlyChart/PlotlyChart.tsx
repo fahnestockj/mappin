@@ -68,17 +68,15 @@ export const PlotlyChart = (props: IProps) => {
     let filteredTimeseries = timeseriesArr.map((timeseries) => {
       const filteredMidDateArray: Date[] = [];
       const filteredVelocityArray: number[] = [];
-      const filteredDateDtArray: Date[] = [];
+      const filteredDateDtArray: number[] = [];
       const filtertedSatelliteArray: string[] = [];
 
       for (let i = 0; i < timeseries.data.velocityArray.length; i++) {
-        const dt = timeseries.data.dateDeltaArray[i].getTime() - epochTime;
-
-        const days = dt / (1000 * 3600 * 24);
-        if (days >= intervalDays[0] && days <= intervalDays[1]) {
+        const dt = timeseries.data.daysDeltaArray[i]
+        if (dt >= intervalDays[0] && dt <= intervalDays[1]) {
           filteredMidDateArray.push(timeseries.data.midDateArray[i]);
           filteredVelocityArray.push(timeseries.data.velocityArray[i]);
-          filteredDateDtArray.push(timeseries.data.dateDeltaArray[i]);
+          filteredDateDtArray.push(timeseries.data.daysDeltaArray[i]);
           filtertedSatelliteArray.push(timeseries.data.satelliteArray[i]);
         }
       }
