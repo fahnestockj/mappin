@@ -151,6 +151,7 @@ export const PlotlyChart = (props: IProps) => {
         onUpdate={(figure) => {
           // this callback gets called a lot including when the user is dragging a zoom box
           // in that time we need to be careful to ignore all changes except for those that actually change the x and y axis range
+          // heavily impacts chart performance
 
           // check dragmode
           if (figure.layout.dragmode !== dragmode) {
@@ -163,11 +164,13 @@ export const PlotlyChart = (props: IProps) => {
             Date
           ];
           const plotYBounds = figure.layout.yaxis!.range! as [number, number];
-          if (
-            !(
-              plotXBoundsDate[0].toISOString() === plotBounds.x[0].toISOString()
-            )
-          ) {
+
+          const currentPlotBounds: IPlotBounds = {
+            x: plotXBoundsDate,
+            y: plotYBounds,
+          };
+          // we need to see if our params don't match with
+          if (!arePlotBoundsEqual(plotBounds, currentPlotBounds)) {
             const currentPlotBounds: IPlotBounds = {
               x: plotXBoundsDate,
               y: plotYBounds,
@@ -259,6 +262,15 @@ const satelliteColorDict = {
   "Landsat 4": "#2660a4ff",
   "Landsat 5": "#A1C181",
   "Landsat 7": "#55dde0ff",
-"Landsat 8": "#2660a4ff",
+  "Landsat 8": "#2660a4ff",
   "Landsat 9": "#C60F7B",
 };
+
+function arePlotBoundsEqual(a: IPlotBounds, b: IPlotBounds): boolean {
+  return (
+    a.x[0].toISOString() === b.x[0].toISOString() &&
+    a.x[1].toISOString() === b.x[1].toISOString() &&
+    a.y[0] === b.y[0] &&
+    a.y[1] === b.y[1]
+  );
+}
