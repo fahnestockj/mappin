@@ -257,7 +257,7 @@ export const PlotlyChart = (props: IProps) => {
 };
 
 const satelliteColorDict = {
-  "Sentinel 1": "#28502eff",
+  "Sentinel 1": "#FE4A49",
   "Sentinel 2": "#c47335ff",
   "Landsat 4": "#2660a4ff",
   "Landsat 5": "#A1C181",

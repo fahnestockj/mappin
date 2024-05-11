@@ -19,7 +19,7 @@ const LeafletMap = memo(function Velmap(props: IProps) {
   const { zoom, markers, setMarkers, setSearchParams } = props;
   const middleMarkerIdx = Math.floor((markers.length - 1) / 2);
   const center: [number, number] =
-    middleMarkerIdx > 0
+    middleMarkerIdx >= 0
       ? [
           markers[middleMarkerIdx].latLon.lat,
           markers[middleMarkerIdx].latLon.lon,

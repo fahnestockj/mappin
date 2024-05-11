@@ -112,7 +112,8 @@ export async function findManyTimeseries(markerArr: Array<IMarker>): Promise<Arr
       if (timeseriesArr[i] === -32767) continue
       velocityArray.push(timeseriesArr[i])
       midDateArray.push(new Date(midDateArr[i] * 86400000))
-      dateDeltaArray.push(new Date(dateDeltaArr[i] * 86400000))
+      dateDeltaArray.push(new Date(dateDeltaArr[i] * 86400000)) // TODO: no need to alter this data
+      // make it into a number array
 
       const offset = i * 8
       const eightBytes = satelliteArr.buffer.slice(offset, offset + 8);
