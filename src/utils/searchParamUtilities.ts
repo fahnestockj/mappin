@@ -3,11 +3,12 @@ import { IMarker, colorHexArr } from "../types";
 import { z } from "zod";
 import dayjs from "dayjs";
 
-export function getStateFromUrlParams(params: URLSearchParams): { markers: Array<IMarker>, mapZoom: number, plotBounds: IPlotBounds } {
+export function getStateFromUrlParams(params: URLSearchParams): { markers: Array<IMarker>, mapZoom: number, plotBounds: IPlotBounds, intervalDays: [number, number] } {
   return {
     markers: getMarkersFromParams(params),
     mapZoom: getMapZoomFromParams(params),
-    plotBounds: getBoundsFromParams(params)
+    plotBounds: getBoundsFromParams(params),
+    intervalDays: getIntervalDaysFromParams(params)
   }
 }
 
@@ -67,6 +68,17 @@ function getMapZoomFromParams(params: URLSearchParams): number {
   return parseFloat(params.get('z') || '7');
 }
 
+function getIntervalDaysFromParams(params: URLSearchParams): [number, number] {
+  const intervalDays = params.getAll('int');
+  if (intervalDays.length == 2) {
+    const parsedInterval = [parseInt(intervalDays[0]), parseInt(intervalDays[1])];
+    if (!(parsedInterval.some(isNaN))) {
+      return parsedInterval as [number, number]
+    }
+  }
+  return [1, 120];
+}
+
 
 
 
@@ -83,11 +95,16 @@ export function setPlotBoundsInUrlParams(prevParams: URLSearchParams, plotBounds
   newParams.delete('y');
   newParams.append('x', dayjs(plotBounds.x[0]).format('YYYY-MM-DD'));
   newParams.append('x', dayjs(plotBounds.x[1]).format('YYYY-MM-DD'));
-  console.log(plotBounds.y[0].toFixed(0));
-  console.log(plotBounds.y[0].toFixed(0));
-  
   newParams.append('y', plotBounds.y[0].toFixed(0));
   newParams.append('y', plotBounds.y[1].toFixed(0));
+  return newParams;
+}
+
+export function setIntervalDaysInUrlParams(prevParams: URLSearchParams, intervalDays: Array<number>): URLSearchParams {
+  const newParams = new URLSearchParams(prevParams);
+  newParams.delete('int');
+  newParams.append('int', intervalDays[0].toString());
+  newParams.append('int', intervalDays[1].toString());
   return newParams;
 }
 

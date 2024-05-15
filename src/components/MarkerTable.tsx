@@ -112,7 +112,7 @@ export function MarkerTable(props: IProps) {
                 )}
               >
                 <div className="h-6 w-full flex flex-row items-center justify-between overflow-hidden">
-                  <div className="w-[16px]"></div>
+                  <div className="w-[24px]"></div>
                   {SvgCross(marker.color, "h-[22px] w-[22px]")}
                   <div
                     className="cursor-pointer mr-2"

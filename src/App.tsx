@@ -7,7 +7,10 @@ import { ShareButton } from "./components/ShareButton";
 import LeafletMap from "./components/LeafletMap/LeafletMap";
 import { ITimeseries, IMarker } from "./types";
 import { useSearchParams } from "react-router-dom";
-import { getStateFromUrlParams } from "./utils/searchParamUtilities";
+import {
+  getStateFromUrlParams,
+  setIntervalDaysInUrlParams,
+} from "./utils/searchParamUtilities";
 import { getTimeseries } from "./findManyTimeseries/findManyTimeseries";
 
 function App() {
@@ -15,7 +18,9 @@ function App() {
   const [params, setSearchParams] = useSearchParams();
   const initialState = getStateFromUrlParams(params);
   const [markers, setMarkers] = useState<Array<IMarker>>(initialState.markers);
-  const [intervalDays, setIntervalDays] = useState<Array<number>>([1, 120]);
+  const [intervalDays, setIntervalDays] = useState<Array<number>>(
+    initialState.intervalDays
+  );
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -80,10 +85,17 @@ function App() {
               </div>
               <RangeSlider
                 className="w-[100%] h-10"
-                defaultValue={[1, 120]}
+                defaultValue={intervalDays}
                 min={1}
                 max={500}
-                onAfterChange={(value) => setIntervalDays(value)}
+                onAfterChange={(value) => {
+                  setIntervalDays(value);
+                  setSearchParams(
+                    (prevParams) =>
+                      setIntervalDaysInUrlParams(prevParams, value),
+                    { replace: true }
+                  );
+                }}
               />
             </div>
             <div className="flex justify-between">
