@@ -1,6 +1,6 @@
 import { HTTPStore, openArray } from "@fahnestockj/zarr-fork";
 import { findClosestIndex } from "./findClosestIndex";
-import { IGeoJsonLookupResponse, geoJsonLookup } from "./geoJsonLookup";
+import { geoJsonLookup } from "./geoJsonLookup";
 import { IMarker, ITimeseries } from "../types";
 
 declare enum HTTPMethod {
@@ -11,6 +11,8 @@ export async function getTimeseries(marker: IMarker): Promise<ITimeseries> {
 
   const geoJsonLookupRes = geoJsonLookup(marker)
   const { zarrUrl, cartesianCoordinate } = geoJsonLookupRes
+
+  const cachedMidDateArrJson = window.sessionStorage.getItem(`midDateArr:${zarrUrl}`)
 
   const url = zarrUrl.replace('http', 'https')
 
@@ -79,12 +81,20 @@ export async function getTimeseries(marker: IMarker): Promise<ITimeseries> {
    * NOTE: Mid date array is in days since 1970-01-01 (EPOCH) which the Date constructor cannot handle
    * new Date(daysSinceEpochFloat * 86400000) -> converts to milliseconds since EPOCH which the Date constructor can handle
    **/
-  const midDateArr = await midDateZarr.get(null).then(res => {
-    if (typeof res === 'number') {
-      throw new Error('data is a number')
-    }
-    return res.data as Float64Array
-  })
+  let midDateArr: Float64Array
+
+  if (cachedMidDateArrJson) {
+    midDateArr = JSON.parse(cachedMidDateArrJson)
+  }
+  else {
+    midDateArr = await midDateZarr.get(null).then(res => {
+      if (typeof res === 'number') {
+        throw new Error('data is a number')
+      }
+      return res.data as Float64Array
+    })
+    window.sessionStorage.setItem(`midDateArr:${zarrUrl}`, JSON.stringify(midDateArr))
+  }
 
 
   const dateDeltaArr = await dateDeltaZarr.get(null).then(res => {
