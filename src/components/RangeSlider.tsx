@@ -1,7 +1,6 @@
 import ReactSlider, { ReactSliderProps } from "react-slider";
 import cn from "classnames";
-const RangeSlider = 
-<T extends number | readonly number[]>(
+const RangeSlider = <T extends number | readonly number[]>(
   _props: ReactSliderProps<T>
 ) => {
   const isVertical = _props.orientation === "vertical";
@@ -22,12 +21,12 @@ const RangeSlider =
         </div>
       )}
       renderTrack={(props, state) => {
-        const numPoints = Array.isArray(state.value) ? state.value.length : null;
+        const numPoints = Array.isArray(state.value)
+          ? state.value.length
+          : null;
         const isMulti = numPoints && numPoints > 0;
         const isFirst = state.index === 0;
-        const isLast = isMulti && (state.index === numPoints - 1);
-        
-        
+        const isLast = isMulti && state.index === numPoints - 1;
         return (
           <div
             {...props}
@@ -37,7 +36,7 @@ const RangeSlider =
               "w-1/4 left-1/2 -translate-x-1/2": isVertical,
               "rounded-full": true,
               "bg-gray-200": isFirst || !isLast,
-              "bg-sky-900":  isLast,
+              "bg-sky-900": isLast,
             })}
           />
         );

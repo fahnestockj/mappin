@@ -9,6 +9,7 @@ import {
   addMarkerToUrlParams,
   clearMarkersFromUrlParams,
 } from "../../utils/searchParamUtilities";
+import { createId } from "@paralleldrive/cuid2";
 
 type IProps = {
   markerProp: IMarker;
@@ -38,14 +39,15 @@ const LocationMarker = (props: IProps) => {
         );
         const marker = markerRef.current;
         if (marker != null) {
-          const newMarkers = [...markers];
+          const newMarkers = markers.slice()
           // @ts-ignore
           const { lat, lng: lon } = marker.getLatLng() as {
             lat: number;
             lng: number;
-          }; //a leaflet function for fetching latLon
+          };
           newMarkers[oldMarkerIndex] = {
-            ...markerProp,
+            id: createId(),
+            color: markerProp.color,
             latLon: {
               lat: parseFloat(lat.toFixed(4)),
               lon: parseFloat(lon.toFixed(4)),

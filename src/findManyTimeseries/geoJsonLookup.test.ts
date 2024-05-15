@@ -13,8 +13,8 @@ describe('geoJsonLookup', () => {
       id: 'test',
       color: '#2660a4ff',
     }
-    const res = geoJsonLookup([marker])
-    expect(res[0].zarrUrl).toEqual('http://its-live-data.s3.amazonaws.com/datacubes/v2/N70W040/ITS_LIVE_vel_EPSG3413_G0120_X-150000_Y-2150000.zarr')
+    const res = geoJsonLookup(marker)
+    expect(res.zarrUrl).toEqual('http://its-live-data.s3.amazonaws.com/datacubes/v2/N70W040/ITS_LIVE_vel_EPSG3413_G0120_X-150000_Y-2150000.zarr')
 
   })
 
@@ -35,7 +35,7 @@ describe('geoJsonLookup', () => {
      * toThrow asks does the function passed to expect (as a callback) throw an error when it is called
      */
 
-    const callbackFunction = () => { geoJsonLookup([marker]) }
+    const callbackFunction = () => { geoJsonLookup(marker) }
     expect(callbackFunction).toThrow(err)
   })
 
@@ -49,8 +49,8 @@ describe('geoJsonLookup', () => {
       color: '#2660a4ff',
       id: 'test'
     }
-    const res = geoJsonLookup([marker])
-    expect(res[0].zarrUrl).toEqual('http://its-live-data.s3.amazonaws.com/datacubes/v2/N70W040/ITS_LIVE_vel_EPSG3413_G0120_X50000_Y-2150000.zarr')
+    const res = geoJsonLookup(marker)
+    expect(res.zarrUrl).toEqual('http://its-live-data.s3.amazonaws.com/datacubes/v2/N70W040/ITS_LIVE_vel_EPSG3413_G0120_X50000_Y-2150000.zarr')
 
 
 

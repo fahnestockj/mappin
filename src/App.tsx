@@ -5,10 +5,11 @@ import { PlotlyChart } from "./components/PlotlyChart/PlotlyChart";
 import RangeSlider from "./components/RangeSlider";
 import { ShareButton } from "./components/ShareButton";
 import LeafletMap from "./components/LeafletMap/LeafletMap";
-import { findManyTimeseries } from "./findManyTimeseries/findManyTimeseries";
 import { ITimeseries, IMarker } from "./types";
 import { useSearchParams } from "react-router-dom";
 import { getStateFromUrlParams } from "./utils/searchParamUtilities";
+import { getTimeseries } from "./findManyTimeseries/findManyTimeseries";
+import { set } from "immer/dist/internal";
 
 function App() {
   const [timeseriesArr, setTimeseriesArr] = useState<Array<ITimeseries>>([]);
@@ -19,17 +20,28 @@ function App() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    setIsLoading(true);
-    //NOTE: useEffect will run twice in development because of React.StrictMode this won't happen in production
-    findManyTimeseries(markers)
-      .then((timeseriesArr) => {
-        setTimeseriesArr(timeseriesArr);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setIsLoading(false);
-      });
+    const filteredTimeseries = timeseriesArr.filter(
+      (timeseries) => !markers.every((m) => m.id !== timeseries.marker.id)
+    );
+    setTimeseriesArr(filteredTimeseries.slice());
+
+    const newMarkers = markers.filter((marker) =>
+      timeseriesArr.every((timeseries) => timeseries.marker.id !== marker.id)
+    );
+    if (newMarkers.length > 0) {
+      setIsLoading(true);
+      newMarkers.map(getTimeseries).map((promise) =>
+        promise
+          .then((timeseries) => {
+            setTimeseriesArr((arr) => [...arr, timeseries]);
+            setIsLoading(false);
+          })
+          .catch((err) => {
+            console.error(err);
+            setIsLoading(false);
+          })
+      );
+    }
   }, [markers]);
 
   return (
@@ -58,6 +70,7 @@ function App() {
               markers={markers}
               setMarkers={setMarkers}
               setSearchParams={setSearchParams}
+              setTimeseriesArr={setTimeseriesArr}
             />
           </div>
 

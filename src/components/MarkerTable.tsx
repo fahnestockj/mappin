@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { IMarker, ISetSearchParams } from "../types";
+import { IMarker, ISetSearchParams, ITimeseries } from "../types";
 import { SvgCross } from "./SvgCross";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -7,6 +7,7 @@ type IProps = {
   markers: Array<IMarker>;
   setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>;
   setSearchParams: ISetSearchParams;
+  setTimeseriesArr: React.Dispatch<React.SetStateAction<ITimeseries[]>>;
 };
 // TODO: clean up these classnames
 const cellClassName = "border-r-2 border-b-2 border-slate-600";
@@ -120,6 +121,7 @@ export function MarkerTable(props: IProps) {
           className="h-[24px] block w-full cursor-pointer hover:bg-slate-100"
           onClick={() => {
             props.setMarkers([]);
+            props.setTimeseriesArr([]);
             props.setSearchParams(
               (prevParams) => {
                 const newParams = new URLSearchParams(prevParams);
