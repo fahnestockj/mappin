@@ -20,13 +20,12 @@ export function createMarker(props: IProps) {
   if (markers.length <= 10) {
     const newMarker: IMarker = {
       id: createId(),
-      color: colorHexArr[markers.length],
+      color: colorHexArr.find(color => !markers.some(marker => marker.color === color)) || colorHexArr[0],
       latLon: {
         lat: parseFloat(latitude.toFixed(4)),
         lon: parseFloat(longitude.toFixed(4))
       }
     }
-    //Immer produce for immutability
     const updatedMarkers = produce(markers, draft => {
       draft.push(newMarker)
     })

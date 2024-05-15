@@ -2,6 +2,7 @@ import classNames from "classnames";
 import { IMarker, ISetSearchParams, ITimeseries } from "../types";
 import { SvgCross } from "./SvgCross";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { clearMarkersFromUrlParams } from "../utils/searchParamUtilities";
 
 type IProps = {
   markers: Array<IMarker>;
@@ -12,6 +13,7 @@ type IProps = {
 // TODO: clean up these classnames
 const cellClassName = "border-r-2 border-b-2 border-slate-600";
 export function MarkerTable(props: IProps) {
+  const { markers, setMarkers, setSearchParams, setTimeseriesArr } = props;
   const [scrollBarGutterPresent, setScrollBarGutterPresent] = useState(false);
   const bottomRowRef = useRef<HTMLTableRowElement>(null);
   const tableBodyRef = useCallback((node: HTMLTableSectionElement) => {
@@ -19,7 +21,6 @@ export function MarkerTable(props: IProps) {
       setScrollBarGutterPresent(node.offsetWidth - node.clientWidth > 0);
     }
   }, []);
-
 
   useEffect(() => {
     if (bottomRowRef.current) {
@@ -29,7 +30,7 @@ export function MarkerTable(props: IProps) {
         inline: "nearest",
       });
     }
-  }, [props.markers]);
+  }, [markers]);
 
   return (
     <table
@@ -40,7 +41,7 @@ export function MarkerTable(props: IProps) {
       <thead
         className={classNames(
           "bg-[#B4D2E7] block relative w-full",
-          props.markers.length > 3 && "shadow-lg"
+          markers.length > 3 && "shadow-lg"
         )}
       >
         <tr className="w-full flex">
@@ -77,14 +78,17 @@ export function MarkerTable(props: IProps) {
           "block relative w-full max-h-[104px] border-b border-slate-600 overflow-y-scroll"
         )}
       >
-        {props.markers.map((marker, i) => {
+        {markers.map((marker, i) => {
           return (
-            <tr className="w-full flex" key={`${marker.id}`}>
+            <tr
+              className="w-full flex hover:bg-slate-100 group"
+              key={`${marker.id}`}
+            >
               <td
                 className={classNames(
                   cellClassName,
                   "basis-full grow-[2] block p-1",
-                  i === props.markers.length - 1 && "border-b-0"
+                  i === markers.length - 1 && "border-b-0"
                 )}
               >
                 <div className="ml-2 overflow-hidden">{marker.latLon.lat}</div>
@@ -94,7 +98,7 @@ export function MarkerTable(props: IProps) {
                 className={classNames(
                   cellClassName,
                   "basis-full grow-[2] block p-1",
-                  i === props.markers.length - 1 && "border-b-0"
+                  i === markers.length - 1 && "border-b-0"
                 )}
               >
                 <div className="ml-2 overflow-hidden">{marker.latLon.lon}</div>
@@ -103,12 +107,32 @@ export function MarkerTable(props: IProps) {
               <td
                 className={classNames(
                   "border-b-2 border-slate-600 basis-full grow-[2] block p-1 ",
-                  i === props.markers.length - 1 && "border-b-0",
+                  i === markers.length - 1 && "border-b-0",
                   scrollBarGutterPresent && "max-w-[calc(34.35%-15px)]"
                 )}
               >
-                <div className="h-5 flex flex-col justify-middle overflow-hidden">
-                  {SvgCross(marker.color)}
+                <div className="h-6 w-full flex flex-row items-center justify-between overflow-hidden">
+                  <div className="w-[16px]"></div>
+                  {SvgCross(marker.color, "h-[22px] w-[22px]")}
+                  <div
+                    className="cursor-pointer mr-2"
+                    onClick={() => {
+                      const newMarkers = markers
+                        .filter((m) => m.id !== marker.id)
+                        .slice();
+                      setMarkers(newMarkers);
+                      setSearchParams((prevParams) => {
+                        const newParams = clearMarkersFromUrlParams(prevParams);
+                        newMarkers.forEach((marker) => {
+                          newParams.append("lat", marker.latLon.lat.toString());
+                          newParams.append("lon", marker.latLon.lon.toString());
+                        });
+                        return newParams;
+                      });
+                    }}
+                  >
+                    <TrashCanSvg className="stroke-white group-hover:stroke-gray-600" />
+                  </div>
                 </div>
               </td>
             </tr>
@@ -120,9 +144,9 @@ export function MarkerTable(props: IProps) {
         <tr
           className="h-[24px] block w-full cursor-pointer hover:bg-slate-100"
           onClick={() => {
-            props.setMarkers([]);
-            props.setTimeseriesArr([]);
-            props.setSearchParams(
+            setMarkers([]);
+            setTimeseriesArr([]);
+            setSearchParams(
               (prevParams) => {
                 const newParams = new URLSearchParams(prevParams);
                 newParams.delete("lat");

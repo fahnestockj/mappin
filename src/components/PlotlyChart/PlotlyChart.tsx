@@ -1,7 +1,7 @@
 import createPlotlyComponent from "react-plotly.js/factory";
 import { Figure } from "react-plotly.js/index";
 import Plotly from "plotly.js-gl2d-dist-min";
-import { ISetSearchParams, ITimeseries, colorHexArr } from "../../types";
+import { ISetSearchParams, ITimeseries } from "../../types";
 import { useMemo, useState } from "react";
 import classNames from "classnames";
 import { ITS_LIVE_LOGO_SVG } from "../../utils/ITS_LIVE_LOGO_SVG";

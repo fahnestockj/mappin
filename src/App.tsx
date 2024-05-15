@@ -9,7 +9,6 @@ import { ITimeseries, IMarker } from "./types";
 import { useSearchParams } from "react-router-dom";
 import { getStateFromUrlParams } from "./utils/searchParamUtilities";
 import { getTimeseries } from "./findManyTimeseries/findManyTimeseries";
-import { set } from "immer/dist/internal";
 
 function App() {
   const [timeseriesArr, setTimeseriesArr] = useState<Array<ITimeseries>>([]);
@@ -42,7 +41,7 @@ function App() {
           })
       );
     }
-  }, [markers]);
+  }, [markers, timeseriesArr.length]);
 
   return (
     <div className="w-full h-screen">
