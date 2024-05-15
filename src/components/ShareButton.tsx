@@ -24,8 +24,8 @@ export const ShareButton = (props: IProps) => {
       onClick={copyToClipboard}
       disabled={copied}
       className="
-      h-[3rem] inline-flex items-center rounded-md border border-gray-300 bg-white px-5 py-3 
-      text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+      h-[40px] inline-flex items-center rounded-md border border-gray-300 bg-white px-5 py-3 
+      text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
     >
       {!copied && <BiShare className="scale-150 mr-2" />}
       {copied ? "Link Copied!" : "Share"}

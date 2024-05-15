@@ -12,6 +12,7 @@ import {
   setIntervalDaysInUrlParams,
 } from "./utils/searchParamUtilities";
 import { getTimeseries } from "./findManyTimeseries/findManyTimeseries";
+import { NumberOfFilteredPts } from "./components/NumberOfFilteredPts";
 
 function App() {
   const [timeseriesArr, setTimeseriesArr] = useState<Array<ITimeseries>>([]);
@@ -21,7 +22,7 @@ function App() {
   const [intervalDays, setIntervalDays] = useState<Array<number>>(
     initialState.intervalDays
   );
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const filteredTimeseries = timeseriesArr.filter(
@@ -69,7 +70,7 @@ function App() {
           />
         </div>
         <div className="max-w-[400px] w-full h-full  mx-4 flex flex-col items-center">
-          <div className="h-[165px] w-full">
+          <div className="h-[166px] w-full">
             <MarkerTable
               markers={markers}
               setMarkers={setMarkers}
@@ -78,13 +79,19 @@ function App() {
             />
           </div>
 
-          <div className="w-full mt-4 shadow-md border-[#e5e7eb] border-2 rounded-lg p-4 overflow-auto h-content">
-            <div className="align-end my-5 flex items-center mx-4">
-              <div className="text-md mr-4 font-semibold">
-                Interval <br /> (days)
+          <div className="w-full mt-4 shadow-md border-[#e5e7eb] border-2 rounded-lg p-4 overflow-auto h-min">
+            <div className="flex flex-col items-center mx-4">
+              <div className="w-full flex flex-row items-center justify-between">
+                <div className="text-md font-semibold">
+                  Measurement Interval (days)
+                </div>
+                <NumberOfFilteredPts
+                  timeseriesArr={timeseriesArr}
+                  intervalDays={intervalDays}
+                />
               </div>
               <RangeSlider
-                className="w-[100%] h-10"
+                className="w-[100%] h-10 mt-2 mb-2"
                 defaultValue={intervalDays}
                 min={1}
                 max={500}
