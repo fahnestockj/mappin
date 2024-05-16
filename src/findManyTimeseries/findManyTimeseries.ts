@@ -93,7 +93,12 @@ export async function getTimeseries(marker: IMarker): Promise<ITimeseries> {
       }
       return res.data as Float64Array
     })
-    window.sessionStorage.setItem(`midDateArr:${zarrUrl}`, JSON.stringify(midDateArr))
+    try {
+      window.sessionStorage.setItem(`midDateArr:${zarrUrl}`, JSON.stringify(midDateArr, null, 0))
+    }
+    catch (e) {
+      console.error(e)
+    }
   }
 
 
