@@ -64,9 +64,6 @@ export const PlotlyChart = (props: IProps) => {
                 height: 600,
                 width: 1500,
               });
-              console.log("satelliteView", satelliteView);
-              console.log("gd.style.mar", gd)
-
               Plotly.relayout(gd, {
                 title: "",
               });

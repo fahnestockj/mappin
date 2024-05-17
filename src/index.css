@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .modebar-btn {
-  margin-bottom: 20px !important;
+  margin-top: 20px !important;
 }
 
 .modebar-group {
