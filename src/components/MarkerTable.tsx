@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import { TiPencil } from "react-icons/ti";
 import { IMarker, ISetSearchParams, ITimeseries } from "../types";
 import { SvgCross } from "./SvgCross";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -38,12 +39,7 @@ export function MarkerTable(props: IProps) {
       block min-w-[362px] overflow-hidden
     "
     >
-      <thead
-        className={classNames(
-          "bg-[#B4D2E7] block relative w-full",
-          markers.length > 3 && "shadow-lg"
-        )}
-      >
+      <thead className={classNames("bg-[#B4D2E7] block relative w-full")}>
         <tr className="w-full flex">
           <th
             className={classNames(
@@ -112,26 +108,43 @@ export function MarkerTable(props: IProps) {
                 )}
               >
                 <div className="h-6 w-full flex flex-row items-center justify-between overflow-hidden">
-                  <div className="w-[24px]"></div>
+                  <div className="w-[36px]"></div>
                   {SvgCross(marker.color, "h-[22px] w-[22px]")}
-                  <div
-                    className="cursor-pointer mr-2"
-                    onClick={() => {
-                      const newMarkers = markers
-                        .filter((m) => m.id !== marker.id)
-                        .slice();
-                      setMarkers(newMarkers);
-                      setSearchParams((prevParams) => {
-                        const newParams = clearMarkersFromUrlParams(prevParams);
-                        newMarkers.forEach((marker) => {
-                          newParams.append("lat", marker.latLon.lat.toString());
-                          newParams.append("lon", marker.latLon.lon.toString());
+                  <div className="w-[36px] flex">
+                    <div
+                      className="cursor-pointer"
+                      onClick={() => {
+                        
+                      }}
+                    >
+                      <TiPencil className="fill-white  group-hover:fill-gray-600 " />
+                    </div>
+                    <div
+                      className="cursor-pointer mx-1"
+                      onClick={() => {
+                        const newMarkers = markers
+                          .filter((m) => m.id !== marker.id)
+                          .slice();
+                        setMarkers(newMarkers);
+                        setSearchParams((prevParams) => {
+                          const newParams =
+                            clearMarkersFromUrlParams(prevParams);
+                          newMarkers.forEach((marker) => {
+                            newParams.append(
+                              "lat",
+                              marker.latLon.lat.toString()
+                            );
+                            newParams.append(
+                              "lon",
+                              marker.latLon.lon.toString()
+                            );
+                          });
+                          return newParams;
                         });
-                        return newParams;
-                      });
-                    }}
-                  >
-                    <TrashCanSvg className="stroke-white group-hover:stroke-gray-600" />
+                      }}
+                    >
+                      <TrashCanSvg className="stroke-white group-hover:stroke-gray-600" />
+                    </div>
                   </div>
                 </div>
               </td>
@@ -172,12 +185,14 @@ export function MarkerTable(props: IProps) {
   );
 }
 
+function TrashCanButton() {}
+
 function TrashCanSvg(props: { className?: string }) {
   return (
     <svg
       className={classNames(props.className)}
-      width="16"
-      height="16"
+      width="15"
+      height="15"
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
