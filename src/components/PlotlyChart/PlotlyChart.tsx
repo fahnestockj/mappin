@@ -24,6 +24,93 @@ export const PlotlyChart = (props: IProps) => {
     props;
   const [dragmode, setDragmode] = useState<"pan" | "zoom">("zoom");
   const [satelliteView, setSatelliteView] = useState<boolean>(false);
+  const chartConfig: Partial<Plotly.Config> = useMemo(() => {
+    return {
+      modeBarButtons: [
+        [
+          {
+            name: "satelliteView",
+            title: "Satellite View",
+            icon: {
+              svg: satelliteSvgString,
+              name: "satellite",
+            },
+            click: function () {
+              setSatelliteView((prev) => !prev);
+            },
+          },
+
+          {
+            name: "downloadImage",
+            title: "Download Plot PNG",
+            icon: Plotly.Icons.camera,
+            click: function (gd) {
+              Plotly.relayout(gd, {
+                title: {
+                  text: "Source: NASA MEaSUREs ITS_LIVE",
+                  xref: "container",
+                  yref: "container",
+                  x: 0.02,
+                  y: 0.03,
+                  font: {
+                    color: "#808080",
+                    size: 13,
+                  },
+                },
+              });
+              Plotly.downloadImage(gd, {
+                format: "png",
+                filename: "plot",
+                height: 600,
+                width: 1500,
+              });
+              console.log("satelliteView", satelliteView);
+              console.log("gd.style.mar", gd)
+
+              Plotly.relayout(gd, {
+                title: "",
+              });
+            },
+          },
+          {
+            name: "zoom2d",
+            title: "Zoom",
+            icon: Plotly.Icons.zoombox,
+            click: function (gd) {
+              setDragmode("zoom");
+              Plotly.relayout(gd, { dragmode: "zoom" });
+            },
+          },
+          {
+            name: "pan2d",
+            title: "Pan",
+            icon: Plotly.Icons.pan,
+            click: function (gd) {
+              setDragmode("pan");
+              Plotly.relayout(gd, { dragmode: "pan" });
+            },
+          },
+          {
+            name: "autoscale2d",
+            title: "Reset Axes",
+            icon: Plotly.Icons.autoscale,
+            click: function (gd) {
+              Plotly.relayout(gd, {
+                "xaxis.autorange": true,
+                "yaxis.autorange": true,
+              });
+            },
+          },
+        ],
+      ],
+      doubleClick: "autosize",
+      doubleClickDelay: 600,
+      displaylogo: false,
+      showTips: false,
+      responsive: true,
+      displayModeBar: true,
+    };
+  }, [satelliteView, setSatelliteView]);
 
   const chartLayout = useMemo(() => {
     const xBounds = plotBounds.x.slice(); // Needed to ensure immutability (the props don't get mutated)
@@ -40,7 +127,7 @@ export const PlotlyChart = (props: IProps) => {
       | "legend"
       | "modebar"
     > = {
-      margin: { t: 0, b: 40, l: 80, r: satelliteView ? 140 : 80 },
+      margin: { t: 20, b: 60, l: 80, r: satelliteView ? 150 : 80 },
       autosize: true,
       showlegend: satelliteView,
       xaxis: { type: "date", range: xBounds, autorange: false },
@@ -53,7 +140,7 @@ export const PlotlyChart = (props: IProps) => {
       dragmode,
       legend: {
         title: { text: "  Satellites", font: { size: 15 } },
-        x: 0.98,
+        x: 1,
       },
       modebar: {
         orientation: "v",
@@ -71,7 +158,7 @@ export const PlotlyChart = (props: IProps) => {
       const filtertedSatelliteArray: string[] = [];
 
       for (let i = 0; i < timeseries.data.velocityArray.length; i++) {
-        const dt = timeseries.data.daysDeltaArray[i]
+        const dt = timeseries.data.daysDeltaArray[i];
         if (dt >= intervalDays[0] && dt <= intervalDays[1]) {
           filteredMidDateArray.push(timeseries.data.midDateArray[i]);
           filteredVelocityArray.push(timeseries.data.velocityArray[i]);
@@ -138,8 +225,8 @@ export const PlotlyChart = (props: IProps) => {
   }, [timeseriesArr, intervalDays, satelliteView]);
 
   return (
-    <div className={classNames("w-full h-4/5", loading && "animate-pulse")}>
-      <div className="w-full flex justify-center my-4">
+    <div className={classNames("w-full h-[90%]", loading && "animate-pulse")}>
+      <div className="w-full flex justify-center mt-4">
         <a href="https://its-live.jpl.nasa.gov/">
           <ITS_LIVE_LOGO_SVG />
         </a>
@@ -149,11 +236,6 @@ export const PlotlyChart = (props: IProps) => {
           // this callback gets called a lot including when the user is dragging a zoom box
           // in that time we need to be careful to ignore all changes except for those that actually change the x and y axis range
           // heavily impacts chart performance
-
-          // check dragmode
-          if (figure.layout.dragmode !== dragmode) {
-            setDragmode(figure.layout.dragmode as "pan" | "zoom");
-          }
 
           const plotXBounds = figure.layout.xaxis!.range! as [string, string];
           const plotXBoundsDate = plotXBounds.map((date) => new Date(date)) as [
@@ -181,72 +263,7 @@ export const PlotlyChart = (props: IProps) => {
         }}
         data={data}
         layout={chartLayout}
-        config={{
-          modeBarButtons: [
-            [],
-            [
-              {
-                name: "satelliteView",
-                title: "Satellite View",
-                icon: {
-                  svg: satelliteSvgString,
-                  name: "satellite",
-                },
-                click: function () {
-                  setSatelliteView((prev) => !prev);
-                },
-              },
-
-              {
-                name: "downloadImage",
-                title: "Download Plot PNG",
-                icon: Plotly.Icons.camera,
-                click: function (gd) {
-                  Plotly.downloadImage(gd, {
-                    format: "png",
-                    filename: "plot",
-                    height: 600,
-                    width: 1500,
-                  });
-                },
-              },
-              {
-                name: "zoom2d",
-                title: "Zoom",
-                icon: Plotly.Icons.zoombox,
-                click: function (gd) {
-                  Plotly.relayout(gd, { dragmode: "zoom" });
-                },
-              },
-              {
-                name: "pan2d",
-                title: "Pan",
-                icon: Plotly.Icons.pan,
-                click: function (gd) {
-                  setDragmode("pan");
-                  Plotly.relayout(gd, { dragmode: "pan" });
-                },
-              },
-              {
-                name: "autoscale2d",
-                title: "Reset Axes",
-                icon: Plotly.Icons.autoscale,
-                click: function (gd) {
-                  Plotly.relayout(gd, {
-                    "xaxis.autorange": true,
-                    "yaxis.autorange": true,
-                  });
-                },
-              },
-            ],
-          ],
-          doubleClick: "autosize",
-          doubleClickDelay: 600,
-          displaylogo: false,
-          showTips: false,
-          responsive: true,
-          displayModeBar: true,
-        }}
+        config={chartConfig}
         className="w-full h-full"
       />
     </div>
