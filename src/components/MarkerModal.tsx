@@ -3,6 +3,11 @@ import { IMarker, ISetSearchParams } from "../types";
 import { z } from "zod";
 import classNames from "classnames";
 import { ErrorMessage, Field, Form, Formik, FormikErrors } from "formik";
+import { createId } from "@paralleldrive/cuid2";
+import {
+  addMarkerToUrlParams,
+  clearMarkersFromUrlParams,
+} from "../utils/searchParamUtilities";
 
 interface IProps {
   setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>;
@@ -67,24 +72,33 @@ export function MarkerModal(props: IProps) {
             return errors;
           }}
           onSubmit={(values, { setSubmitting }) => {
-            setMarkers(() => {
-              const newMarkers = markers.slice();
-              newMarkers[markers.indexOf(marker)] = {
-                ...marker,
-                latLon: {
-                  lat: Number(values.latitude),
-                  lon: Number(values.longitude),
-                },
-              };
-              return newMarkers;
-            });
-            setTimeout(() => {
-              setSubmitting(false);
-            }, 400);
+            const newMarkers = markers.slice();
+            const index = newMarkers.findIndex((m) => m.id === marker.id);
+            newMarkers[index] = {
+              ...newMarkers[index],
+              id: createId(),
+              latLon: {
+                lat: Number(values.latitude),
+                lon: Number(values.longitude),
+              },
+            };
+            setMarkers(newMarkers);
+            setSearchParams(
+              (prevParams) => {
+                // remove all markers from the url
+                let params = clearMarkersFromUrlParams(prevParams);
+                // then add our newMarkers as params
+                newMarkers.forEach((marker) => {
+                  params = addMarkerToUrlParams(params, marker);
+                });
+                return params;
+              },
+              { replace: true }
+            );
+            onClose();
           }}
-          className="w-full h-full"
         >
-          {({ values, errors, handleChange, isSubmitting }) => (
+          {({ isSubmitting }) => (
             <Form className="w-full h-full">
               <div className="w-full h-2/3 flex justify-evenly items-center">
                 <label className="block">

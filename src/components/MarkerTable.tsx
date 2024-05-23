@@ -130,16 +130,16 @@ export function MarkerTable(props: IProps) {
                   )}
                 >
                   <div className="h-6 w-full flex flex-row items-center justify-between overflow-hidden">
-                    <div className="w-[45px]"></div>
+                    <div className="w-[40px]"></div>
                     {SvgCross(marker.color, "h-[22px] w-[22px]")}
-                    <div className="w-[45px] flex">
+                    <div className="w-[40px] flex">
                       <div
                         className="cursor-pointer"
                         onClick={() => {
                           setMarkerToEditInModal(marker);
                         }}
                       >
-                        <TiPencil className="fill-white group-hover:fill-gray-600 w-[20px] h-[20px]" />
+                        <TiPencil className="fill-white group-hover:fill-gray-600 w-[18px] h-[18px]" />
                       </div>
                       <div
                         className="cursor-pointer mx-1"
@@ -212,8 +212,8 @@ function TrashCanSvg(props: { className?: string }) {
   return (
     <svg
       className={classNames(props.className)}
-      width="20"
-      height="20"
+      width="18"
+      height="18"
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
