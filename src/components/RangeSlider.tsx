@@ -10,7 +10,7 @@ const RangeSlider = <T extends number | readonly number[]>(
         <div
           {...props}
           className={
-            "h-full aspect-square rounded-full bg-sky-700 hover:bg-sky-800 text-xs text-white flex items-center justify-center cursor-grab"
+            "h-full aspect-square rounded-full bg-sky-700 hover:bg-sky-800 text-xs text-white flex items-center justify-center cursor-grab focus:ring-[3px] focus:ring-sky-500"
           }
         >
           {state.valueNow}

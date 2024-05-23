@@ -17,7 +17,8 @@ export const CSVDownloadButton = (props: IProps) => {
       h-[40px]
       cursor-pointer inline-flex 
       items-center rounded-md border border-transparent bg-sky-700 
-      px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-sky-800"
+      px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-sky-800
+       focus:ring-[3px] focus:ring-sky-500"
       onClick={() => {
         data.forEach((timeseries) => {
           let csvStr = "mid_date, v [m/yr], satellite, dt (days)\n";

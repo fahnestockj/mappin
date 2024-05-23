@@ -50,7 +50,7 @@ function App() {
   }, [markers, timeseriesArr.length]);
 
   return (
-    <div className="w-full h-screen">
+    <div id="modal-root" className="w-full h-screen">
       <div className="w-full h-[55%] shadow-md">
         <LeafletMap
           markers={markers}

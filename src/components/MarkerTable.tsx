@@ -4,6 +4,8 @@ import { IMarker, ISetSearchParams, ITimeseries } from "../types";
 import { SvgCross } from "./SvgCross";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { clearMarkersFromUrlParams } from "../utils/searchParamUtilities";
+import { createPortal } from "react-dom";
+import { MarkerModal } from "./MarkerModal";
 
 type IProps = {
   markers: Array<IMarker>;
@@ -16,6 +18,10 @@ const cellClassName = "border-r-2 border-b-2 border-slate-600";
 export function MarkerTable(props: IProps) {
   const { markers, setMarkers, setSearchParams, setTimeseriesArr } = props;
   const [scrollBarGutterPresent, setScrollBarGutterPresent] = useState(false);
+
+  const [markerToEditInModal, setMarkerToEditInModal] =
+    useState<IMarker | null>(null);
+
   const bottomRowRef = useRef<HTMLTableRowElement>(null);
   const tableBodyRef = useCallback((node: HTMLTableSectionElement) => {
     if (node !== null) {
@@ -34,165 +40,180 @@ export function MarkerTable(props: IProps) {
   }, [markers]);
 
   return (
-    <table
-      className="table-fixed border-spacing-0 rounded-lg border-2 border-separate border-slate-600 shadow-md
+    <>
+      {markerToEditInModal &&
+        createPortal(
+          <MarkerModal
+            markers={markers}
+            marker={markerToEditInModal}
+            setMarkers={setMarkers}
+            setSearchParams={setSearchParams}
+            onClose={() => setMarkerToEditInModal(null)}
+          />,
+          document.getElementById("modal-root") as HTMLElement
+        )}
+      <table
+        className="table-fixed border-spacing-0 rounded-lg border-2 border-separate border-slate-600 shadow-md
       block min-w-[362px] overflow-hidden
     "
-    >
-      <thead className={classNames("bg-[#B4D2E7] block relative w-full")}>
-        <tr className="w-full flex">
-          <th
-            className={classNames(
-              cellClassName,
-              "font-semibold overflow-hidden basis-full grow-[2] block p-1"
-            )}
-          >
-            Latitude
-          </th>
-          <th
-            className={classNames(
-              cellClassName,
-              "font-semibold overflow-hidden basis-full grow-[2] block p-1"
-            )}
-          >
-            Longitude
-          </th>
-          <th
-            className={classNames(
-              "border-b-2 border-slate-600 basis-full grow-[2] block p-1",
-              "font-semibold"
-            )}
-          >
-            Symbol
-          </th>
-        </tr>
-      </thead>
-      <tbody
-        id="table-body"
-        ref={tableBodyRef}
-        className={classNames(
-          "block relative w-full max-h-[104px] border-b border-slate-600 overflow-y-scroll"
-        )}
       >
-        {markers.map((marker, i) => {
-          return (
-            <tr
-              className="w-full flex hover:bg-slate-100 group"
-              key={`${marker.id}`}
+        <thead className={classNames("bg-[#B4D2E7] block relative w-full")}>
+          <tr className="w-full flex">
+            <th
+              className={classNames(
+                cellClassName,
+                "font-semibold overflow-hidden basis-full grow-[2] block p-1"
+              )}
             >
-              <td
-                className={classNames(
-                  cellClassName,
-                  "basis-full grow-[2] block p-1",
-                  i === markers.length - 1 && "border-b-0"
-                )}
+              Latitude
+            </th>
+            <th
+              className={classNames(
+                cellClassName,
+                "font-semibold overflow-hidden basis-full grow-[2] block p-1"
+              )}
+            >
+              Longitude
+            </th>
+            <th
+              className={classNames(
+                "border-b-2 border-slate-600 basis-full grow-[2] block p-1",
+                "font-semibold"
+              )}
+            >
+              Symbol
+            </th>
+          </tr>
+        </thead>
+        <tbody
+          id="table-body"
+          ref={tableBodyRef}
+          className={classNames(
+            "block relative w-full max-h-[104px] border-b border-slate-600 overflow-y-scroll"
+          )}
+        >
+          {markers.map((marker, i) => {
+            return (
+              <tr
+                className="w-full flex hover:bg-slate-100 group"
+                key={`${marker.id}`}
               >
-                <div className="ml-2 overflow-hidden">{marker.latLon.lat}</div>
-              </td>
+                <td
+                  className={classNames(
+                    cellClassName,
+                    "basis-full grow-[2] block p-1",
+                    i === markers.length - 1 && "border-b-0"
+                  )}
+                >
+                  <div className="ml-2 overflow-hidden">
+                    {marker.latLon.lat}
+                  </div>
+                </td>
 
-              <td
-                className={classNames(
-                  cellClassName,
-                  "basis-full grow-[2] block p-1",
-                  i === markers.length - 1 && "border-b-0"
-                )}
-              >
-                <div className="ml-2 overflow-hidden">{marker.latLon.lon}</div>
-              </td>
+                <td
+                  className={classNames(
+                    cellClassName,
+                    "basis-full grow-[2] block p-1",
+                    i === markers.length - 1 && "border-b-0"
+                  )}
+                >
+                  <div className="ml-2 overflow-hidden">
+                    {marker.latLon.lon}
+                  </div>
+                </td>
 
-              <td
-                className={classNames(
-                  "border-b-2 border-slate-600 basis-full grow-[2] block p-1 ",
-                  i === markers.length - 1 && "border-b-0",
-                  scrollBarGutterPresent && "max-w-[calc(34.35%-15px)]"
-                )}
-              >
-                <div className="h-6 w-full flex flex-row items-center justify-between overflow-hidden">
-                  <div className="w-[36px]"></div>
-                  {SvgCross(marker.color, "h-[22px] w-[22px]")}
-                  <div className="w-[36px] flex">
-                    <div
-                      className="cursor-pointer"
-                      onClick={() => {
-                        
-                      }}
-                    >
-                      <TiPencil className="fill-white  group-hover:fill-gray-600 " />
-                    </div>
-                    <div
-                      className="cursor-pointer mx-1"
-                      onClick={() => {
-                        const newMarkers = markers
-                          .filter((m) => m.id !== marker.id)
-                          .slice();
-                        setMarkers(newMarkers);
-                        setSearchParams((prevParams) => {
-                          const newParams =
-                            clearMarkersFromUrlParams(prevParams);
-                          newMarkers.forEach((marker) => {
-                            newParams.append(
-                              "lat",
-                              marker.latLon.lat.toString()
-                            );
-                            newParams.append(
-                              "lon",
-                              marker.latLon.lon.toString()
-                            );
+                <td
+                  className={classNames(
+                    "border-b-2 border-slate-600 basis-full grow-[2] block p-1 ",
+                    i === markers.length - 1 && "border-b-0",
+                    scrollBarGutterPresent && "max-w-[calc(34.35%-15px)]"
+                  )}
+                >
+                  <div className="h-6 w-full flex flex-row items-center justify-between overflow-hidden">
+                    <div className="w-[45px]"></div>
+                    {SvgCross(marker.color, "h-[22px] w-[22px]")}
+                    <div className="w-[45px] flex">
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => {
+                          setMarkerToEditInModal(marker);
+                        }}
+                      >
+                        <TiPencil className="fill-white group-hover:fill-gray-600 w-[20px] h-[20px]" />
+                      </div>
+                      <div
+                        className="cursor-pointer mx-1"
+                        onClick={() => {
+                          const newMarkers = markers
+                            .filter((m) => m.id !== marker.id)
+                            .slice();
+                          setMarkers(newMarkers);
+                          setSearchParams((prevParams) => {
+                            const newParams =
+                              clearMarkersFromUrlParams(prevParams);
+                            newMarkers.forEach((marker) => {
+                              newParams.append(
+                                "lat",
+                                marker.latLon.lat.toString()
+                              );
+                              newParams.append(
+                                "lon",
+                                marker.latLon.lon.toString()
+                              );
+                            });
+                            return newParams;
                           });
-                          return newParams;
-                        });
-                      }}
-                    >
-                      <TrashCanSvg className="stroke-white group-hover:stroke-gray-600" />
+                        }}
+                      >
+                        <TrashCanSvg className="stroke-white group-hover:stroke-gray-600" />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </td>
-            </tr>
-          );
-        })}
-        <tr ref={bottomRowRef} />
-      </tbody>
-      <tfoot className="w-full block">
-        <tr
-          className="h-[24px] block w-full cursor-pointer hover:bg-slate-100"
-          onClick={() => {
-            setMarkers([]);
-            setTimeseriesArr([]);
-            setSearchParams(
-              (prevParams) => {
-                const newParams = new URLSearchParams(prevParams);
-                newParams.delete("lat");
-                newParams.delete("lon");
-                return newParams;
-              },
-              { replace: true }
+                </td>
+              </tr>
             );
-          }}
-        >
-          <td
-            colSpan={3}
-            className="w-full h-full text-gray-600 text-sm text-left"
+          })}
+          <tr ref={bottomRowRef} />
+        </tbody>
+        <tfoot className="w-full block">
+          <tr
+            className="h-[24px] block w-full cursor-pointer hover:bg-slate-100"
+            onClick={() => {
+              setMarkers([]);
+              setTimeseriesArr([]);
+              setSearchParams(
+                (prevParams) => {
+                  const newParams = new URLSearchParams(prevParams);
+                  newParams.delete("lat");
+                  newParams.delete("lon");
+                  return newParams;
+                },
+                { replace: true }
+              );
+            }}
           >
-            <div className="ml-2 flex items-center text-gray-600">
-              <TrashCanSvg className="stroke-gray-600 mr-1" />
-              Clear Markers
-            </div>
-          </td>
-        </tr>
-      </tfoot>
-    </table>
+            <td
+              colSpan={3}
+              className="w-full h-full text-gray-600 text-sm text-left"
+            >
+              <div className="ml-2 flex items-center text-gray-600">
+                <TrashCanSvg className="stroke-gray-600 mr-1" />
+                Clear Markers
+              </div>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </>
   );
 }
-
-function TrashCanButton() {}
 
 function TrashCanSvg(props: { className?: string }) {
   return (
     <svg
       className={classNames(props.className)}
-      width="15"
-      height="15"
+      width="20"
+      height="20"
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
