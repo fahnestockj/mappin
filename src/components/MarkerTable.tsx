@@ -139,7 +139,10 @@ export function MarkerTable(props: IProps) {
                           setMarkerToEditInModal(marker);
                         }}
                       >
-                        <TiPencil className="fill-white group-hover:fill-gray-600 w-[18px] h-[18px]" />
+                        <TiPencil
+                          title={"Edit this marker"}
+                          className="fill-white group-hover:fill-gray-600 w-[18px] h-[18px]"
+                        />
                       </div>
                       <div
                         className="cursor-pointer mx-1"
@@ -165,7 +168,7 @@ export function MarkerTable(props: IProps) {
                           });
                         }}
                       >
-                        <TrashCanSvg className="stroke-white group-hover:stroke-gray-600" />
+                        <TrashCanSvg title="Delete this marker" className="stroke-white group-hover:stroke-gray-600" />
                       </div>
                     </div>
                   </div>
@@ -208,7 +211,7 @@ export function MarkerTable(props: IProps) {
   );
 }
 
-function TrashCanSvg(props: { className?: string }) {
+function TrashCanSvg(props: { className?: string; title?: string }) {
   return (
     <svg
       className={classNames(props.className)}
@@ -218,6 +221,7 @@ function TrashCanSvg(props: { className?: string }) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
+      {props.title && <title>{props.title}</title>}
       <path
         d="M3 6H5H21"
         strokeWidth="2"

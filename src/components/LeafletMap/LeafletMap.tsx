@@ -60,7 +60,7 @@ const LeafletMap = memo(function Velmap(props: IProps) {
             <Overlay checked={false} name="Velocity Map">
               <TileLayer
                 className="!cursor-crosshair !opacity-50"
-                url="https://glacierflow.nyc3.digitaloceanspaces.com/webmaps/vel_map/{z}/{x}/{y}.png"
+                url="https://its-live-data.s3.amazonaws.com/velocity_mosaic/v2/static/v_tiles_global/{z}/{x}/{y}.png"
                 maxNativeZoom={15}
                 tileSize={256}
               />
