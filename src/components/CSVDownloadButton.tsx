@@ -1,7 +1,7 @@
 import { BiDownload } from "react-icons/bi";
-import { saveAs } from "file-saver";
 import JSZip from "jszip";
 import { ITimeseries } from "../types";
+import { downloadBlob } from "../utils/downloadBlob";
 
 type IProps = {
   data: ITimeseries[];
@@ -38,7 +38,7 @@ export const CSVDownloadButton = (props: IProps) => {
         });
 
         zip.generateAsync({ type: "blob" }).then(function (content) {
-          saveAs(content, "itslive-data.zip");
+          downloadBlob(content, "itslive-data.zip");
         });
       }}
     >

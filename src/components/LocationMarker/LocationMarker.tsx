@@ -17,7 +17,7 @@ type IProps = {
   setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>;
   setSearchParams: ISetSearchParams;
 };
-//TODO: This NEEDS some typing, remember leaflet uses lat and lng, not lon
+
 const LocationMarker = (props: IProps) => {
   const { markerProp, markers, setMarkers, setSearchParams } = props;
   const markerRef = useRef(null);

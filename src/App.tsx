@@ -23,7 +23,7 @@ function App() {
     initialState.intervalDays
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  
   useEffect(() => {
     const filteredTimeseries = timeseriesArr.filter(
       (timeseries) => !markers.every((m) => m.id !== timeseries.marker.id)

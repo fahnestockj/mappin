@@ -1,9 +1,8 @@
-import React from "react";
+import { useState } from "react";
 import { BiShare } from "react-icons/bi";
 
-type IProps = {};
-export const ShareButton = (props: IProps) => {
-  const [copied, setCopied] = React.useState<boolean>(false);
+export const ShareButton = () => {
+  const [copied, setCopied] = useState<boolean>(false);
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(window.location.href).then(
