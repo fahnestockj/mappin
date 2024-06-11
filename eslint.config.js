@@ -13,9 +13,9 @@ export default [
   },
   pluginReactConfig,
   {
+
     rules: {
       "@typescript-eslint/ban-ts-comment": "off",
-    }
+    },
   }
-
 ];

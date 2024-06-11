@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "coverage": "vitest run --coverage",
-    "lint": "eslint ."
+    "lint": "eslint \"src/**\""
   },
   "dependencies": {
     "@fahnestockj/zarr-fork": "^0.6.3",

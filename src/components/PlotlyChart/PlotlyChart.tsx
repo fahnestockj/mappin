@@ -148,7 +148,7 @@ export const PlotlyChart = (props: IProps) => {
   }, [plotBounds, satelliteView]);
 
   const data = useMemo<Figure["data"]>(() => {
-    let filteredTimeseries = timeseriesArr.map((timeseries) => {
+    const filteredTimeseries = timeseriesArr.map((timeseries) => {
       const filteredMidDateArray: Date[] = [];
       const filteredVelocityArray: number[] = [];
       const filteredDateDtArray: number[] = [];
