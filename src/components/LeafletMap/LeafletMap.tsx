@@ -4,7 +4,7 @@ import { CRS } from "leaflet";
 import catalogJson from "../../geoJson/stripped_catalog.json";
 import { GeoJsonObject } from "geojson";
 import { IMarker, ISetSearchParams } from "../../types";
-import MapEventController from "../LatLonMapEventController";
+import MapEventController from "../MapEventController";
 import LocationMarker from "../LocationMarker/LocationMarker";
 import "./leaflet.css";
 

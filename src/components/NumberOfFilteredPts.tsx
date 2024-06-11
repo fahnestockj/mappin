@@ -8,12 +8,7 @@ interface IProps {
 export function NumberOfFilteredPts(props: IProps) {
   const { timeseriesArr, intervalDays } = props;
   const { filteredPts, totalPts } = useMemo(() => {
-    const totalPts = [
-      ...timeseriesArr.map(
-        (timeseries) => timeseries.data.velocityArray.length
-      ),
-    ].reduce((a, b) => a + b, 0);
-
+    let totalPts = 0;
     let filteredPts = 0;
     for (const timeseries of timeseriesArr) {
       for (let i = 0; i < timeseries.data.velocityArray.length; i++) {
@@ -21,6 +16,7 @@ export function NumberOfFilteredPts(props: IProps) {
         if (dt >= intervalDays[0] && dt <= intervalDays[1]) {
           filteredPts++;
         }
+        totalPts++;
       }
     }
     return { filteredPts, totalPts };
