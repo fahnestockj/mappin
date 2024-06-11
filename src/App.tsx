@@ -23,8 +23,11 @@ function App() {
     initialState.intervalDays
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  
+
   useEffect(() => {
+    // cleanup for race conditions
+    let ignore = false;
+
     const filteredTimeseries = timeseriesArr.filter(
       (timeseries) => !markers.every((m) => m.id !== timeseries.marker.id)
     );
@@ -33,11 +36,13 @@ function App() {
     const newMarkers = markers.filter((marker) =>
       timeseriesArr.every((timeseries) => timeseries.marker.id !== marker.id)
     );
+
     if (newMarkers.length > 0) {
       setIsLoading(true);
       newMarkers.map(getTimeseries).map((promise) =>
         promise
           .then((timeseries) => {
+            if (ignore) return;
             setTimeseriesArr((arr) => [...arr, timeseries]);
             setIsLoading(false);
           })
@@ -47,7 +52,10 @@ function App() {
           })
       );
     }
-  }, [markers, timeseriesArr.length]);
+    return () => {
+      ignore = true;
+    };
+  }, [markers]);
 
   return (
     <div id="modal-root" className="w-full h-screen">
