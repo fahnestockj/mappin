@@ -10,6 +10,8 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         {/* NOTE: supporting old routing and different basenames */}
         <Route path="/" element={<App />} />
         <Route path="/app" element={<App />} />
+        <Route path="/app/index.html" element={<App />} />
+        <Route path="/itslive-web/app/index.html" element={<App />} />
         <Route path="/itslive-web/app" element={<App />} />
         <Route path="/chart" element={<App />} />{" "}
       </Routes>
