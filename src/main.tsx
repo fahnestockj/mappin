@@ -5,10 +5,13 @@ import "./index.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <BrowserRouter basename='/app'> {/* NOTE: basename in dev the basename is /itslive-wev/app */}
+    <BrowserRouter>
       <Routes>
+        {/* NOTE: supporting old routing and different basenames */}
         <Route path="/" element={<App />} />
-        <Route path="/chart" element={<App />} /> {/* NOTE: supporting old routing */}
+        <Route path="/app" element={<App />} />
+        <Route path="/itslive-web/app" element={<App />} />
+        <Route path="/chart" element={<App />} />{" "}
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

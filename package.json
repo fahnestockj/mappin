@@ -3,6 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "license": "MIT",
+  "author": {
+    "name": "Jacob Fahnestock"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
