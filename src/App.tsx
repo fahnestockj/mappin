@@ -11,7 +11,7 @@ import {
   getStateFromUrlParams,
   setIntervalDaysInUrlParams,
 } from "./utils/searchParamUtilities";
-import { getTimeseries } from "./findManyTimeseries/findManyTimeseries";
+import { getTimeseries } from "./getTimeseries/getTimeseries";
 import { NumberOfFilteredPts } from "./components/NumberOfFilteredPts";
 
 function App() {
