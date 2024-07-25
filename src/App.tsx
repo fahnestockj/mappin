@@ -28,6 +28,7 @@ function App() {
     // cleanup for race conditions
     let ignore = false;
 
+    // filter stale timeseries by markers
     const filteredTimeseries = timeseriesArr.filter(
       (timeseries) => !markers.every((m) => m.id !== timeseries.marker.id)
     );
