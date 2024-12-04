@@ -5,7 +5,7 @@ import "./index.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter> {/* NOTE: basename in dev the basename is /itslive-web/app */}
       <Routes>
         {/* NOTE: supporting old routing and different basenames */}
         <Route path="/" element={<App />} />
