@@ -3,7 +3,7 @@ import GeoJsonGeometriesLookup from "geojson-geometries-lookup";
 import { checkIfCoordinateIsWithinBounds } from "./checkIfCoordinateIsWithinBounds";
 import { appProj4 } from "./proj4Projections";
 import { IMarker } from "../types";
-import geoJsonFile from "../geoJson/new_december_stripped_catalog.json";
+import geoJsonFile from "../geoJson/stripped_catalog.json";
 type ICatalogGeoJson = {
   "features": Array<{
     properties: {

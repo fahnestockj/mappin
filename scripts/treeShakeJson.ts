@@ -1,5 +1,5 @@
 // @ts-nocheck
-import catalog_json from '../src/geoJson/catalog_v2_updated_december2024.json'
+import catalog_json from '../src/geoJson/catalog_v2.json'
 import fs from 'node:fs'
 function main() {
 
@@ -17,7 +17,7 @@ function main() {
     type: catalogJson.type,
     features: newFeatures,
   }
-  fs.writeFileSync('../src/geoJson/new_december_stripped_catalog.json', JSON.stringify(newCatalogJson, null, 0))
+  fs.writeFileSync('../src/geoJson/stripped_catalog.json', JSON.stringify(newCatalogJson, null, 0))
 }
 
 main()
