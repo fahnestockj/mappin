@@ -19,7 +19,8 @@ function getMarkersFromParams(params: URLSearchParams): Array<IMarker> {
   if (lonArr.length === 0) {
     lonArr = params.getAll('lng');
   }
-
+  
+  // Max number of markers set here
   for (let i = 0; i < params.getAll('lat').length && markers.length < 11; i++) {
     markers.push({
       id: createId(),

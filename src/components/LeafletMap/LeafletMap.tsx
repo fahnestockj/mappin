@@ -18,13 +18,14 @@ type IProps = {
 const LeafletMap = memo(function Velmap(props: IProps) {
   const { zoom, markers, setMarkers, setSearchParams } = props;
   const middleMarkerIdx = Math.floor((markers.length - 1) / 2);
-  const center: [number, number] =
+  const mapCenter: [number, number] =
     middleMarkerIdx >= 0
       ? [
           markers[middleMarkerIdx].latLon.lat,
           markers[middleMarkerIdx].latLon.lon,
         ]
-      : [69.198, -49.103];
+      : // This is the default map location if no markers are found
+        [69.198, -49.103];
 
   const { Overlay } = LayersControl;
 
@@ -35,7 +36,7 @@ const LeafletMap = memo(function Velmap(props: IProps) {
           className="h-[100%] !cursor-crosshair"
           attributionControl={true}
           crs={CRS.EPSG3857}
-          center={center}
+          center={mapCenter}
           zoom={zoom}
           maxZoom={15}
           minZoom={2}

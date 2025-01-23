@@ -22,7 +22,7 @@ interface FormValues {
   longitude: string;
 }
 
-export function MarkerModal(props: IProps) {
+export function EditMarkerModal(props: IProps) {
   const { markers, marker, setMarkers, setSearchParams, onClose } = props;
 
   return (

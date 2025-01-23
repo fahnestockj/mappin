@@ -5,7 +5,7 @@ import { SvgCross } from "./SvgCross";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { clearMarkersFromUrlParams } from "../utils/searchParamUtilities";
 import { createPortal } from "react-dom";
-import { MarkerModal } from "./MarkerModal";
+import { EditMarkerModal } from "./EditMarkerModal";
 
 type IProps = {
   markers: Array<IMarker>;
@@ -43,7 +43,7 @@ export function MarkerTable(props: IProps) {
     <>
       {markerToEditInModal &&
         createPortal(
-          <MarkerModal
+          <EditMarkerModal
             markers={markers}
             marker={markerToEditInModal}
             setMarkers={setMarkers}
