@@ -1,6 +1,5 @@
 //@ts-ignore
 import GeoJsonGeometriesLookup from "geojson-geometries-lookup";
-import fs from 'node:fs'
 import { checkIfCoordinateIsWithinBounds } from "./checkIfCoordinateIsWithinBounds";
 import { appProj4 } from "./proj4Projections";
 import { IMarker } from "../types";

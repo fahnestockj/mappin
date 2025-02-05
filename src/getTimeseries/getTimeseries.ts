@@ -78,10 +78,6 @@ export async function getTimeseries(marker: IMarker): Promise<ITimeseries> {
       return res.data as Int16Array
     })
 
-    /** 
-     * NOTE: Mid date array is in days since 1970-01-01 (EPOCH) which the Date constructor cannot handle
-     * new Date(daysSinceEpochFloat * 86400000) -> converts to milliseconds since EPOCH which the Date constructor can handle
-     **/
     let midDateArr: Float64Array
 
     if (cachedMidDateArrJson) {
@@ -102,8 +98,6 @@ export async function getTimeseries(marker: IMarker): Promise<ITimeseries> {
         window.sessionStorage.clear()
       }
     }
-    console.log(midDateArr, 'midDateArr length')
-
 
     const dateDeltaArr = await dateDeltaZarr.get(null).then(res => {
       if (typeof res === 'number') {
@@ -127,6 +121,10 @@ export async function getTimeseries(marker: IMarker): Promise<ITimeseries> {
     for (let i = 0; i < timeseriesArr.length; i++) {
       if (timeseriesArr[i] === -32767) continue
       velocityArray.push(timeseriesArr[i])
+      /** 
+       * NOTE: Mid date array is in days since 1970-01-01 (EPOCH) which the Date constructor cannot handle
+       * new Date(daysSinceEpochFloat * 86400000) -> converts to milliseconds since EPOCH which the Date constructor can handle
+       **/
       midDateArray.push(new Date(midDateArr[i] * 86400000))
       daysDeltaArray.push(Math.round(dateDeltaArr[i]))
 
