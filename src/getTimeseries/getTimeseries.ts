@@ -49,7 +49,7 @@ export async function getTimeseries(marker: IMarker): Promise<ITimeseries> {
 
     const midDateZarr = await openArray({
       store,
-      path: "/mid_date",
+      path: "/date_center",
       mode: "r"
     })
 
