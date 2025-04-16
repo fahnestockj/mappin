@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 import { MapContainer, TileLayer, LayersControl, GeoJSON } from "react-leaflet";
 import { CRS } from "leaflet";
 import catalogJson from "../../geoJson/stripped_catalog.json";
@@ -17,6 +17,8 @@ type IProps = {
 
 const LeafletMap = memo(function Velmap(props: IProps) {
   const { zoom, markers, setMarkers, setSearchParams } = props;
+  const [isVelMosaicChecked, setVelMosaicChecked] = useState(false);
+
   const middleMarkerIdx = Math.floor((markers.length - 1) / 2);
   const mapCenter: [number, number] =
     middleMarkerIdx >= 0
@@ -31,7 +33,7 @@ const LeafletMap = memo(function Velmap(props: IProps) {
 
   return (
     <div className="w-full h-full">
-      <div className="w-full h-full m-auto ">
+      <div className="w-full h-full">
         <MapContainer
           className="h-[100%] !cursor-crosshair"
           attributionControl={true}
@@ -47,6 +49,14 @@ const LeafletMap = memo(function Velmap(props: IProps) {
           ]}
           worldCopyJump={true}
         >
+          {isVelMosaicChecked && (
+            <img
+              src="/images/velocity_colorbar.png"
+              alt="Vertical Velocity Colorbar"
+              style={{ zIndex: 700 }}
+              className="absolute right-2 bottom-8 w-[70px] rounded-md"
+            />
+          )}
           <LayersControl>
             <Overlay name="Datacube Boundaries">
               <GeoJSON data={catalogJson as GeoJsonObject} />
@@ -59,6 +69,7 @@ const LeafletMap = memo(function Velmap(props: IProps) {
               tileSize={256}
             />
             <Overlay checked={false} name="Velocity Map">
+              {/* <img src="/images/velocity_colorbar.png" alt="Vertical Velocity Colorbar" className="leaflet-bottom leaflet-right h-[40px] rounded-t-md"></img> */}
               <TileLayer
                 className="!cursor-crosshair !opacity-50"
                 url="https://its-live-data.s3.amazonaws.com/velocity_mosaic/v2/static/v_tiles_global/{z}/{x}/{y}.png"
@@ -71,6 +82,7 @@ const LeafletMap = memo(function Velmap(props: IProps) {
             markers={markers}
             setMarkers={setMarkers}
             setSearchParams={setSearchParams}
+            setVelMosaicChecked={setVelMosaicChecked}
           />
           {markers.map((marker) => (
             <LocationMarker

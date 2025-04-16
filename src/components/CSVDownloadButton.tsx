@@ -42,8 +42,8 @@ export const CSVDownloadButton = (props: IProps) => {
         });
       }}
     >
-      <BiDownload className="scale-150 mr-3 mb-1" />
       Download CSV
+      <BiDownload className="scale-150 ml-3 mb-1" />
     </button>
   );
 };

@@ -141,7 +141,7 @@ export function MarkerTable(props: IProps) {
                       >
                         <TiPencil
                           title={"Edit this marker"}
-                          className="fill-white group-hover:fill-gray-600 w-[18px] h-[18px]"
+                          className="fill-white group-hover:fill-gray-600 w-[16px] h-[16px]"
                         />
                       </div>
                       <div
@@ -215,8 +215,8 @@ function TrashCanSvg(props: { className?: string; title?: string }) {
   return (
     <svg
       className={classNames(props.className)}
-      width="18"
-      height="18"
+      width="15"
+      height="15"
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
