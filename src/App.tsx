@@ -59,7 +59,7 @@ function App() {
   }, [markers]);
 
   return (
-    <div id="modal-root" className="w-full h-screen">
+    <div id="root" className="w-full h-screen">
       <div className="w-full h-[55%] shadow-md">
         <LeafletMap
           markers={markers}
@@ -68,8 +68,8 @@ function App() {
           zoom={initialState.mapZoom}
         />
       </div>
-      <div className="h-[45%] flex py-4">
-        <div className="w-full h-full border-[#e5e7eb] border-2 overflow-hidden rounded-lg mx-4 shadow-md">
+      <div className="h-[45%] flex py-4 flex-col lg:flex-row items-center">
+        <div className="w-[90%] h-full min-h-[300px] border-[#e5e7eb] border-2 overflow-hidden rounded-lg mx-4 shadow-md mb-4 lg:mb-0">
           <PlotlyChart
             loading={isLoading}
             timeseriesArr={timeseriesArr}
@@ -88,7 +88,7 @@ function App() {
             />
           </div>
 
-          <div className="w-full mt-4 shadow-md border-[#e5e7eb] border-2 rounded-lg p-4 overflow-auto h-min">
+          <div className="w-full mt-4 shadow-md border-[#e5e7eb] border-2 rounded-lg p-4 overflow-auto min-h-[160px]">
             <div className="flex flex-col items-center mx-4">
               <div className="w-full flex flex-row items-center justify-between">
                 <div className="text-md font-semibold">

@@ -50,7 +50,7 @@ export function MarkerTable(props: IProps) {
             setSearchParams={setSearchParams}
             onClose={() => setMarkerToEditInModal(null)}
           />,
-          document.getElementById("modal-root") as HTMLElement
+          document.getElementById("root") as HTMLElement
         )}
       <table
         className="table-fixed border-spacing-0 rounded-lg border-2 border-separate border-slate-600 shadow-md
