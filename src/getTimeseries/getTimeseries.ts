@@ -15,9 +15,8 @@ export async function getTimeseries(marker: IMarker): Promise<ITimeseries> {
     const { zarrUrl, cartesianCoordinate } = dc
     const cachedMidDateArrJson = window.sessionStorage.getItem(`midDateArr:${zarrUrl}`)
 
-    const url = zarrUrl.replace('http', 'https')
 
-    const store = new HTTPStore(url, { fetchOptions: {}, supportedMethods: ["GET" as HTTPMethod] });
+    const store = new HTTPStore(zarrUrl, { fetchOptions: {}, supportedMethods: ["GET" as HTTPMethod] });
 
     const xArrayZarr = await openArray({
       store,
