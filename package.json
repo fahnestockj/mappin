@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "build-prod": "tsc && vite build --outDir ../static/app --base /app/",
+    "build-prod": "tsc && vite build --outDir ../static/app --base /app/ --emptyOutDir",
     "build-dev": "tsc && vite build --outDir ../static/app --base /itslive-web/app/",
     "typecheck": "tsc",
     "preview": "vite preview",
