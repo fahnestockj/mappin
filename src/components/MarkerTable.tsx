@@ -2,9 +2,8 @@ import classNames from "classnames";
 import { TiPencil } from "react-icons/ti";
 import { IMarker, ISetSearchParams, ITimeseries } from "../types";
 import { SvgCross } from "./SvgCross";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { clearMarkersFromUrlParams } from "../utils/searchParamUtilities";
-import { createPortal } from "react-dom";
 import { EditMarkerModal } from "./EditMarkerModal";
 
 type IProps = {
@@ -13,21 +12,13 @@ type IProps = {
   setSearchParams: ISetSearchParams;
   setTimeseriesArr: React.Dispatch<React.SetStateAction<ITimeseries[]>>;
 };
-// TODO: clean up these classnames
-const cellClassName = "border-r-2 border-b-2 border-slate-600";
+
 export function MarkerTable(props: IProps) {
   const { markers, setMarkers, setSearchParams, setTimeseriesArr } = props;
-  const [scrollBarGutterPresent, setScrollBarGutterPresent] = useState(false);
-
   const [markerToEditInModal, setMarkerToEditInModal] =
     useState<IMarker | null>(null);
 
   const bottomRowRef = useRef<HTMLTableRowElement>(null);
-  const tableBodyRef = useCallback((node: HTMLTableSectionElement) => {
-    if (node !== null) {
-      setScrollBarGutterPresent(node.offsetWidth - node.clientWidth > 0);
-    }
-  }, []);
 
   useEffect(() => {
     if (bottomRowRef.current) {
@@ -39,174 +30,103 @@ export function MarkerTable(props: IProps) {
     }
   }, [markers]);
 
+  const handleDeleteMarker = (markerId: string) => {
+    const newMarkers = markers.filter((m) => m.id !== markerId);
+    setMarkers(newMarkers);
+    setSearchParams((prevParams) => {
+      const newParams = clearMarkersFromUrlParams(prevParams);
+      newMarkers.forEach((marker) => {
+        newParams.append("lat", marker.latLon.lat.toString());
+        newParams.append("lon", marker.latLon.lon.toString());
+      });
+      return newParams;
+    });
+  };
+
+  const handleClearAllMarkers = () => {
+    setMarkers([]);
+    setTimeseriesArr([]);
+    setSearchParams(
+      (prevParams) => {
+        const newParams = new URLSearchParams(prevParams);
+        newParams.delete("lat");
+        newParams.delete("lon");
+        return newParams;
+      },
+      { replace: true }
+    );
+  };
+
   return (
     <>
-      {markerToEditInModal &&
-        createPortal(
-          <EditMarkerModal
-            markers={markers}
-            marker={markerToEditInModal}
-            setMarkers={setMarkers}
-            setSearchParams={setSearchParams}
-            onClose={() => setMarkerToEditInModal(null)}
-          />,
-          document.getElementById("root") as HTMLElement
-        )}
-      <table
-        className="table-fixed border-spacing-0 rounded-lg border-2 border-separate border-slate-600 shadow-md
-      block min-w-[362px] overflow-hidden
-    "
-      >
-        <thead className={classNames("bg-[#B4D2E7] block relative w-full")}>
-          <tr className="w-full flex">
-            <th
-              className={classNames(
-                cellClassName,
-                "font-semibold overflow-hidden basis-full grow-[2] block p-1"
-              )}
-            >
-              Latitude
-            </th>
-            <th
-              className={classNames(
-                cellClassName,
-                "font-semibold overflow-hidden basis-full grow-[2] block p-1"
-              )}
-            >
-              Longitude
-            </th>
-            <th
-              className={classNames(
-                "border-b-2 border-slate-600 basis-full grow-[2] block p-1",
-                "font-semibold"
-              )}
-            >
-              Symbol
-            </th>
-          </tr>
-        </thead>
-        <tbody
-          id="table-body"
-          ref={tableBodyRef}
-          className={classNames(
-            "block relative w-full max-h-[104px] border-b border-slate-600 overflow-y-scroll"
-          )}
-        >
-          {markers.map((marker, i) => {
-            return (
-              <tr
-                className="w-full flex hover:bg-slate-100 group"
-                key={`${marker.id}`}
+      {markerToEditInModal && (
+        <EditMarkerModal
+          markers={markers}
+          marker={markerToEditInModal}
+          setMarkers={setMarkers}
+          setSearchParams={setSearchParams}
+          onClose={() => setMarkerToEditInModal(null)}
+        />
+      )}
+      <div className="w-full h-full border-2 border-gray-300 rounded-lg shadow-md overflow-hidden flex flex-col">
+        {/* Header */}
+        <div className="grid grid-cols-3 bg-sky-100 border-b-2 border-gray-300 font-semibold text-sm flex-shrink-0">
+          <div className="px-3 py-2 border-r border-gray-300">Latitude</div>
+          <div className="px-3 py-2 border-r border-gray-300">Longitude</div>
+          <div className="px-3 py-2">Symbol</div>
+        </div>
+
+        {/* Body - Scrollable */}
+        <div className="flex-1 overflow-y-auto border-b border-gray-300 min-h-0">
+          {markers.length === 0 ? (
+            <div className="px-3 py-4 text-sm text-gray-500 text-center">
+              No markers added yet. Click on the map to add markers.
+            </div>
+          ) : (
+            markers.map((marker) => (
+              <div
+                key={marker.id}
+                className="grid grid-cols-3 hover:bg-gray-50 transition-colors border-b border-gray-200 last:border-b-0 group"
               >
-                <td
-                  className={classNames(
-                    cellClassName,
-                    "basis-full grow-[2] block p-1",
-                    i === markers.length - 1 && "border-b-0"
-                  )}
-                >
-                  <div className="ml-2 overflow-hidden">
-                    {marker.latLon.lat}
-                  </div>
-                </td>
-
-                <td
-                  className={classNames(
-                    cellClassName,
-                    "basis-full grow-[2] block p-1",
-                    i === markers.length - 1 && "border-b-0"
-                  )}
-                >
-                  <div className="ml-2 overflow-hidden">
-                    {marker.latLon.lon}
-                  </div>
-                </td>
-
-                <td
-                  className={classNames(
-                    "border-b-2 border-slate-600 basis-full grow-[2] block p-1 ",
-                    i === markers.length - 1 && "border-b-0",
-                    scrollBarGutterPresent && "max-w-[calc(34.35%-15px)]"
-                  )}
-                >
-                  <div className="h-6 w-full flex flex-row items-center justify-between overflow-hidden">
-                    <div className="w-[40px]"></div>
-                    {SvgCross(marker.color, "h-[22px] w-[22px]")}
-                    <div className="w-[40px] flex">
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => {
-                          setMarkerToEditInModal(marker);
-                        }}
-                      >
-                        <TiPencil
-                          title={"Edit this marker"}
-                          className="fill-white group-hover:fill-gray-600 w-[16px] h-[16px]"
-                        />
-                      </div>
-                      <div
-                        className="cursor-pointer mx-1"
-                        onClick={() => {
-                          const newMarkers = markers
-                            .filter((m) => m.id !== marker.id)
-                            .slice();
-                          setMarkers(newMarkers);
-                          setSearchParams((prevParams) => {
-                            const newParams =
-                              clearMarkersFromUrlParams(prevParams);
-                            newMarkers.forEach((marker) => {
-                              newParams.append(
-                                "lat",
-                                marker.latLon.lat.toString()
-                              );
-                              newParams.append(
-                                "lon",
-                                marker.latLon.lon.toString()
-                              );
-                            });
-                            return newParams;
-                          });
-                        }}
-                      >
-                        <TrashCanSvg title="Delete this marker" className="stroke-white group-hover:stroke-gray-600" />
-                      </div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            );
-          })}
-          <tr ref={bottomRowRef} />
-        </tbody>
-        <tfoot className="w-full block">
-          <tr
-            className="h-[24px] block w-full cursor-pointer hover:bg-slate-100"
-            onClick={() => {
-              setMarkers([]);
-              setTimeseriesArr([]);
-              setSearchParams(
-                (prevParams) => {
-                  const newParams = new URLSearchParams(prevParams);
-                  newParams.delete("lat");
-                  newParams.delete("lon");
-                  return newParams;
-                },
-                { replace: true }
-              );
-            }}
-          >
-            <td
-              colSpan={3}
-              className="w-full h-full text-gray-600 text-sm text-left"
-            >
-              <div className="ml-2 flex items-center text-gray-600">
-                <TrashCanSvg className="stroke-gray-600 mr-1" />
-                Clear Markers
+                <div className="px-3 py-2 border-r border-gray-200 text-sm truncate">
+                  {marker.latLon.lat.toFixed(4)}
+                </div>
+                <div className="px-3 py-2 border-r border-gray-200 text-sm truncate">
+                  {marker.latLon.lon.toFixed(4)}
+                </div>
+                <div className="px-3 py-2 flex items-center justify-center gap-2">
+                  {SvgCross(marker.color, "h-5 w-5")}
+                  <button
+                    onClick={() => setMarkerToEditInModal(marker)}
+                    className="p-1 rounded hover:bg-gray-200 transition-colors"
+                    title="Edit marker"
+                  >
+                    <TiPencil className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteMarker(marker.id)}
+                    className="p-1 rounded hover:bg-gray-200 transition-colors"
+                    title="Delete marker"
+                  >
+                    <TrashCanSvg className="stroke-gray-400 group-hover:stroke-gray-600" />
+                  </button>
+                </div>
               </div>
-            </td>
-          </tr>
-        </tfoot>
-      </table>
+            ))
+          )}
+          <div ref={bottomRowRef} />
+        </div>
+
+        {/* Footer */}
+        <button
+          onClick={handleClearAllMarkers}
+          className="w-full px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors flex items-center flex-shrink-0"
+          disabled={markers.length === 0}
+        >
+          <TrashCanSvg className="stroke-gray-600 mr-2" />
+          Clear All Markers
+        </button>
+      </div>
     </>
   );
 }

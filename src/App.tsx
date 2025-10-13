@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { CSVDownloadButton } from "./components/CSVDownloadButton";
 import { MarkerTable } from "./components/MarkerTable";
 import { PlotlyChart } from "./components/PlotlyChart/PlotlyChart";
-import RangeSlider from "./components/RangeSlider";
+import DualRangeSlider from "./components/DualRangeSlider";
 import { ShareButton } from "./components/ShareButton";
 import LeafletMap from "./components/LeafletMap/LeafletMap";
 import { ITimeseries, IMarker } from "./types";
@@ -59,8 +59,9 @@ function App() {
   }, [markers]);
 
   return (
-    <div id="root" className="w-full h-screen">
-      <div className="w-full h-[55%] shadow-md">
+    <div id="root" className="w-full h-screen flex flex-col">
+      {/* Map Section */}
+      <div className="w-full flex-[3] min-h-[300px] shadow-md">
         <LeafletMap
           markers={markers}
           setMarkers={setMarkers}
@@ -68,8 +69,11 @@ function App() {
           zoom={initialState.mapZoom}
         />
       </div>
-      <div className="h-[45%] flex py-4 flex-col lg:flex-row items-center">
-        <div className="w-[90%] h-full min-h-[300px] border-[#e5e7eb] border-2 overflow-hidden rounded-lg mx-4 shadow-md mb-4 lg:mb-0">
+
+      {/* Bottom Section */}
+      <div className="flex-[2] flex flex-col lg:flex-row p-4 gap-4 overflow-auto">
+        {/* Chart Section */}
+        <div className="flex-1 min-h-[300px] border-2 border-gray-200 overflow-hidden rounded-lg shadow-md">
           <PlotlyChart
             loading={isLoading}
             timeseriesArr={timeseriesArr}
@@ -78,8 +82,11 @@ function App() {
             setSearchParams={setSearchParams}
           />
         </div>
-        <div className="max-w-[400px] w-full h-full  mx-4 flex flex-col items-center">
-          <div className="h-[166px] w-full">
+
+        {/* Controls Section */}
+        <div className="w-full lg:w-96 flex flex-col gap-4">
+          {/* Marker Table */}
+          <div className="h-[166px]">
             <MarkerTable
               markers={markers}
               setMarkers={setMarkers}
@@ -88,20 +95,22 @@ function App() {
             />
           </div>
 
-          <div className="w-full mt-4 shadow-md border-[#e5e7eb] border-2 rounded-lg p-4 overflow-auto min-h-[160px]">
-            <div className="flex flex-col items-center mx-4">
-              <div className="w-full flex flex-row items-center justify-between">
-                <div className="text-md font-semibold">
+          {/* Controls Panel */}
+          <div className="flex-1 shadow-md border-2 border-gray-200 rounded-lg p-4 space-y-4">
+            {/* Slider Section */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-semibold text-gray-700">
                   Measurement Interval (days)
-                </div>
+                </h3>
                 <NumberOfFilteredPts
                   timeseriesArr={timeseriesArr}
                   intervalDays={intervalDays}
                 />
               </div>
-              <RangeSlider
-                className="w-[100%] h-10 mt-2 mb-2"
-                defaultValue={intervalDays}
+              <DualRangeSlider
+                className="w-full h-10"
+                defaultValue={[intervalDays[0], intervalDays[1]]}
                 min={1}
                 max={500}
                 onAfterChange={(value) => {
@@ -114,10 +123,10 @@ function App() {
                 }}
               />
             </div>
-            <div className="flex justify-between">
-              <div className="mr-4">
-                <CSVDownloadButton data={timeseriesArr} />
-              </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 pt-2">
+              <CSVDownloadButton data={timeseriesArr} />
               <ShareButton />
             </div>
           </div>
