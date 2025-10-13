@@ -116,9 +116,15 @@ export async function getTimeseries(marker: IMarker): Promise<ITimeseries> {
     const midDateArray: Array<Date> = []
     const daysDeltaArray: Array<number> = []
     const satelliteArray: Array<string> = []
-
+    // console.log(timeseriesArr.length);
+    // console.log('bytelength ', timeseriesArr.byteLength);
+    
     for (let i = 0; i < timeseriesArr.length; i++) {
-      if (timeseriesArr[i] === -32767) continue
+      if (timeseriesArr[i] === -32767) {
+        // console.log("SKIPPING");
+        
+        continue
+      }
       velocityArray.push(timeseriesArr[i])
       /** 
        * NOTE: Mid date array is in days since 1970-01-01 (EPOCH) which the Date constructor cannot handle
@@ -144,6 +150,7 @@ export async function getTimeseries(marker: IMarker): Promise<ITimeseries> {
 
     return {
       marker,
+      zarrUrl,
       data: {
         midDateArray,
         velocityArray,

@@ -28,6 +28,7 @@ export type IMarker = {
 }
 
 export type ITimeseries = {
+  zarrUrl: string
   marker: IMarker
   data: {
     midDateArray: Date[]
