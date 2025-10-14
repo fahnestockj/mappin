@@ -28,6 +28,18 @@ export default function DualRangeSlider({
     [min, max]
   );
 
+  // Get thumb position accounting for thumb width
+  const getThumbPosition = useCallback(
+    (value: number) => {
+      const percent = (value - min) / (max - min);
+      const thumbWidth = 40; // Width of thumb in pixels
+      const trackWidth = 100; // Assume percentage-based positioning
+      // Adjust position to account for thumb size
+      return `calc(${percent * 100}% + ${(0.5 - percent) * thumbWidth}px)`;
+    },
+    [min, max]
+  );
+
   // Set width of the range to decrease from the left side
   useEffect(() => {
     const minPercent = getPercent(minVal);
@@ -63,7 +75,16 @@ export default function DualRangeSlider({
   };
 
   return (
-    <div className={classNames("relative w-full", className)}>
+    <div className={classNames("relative w-full h-10 flex items-center", className)}>
+      {/* Background track */}
+      <div className="absolute w-full h-1 bg-gray-200 rounded-full" />
+
+      {/* Active range track */}
+      <div
+        ref={range}
+        className="absolute h-1 bg-sky-900 rounded-full"
+      />
+
       {/* Min thumb input */}
       <input
         type="range"
@@ -78,7 +99,7 @@ export default function DualRangeSlider({
         onMouseUp={handleMinMouseUp}
         onTouchEnd={handleMinMouseUp}
         className="thumb thumb-left"
-        style={{ zIndex: minVal > max - 100 ? 5 : undefined }}
+        style={{ zIndex: minVal > max - 100 ? 5 : 3, touchAction: 'none' }}
       />
 
       {/* Max thumb input */}
@@ -95,34 +116,23 @@ export default function DualRangeSlider({
         onMouseUp={handleMaxMouseUp}
         onTouchEnd={handleMaxMouseUp}
         className="thumb thumb-right"
+        style={{ zIndex: 4, touchAction: 'none' }}
       />
 
-      {/* Slider track container */}
-      <div className="relative w-full">
-        {/* Background track */}
-        <div className="absolute w-full h-1 bg-gray-200 rounded-full top-1/2 -translate-y-1/2" />
+      {/* Min value label */}
+      <div
+        className="absolute -translate-x-1/2 h-10 w-10 flex items-center justify-center rounded-full bg-sky-700 text-white text-xs font-medium pointer-events-none select-none"
+        style={{ left: getThumbPosition(minVal), zIndex: minVal > max - 100 ? 6 : 4 }}
+      >
+        {minVal}
+      </div>
 
-        {/* Active range track */}
-        <div
-          ref={range}
-          className="absolute h-1 bg-sky-900 rounded-full top-1/2 -translate-y-1/2"
-        />
-
-        {/* Min value label */}
-        <div
-          className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-10 w-10 flex items-center justify-center rounded-full bg-sky-700 text-white text-xs font-medium pointer-events-none"
-          style={{ left: `${getPercent(minVal)}%` }}
-        >
-          {minVal}
-        </div>
-
-        {/* Max value label */}
-        <div
-          className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-10 w-10 flex items-center justify-center rounded-full bg-sky-700 text-white text-xs font-medium pointer-events-none"
-          style={{ left: `${getPercent(maxVal)}%` }}
-        >
-          {maxVal}
-        </div>
+      {/* Max value label */}
+      <div
+        className="absolute -translate-x-1/2 h-10 w-10 flex items-center justify-center rounded-full bg-sky-700 text-white text-xs font-medium pointer-events-none select-none"
+        style={{ left: getThumbPosition(maxVal), zIndex: 5 }}
+      >
+        {maxVal}
       </div>
 
       <style>{`
@@ -132,8 +142,8 @@ export default function DualRangeSlider({
           height: 0;
           width: 100%;
           outline: none;
-          top: 50%;
-          transform: translateY(-50%);
+          appearance: none;
+          background: transparent;
         }
 
         .thumb::-webkit-slider-thumb {
@@ -144,22 +154,18 @@ export default function DualRangeSlider({
           height: 40px;
           border-radius: 50%;
           border: none;
-          background: transparent;
+          background: rgb(3 105 161);
           cursor: grab;
-          position: relative;
-          z-index: 3;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .thumb::-webkit-slider-thumb:active {
           cursor: grabbing;
+          background: rgb(7 89 133);
         }
 
         .thumb::-webkit-slider-thumb:hover {
-          box-shadow: 0 0 0 8px rgba(14, 116, 144, 0.1);
-        }
-
-        .thumb::-webkit-slider-thumb:focus {
-          box-shadow: 0 0 0 8px rgba(14, 116, 144, 0.2);
+          background: rgb(7 89 133);
         }
 
         .thumb::-moz-range-thumb {
@@ -168,22 +174,18 @@ export default function DualRangeSlider({
           height: 40px;
           border-radius: 50%;
           border: none;
-          background: transparent;
+          background: rgb(3 105 161);
           cursor: grab;
-          position: relative;
-          z-index: 3;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .thumb::-moz-range-thumb:active {
           cursor: grabbing;
+          background: rgb(7 89 133);
         }
 
         .thumb::-moz-range-thumb:hover {
-          box-shadow: 0 0 0 8px rgba(14, 116, 144, 0.1);
-        }
-
-        .thumb::-moz-range-thumb:focus {
-          box-shadow: 0 0 0 8px rgba(14, 116, 144, 0.2);
+          background: rgb(7 89 133);
         }
       `}</style>
     </div>

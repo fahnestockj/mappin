@@ -70,10 +70,13 @@ export function MarkerTable(props: IProps) {
       )}
       <div className="w-full h-full border-2 border-gray-300 rounded-lg shadow-md overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="grid grid-cols-3 bg-sky-100 border-b-2 border-gray-300 font-semibold text-sm flex-shrink-0">
-          <div className="px-3 py-2 border-r border-gray-300">Latitude</div>
-          <div className="px-3 py-2 border-r border-gray-300">Longitude</div>
-          <div className="px-3 py-2">Symbol</div>
+        <div className="bg-sky-100 border-b-2 border-gray-300 font-semibold text-sm flex-shrink-0">
+          <div className="grid grid-cols-[1fr_1fr_75px_75px]">
+            <div className="px-3 py-2 border-r border-gray-300">Latitude</div>
+            <div className="px-3 py-2 border-r border-gray-300">Longitude</div>
+            <div className="px-3 py-2 border-r border-gray-300 text-center">Symbol</div>
+            <div className="px-2 py-2 text-center">Actions</div>
+          </div>
         </div>
 
         {/* Body - Scrollable */}
@@ -86,7 +89,7 @@ export function MarkerTable(props: IProps) {
             markers.map((marker) => (
               <div
                 key={marker.id}
-                className="grid grid-cols-3 hover:bg-gray-50 transition-colors border-b border-gray-200 last:border-b-0 group"
+                className="grid grid-cols-[1fr_1fr_75px_75px] hover:bg-gray-50 transition-colors border-b border-gray-200 last:border-b-0 group"
               >
                 <div className="px-3 py-2 border-r border-gray-200 text-sm truncate">
                   {marker.latLon.lat.toFixed(4)}
@@ -94,8 +97,10 @@ export function MarkerTable(props: IProps) {
                 <div className="px-3 py-2 border-r border-gray-200 text-sm truncate">
                   {marker.latLon.lon.toFixed(4)}
                 </div>
-                <div className="px-3 py-2 flex items-center justify-center gap-2">
+                <div className="px-3 py-2 border-r border-gray-200 flex items-center justify-center">
                   {SvgCross(marker.color, "h-5 w-5")}
+                </div>
+                <div className="px-1 py-2 flex items-center justify-center gap-0.5">
                   <button
                     onClick={() => setMarkerToEditInModal(marker)}
                     className="p-1 rounded hover:bg-gray-200 transition-colors"
