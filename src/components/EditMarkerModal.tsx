@@ -16,6 +16,7 @@ interface IProps {
   marker: IMarker;
   setSearchParams: ISetSearchParams;
   onClose: () => void;
+  container?: HTMLElement | null;
 }
 
 interface FormValues {
@@ -24,10 +25,10 @@ interface FormValues {
 }
 
 export function EditMarkerModal(props: IProps) {
-  const { markers, marker, setMarkers, setSearchParams, onClose } = props;
+  const { markers, marker, setMarkers, setSearchParams, onClose, container } = props;
 
   return (
-    <Modal isOpen={true} onClose={onClose} title="Edit Marker" size="md">
+    <Modal isOpen={true} onClose={onClose} title="Edit Marker" size="md" container={container}>
       <Formik
         initialValues={{
           latitude: marker.latLon.lat.toString(),
@@ -99,7 +100,7 @@ export function EditMarkerModal(props: IProps) {
                 <Field
                   name="latitude"
                   className={classNames(
-                    "mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400",
+                    "mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 font-mono",
                     "focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500",
                     "disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none",
                     "invalid:border-pink-500 invalid:text-pink-600 invalid:focus:border-pink-500 invalid:focus:ring-pink-500"
@@ -120,7 +121,7 @@ export function EditMarkerModal(props: IProps) {
                   name="longitude"
                   type="text"
                   className={classNames(
-                    "mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400",
+                    "mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 font-mono",
                     "focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500",
                     "disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none",
                     "invalid:border-pink-500 invalid:text-pink-600 invalid:focus:border-pink-500 invalid:focus:ring-pink-500"

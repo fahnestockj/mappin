@@ -90,6 +90,7 @@ const LeafletMap = memo(function Velmap(props: IProps) {
           setMarkers={setMarkers}
           setSearchParams={setSearchParams}
           onClose={() => setMarkerToEditInModal(null)}
+          container={mapContainerRef.current}
         />
       )}
       <button

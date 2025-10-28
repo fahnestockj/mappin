@@ -9,6 +9,7 @@ interface ModalProps {
   children: ReactNode;
   title?: string;
   size?: "sm" | "md" | "lg";
+  container?: HTMLElement | null;
 }
 
 export function Modal({
@@ -17,6 +18,7 @@ export function Modal({
   children,
   title,
   size = "md",
+  container,
 }: ModalProps) {
   // Handle ESC key
   useEffect(() => {
@@ -72,6 +74,6 @@ export function Modal({
         </div>
       </FocusTrap>
     </div>,
-    document.getElementById("root") as HTMLElement
+    container || (document.getElementById("root") as HTMLElement)
   );
 }
