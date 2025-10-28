@@ -228,6 +228,13 @@ export const PlotlyChart = (props: IProps) => {
           <ITS_LIVE_LOGO_SVG />
         </a>
       </div>
+      {timeseriesArr.length === 0 ? (
+        <div className="w-full h-full flex items-center justify-center">
+          <div className="text-gray-500 text-center">
+            No markers added yet. Click on the map to add markers.
+          </div>
+        </div>
+      ) : (
       <Plot
         onUpdate={(figure) => {
           // this callback gets called a lot including when the user is dragging a zoom box
@@ -263,6 +270,7 @@ export const PlotlyChart = (props: IProps) => {
         config={chartConfig}
         className="w-full h-full"
       />
+      )}
     </div>
   );
 };
