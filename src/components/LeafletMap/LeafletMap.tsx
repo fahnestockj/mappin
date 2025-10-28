@@ -7,6 +7,9 @@ import { IMarker, ISetSearchParams } from "../../types";
 import MapEventController from "../MapEventController";
 import LocationMarker from "../LocationMarker/LocationMarker";
 import { MdFullscreen, MdFullscreenExit } from "react-icons/md";
+import { MarkerList } from "../MarkerList";
+import { EditMarkerModal } from "../EditMarkerModal";
+import { clearMarkersFromUrlParams } from "../../utils/searchParamUtilities";
 import "./leaflet.css";
 
 type IProps = {
@@ -20,6 +23,7 @@ const LeafletMap = memo(function Velmap(props: IProps) {
   const { zoom, markers, setMarkers, setSearchParams } = props;
   const [isVelMosaicChecked, setVelMosaicChecked] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [markerToEditInModal, setMarkerToEditInModal] = useState<IMarker | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
   const middleMarkerIdx = Math.floor((markers.length - 1) / 2);
@@ -33,6 +37,19 @@ const LeafletMap = memo(function Velmap(props: IProps) {
         [69.198, -49.103];
 
   const { Overlay } = LayersControl;
+
+  const handleDeleteMarker = (markerId: string) => {
+    const newMarkers = markers.filter((m) => m.id !== markerId);
+    setMarkers(newMarkers);
+    setSearchParams((prevParams) => {
+      const newParams = clearMarkersFromUrlParams(prevParams);
+      newMarkers.forEach((marker) => {
+        newParams.append("lat", marker.latLon.lat.toString());
+        newParams.append("lon", marker.latLon.lon.toString());
+      });
+      return newParams;
+    });
+  };
 
   const toggleFullscreen = () => {
     if (!mapContainerRef.current) return;
@@ -66,9 +83,18 @@ const LeafletMap = memo(function Velmap(props: IProps) {
 
   return (
     <div className="w-full h-full relative" ref={mapContainerRef}>
+      {markerToEditInModal && (
+        <EditMarkerModal
+          markers={markers}
+          marker={markerToEditInModal}
+          setMarkers={setMarkers}
+          setSearchParams={setSearchParams}
+          onClose={() => setMarkerToEditInModal(null)}
+        />
+      )}
       <button
         onClick={toggleFullscreen}
-        className="absolute top-[72px] right-[11px] z-[1000] bg-white hover:bg-[#f4f4f4] rounded-[5px] border-2 border-[rgba(0,0,0,0.2)] bg-clip-padding w-[48px] h-[48px] flex items-center justify-center text-black no-underline cursor-pointer transition-colors shadow-none"
+        className="absolute top-[86px] left-[8px] z-[1000] bg-white hover:bg-[#f4f4f4] rounded-[5px] border-2 border-[rgba(0,0,0,0.2)] bg-clip-padding w-[48px] h-[48px] flex items-center justify-center text-black no-underline cursor-pointer transition-colors shadow-none"
         title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
       >
         {isFullscreen ? (
@@ -78,27 +104,17 @@ const LeafletMap = memo(function Velmap(props: IProps) {
         )}
       </button>
       {isFullscreen && markers.length > 0 && (
-        <div className="absolute top-20 left-2 z-[1000] bg-white/95 backdrop-blur-sm rounded shadow-lg p-3 max-h-[80vh] overflow-y-auto" style={{ boxShadow: "0 1px 5px rgba(0, 0, 0, 0.65)" }}>
-          <h3 className="font-semibold text-sm mb-2 text-gray-700 border-b border-gray-300 pb-1">
+        <div className="absolute top-[76px] right-2 z-[1000] bg-white/95 backdrop-blur-sm rounded-lg border-2 border-gray-300 shadow-md max-h-[calc(100vh-20px)] flex flex-col max-w-xs">
+          <div className="bg-sky-100 border-b-2 border-gray-300 font-semibold text-sm px-3 py-2 rounded-t-lg">
             Markers ({markers.length})
-          </h3>
-          <div className="space-y-1">
-            {markers.map((marker, idx) => (
-              <div
-                key={marker.id}
-                className="flex items-center gap-2 text-xs py-1 px-2 hover:bg-gray-100 rounded transition-colors"
-              >
-                <div
-                  className="w-3 h-3 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: marker.color }}
-                />
-                <div className="flex-1 font-mono">
-                  <div className="text-gray-600">
-                    {marker.latLon.lat.toFixed(4)}, {marker.latLon.lon.toFixed(4)}
-                  </div>
-                </div>
-              </div>
-            ))}
+          </div>
+          <div className="overflow-y-auto">
+            <MarkerList
+              markers={markers}
+              onEdit={setMarkerToEditInModal}
+              onDelete={handleDeleteMarker}
+              compact
+            />
           </div>
         </div>
       )}

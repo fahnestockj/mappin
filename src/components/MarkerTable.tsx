@@ -1,10 +1,9 @@
 import classNames from "classnames";
-import { TiPencil } from "react-icons/ti";
 import { IMarker, ISetSearchParams, ITimeseries } from "../types";
-import { SvgCross } from "./SvgCross";
 import { useEffect, useRef, useState } from "react";
 import { clearMarkersFromUrlParams } from "../utils/searchParamUtilities";
 import { EditMarkerModal } from "./EditMarkerModal";
+import { MarkerList } from "./MarkerList";
 
 type IProps = {
   markers: Array<IMarker>;
@@ -70,13 +69,8 @@ export function MarkerTable(props: IProps) {
       )}
       <div className="w-full h-full border-2 border-gray-300 rounded-lg shadow-md overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="bg-sky-100 border-b-2 border-gray-300 font-semibold text-sm flex-shrink-0">
-          <div className="grid grid-cols-[1fr_1fr_75px_75px]">
-            <div className="px-3 py-2 border-r border-gray-300">Latitude</div>
-            <div className="px-3 py-2 border-r border-gray-300">Longitude</div>
-            <div className="px-3 py-2 border-r border-gray-300 text-center">Symbol</div>
-            <div className="px-2 py-2 text-center">Actions</div>
-          </div>
+        <div className="bg-sky-100 border-b-2 border-gray-300 font-semibold text-sm flex-shrink-0 px-3 py-2">
+          Markers ({markers.length})
         </div>
 
         {/* Body - Scrollable */}
@@ -86,40 +80,15 @@ export function MarkerTable(props: IProps) {
               No markers added yet. Click on the map to add markers.
             </div>
           ) : (
-            markers.map((marker) => (
-              <div
-                key={marker.id}
-                className="grid grid-cols-[1fr_1fr_75px_75px] hover:bg-gray-50 transition-colors border-b border-gray-200 last:border-b-0 group"
-              >
-                <div className="px-3 py-2 border-r border-gray-200 text-sm truncate">
-                  {marker.latLon.lat.toFixed(4)}
-                </div>
-                <div className="px-3 py-2 border-r border-gray-200 text-sm truncate">
-                  {marker.latLon.lon.toFixed(4)}
-                </div>
-                <div className="px-3 py-2 border-r border-gray-200 flex items-center justify-center">
-                  {SvgCross(marker.color, "h-5 w-5")}
-                </div>
-                <div className="px-1 py-2 flex items-center justify-center gap-0.5">
-                  <button
-                    onClick={() => setMarkerToEditInModal(marker)}
-                    className="p-1 rounded hover:bg-gray-200 transition-colors"
-                    title="Edit marker"
-                  >
-                    <TiPencil className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteMarker(marker.id)}
-                    className="p-1 rounded hover:bg-gray-200 transition-colors"
-                    title="Delete marker"
-                  >
-                    <TrashCanSvg className="stroke-gray-400 group-hover:stroke-gray-600" />
-                  </button>
-                </div>
-              </div>
-            ))
+            <>
+              <MarkerList
+                markers={markers}
+                onEdit={setMarkerToEditInModal}
+                onDelete={handleDeleteMarker}
+              />
+              <div ref={bottomRowRef} />
+            </>
           )}
-          <div ref={bottomRowRef} />
         </div>
 
         {/* Footer */}
@@ -130,51 +99,44 @@ export function MarkerTable(props: IProps) {
               className="flex items-center gap-1 px-2 py-0.5 rounded text-xs hover:bg-red-50 hover:text-red-700 transition-colors text-gray-600"
               title="Clear all markers"
             >
-              <TrashCanSvg className="stroke-current" />
+              <svg
+                className="stroke-current"
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M3 6H5H21"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M10 11V17"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M14 11V17"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
               <span>Clear All</span>
             </button>
           </div>
         )}
       </div>
     </>
-  );
-}
-
-function TrashCanSvg(props: { className?: string; title?: string }) {
-  return (
-    <svg
-      className={classNames(props.className)}
-      width="15"
-      height="15"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      {props.title && <title>{props.title}</title>}
-      <path
-        d="M3 6H5H21"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M10 11V17"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M14 11V17"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
   );
 }
