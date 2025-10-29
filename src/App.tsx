@@ -24,6 +24,18 @@ function App() {
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+
+  // Detect fullscreen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    };
+  }, []);
 
   useEffect(() => {
     // cleanup for race conditions
@@ -70,11 +82,13 @@ function App() {
           zoom={initialState.mapZoom}
           hoveredMarkerId={hoveredMarkerId}
           onMarkerHover={setHoveredMarkerId}
+          timeseriesArr={timeseriesArr}
         />
       </div>
 
-      {/* Bottom Section */}
-      <div className="flex-[3] flex flex-col lg:flex-row p-4 gap-4 overflow-auto">
+      {/* Bottom Section - Hidden in fullscreen */}
+      {!isFullscreen && (
+        <div className="flex-[3] flex flex-col lg:flex-row p-4 gap-4 overflow-auto">
         {/* Chart Section */}
         <div className="flex-1 min-h-[300px] border-2 border-gray-200 overflow-hidden rounded-lg shadow-md">
           <PlotlyChart
@@ -137,6 +151,7 @@ function App() {
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }

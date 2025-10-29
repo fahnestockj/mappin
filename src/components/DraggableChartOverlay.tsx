@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { IMarker, ITimeseries } from "../types";
-import { getTimeseries } from "../getTimeseries/getTimeseries";
 import createPlotlyComponent from "react-plotly.js/factory";
 import Plotly from "plotly.js-gl2d-dist-min";
 import { MdClose, MdDragIndicator } from "react-icons/md";
@@ -11,10 +10,11 @@ interface IProps {
   marker: IMarker;
   onClose: () => void;
   initialPosition?: { x: number; y: number };
+  timeseriesArr: ITimeseries[];
 }
 
 export function DraggableChartOverlay(props: IProps) {
-  const { marker, onClose, initialPosition = { x: 50, y: 50 } } = props;
+  const { marker, onClose, initialPosition = { x: 50, y: 50 }, timeseriesArr } = props;
   const [timeseries, setTimeseries] = useState<ITimeseries | null>(null);
   const [loading, setLoading] = useState(true);
   const [position, setPosition] = useState(initialPosition);
@@ -26,17 +26,17 @@ export function DraggableChartOverlay(props: IProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setLoading(true);
-    getTimeseries(marker)
-      .then((data) => {
-        setTimeseries(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to load timeseries:", err);
-        setLoading(false);
-      });
-  }, [marker.id]);
+    // Wait for App.tsx to fetch and provide timeseries data
+    const existingTimeseries = timeseriesArr.find(ts => ts.marker.id === marker.id);
+
+    if (existingTimeseries) {
+      setTimeseries(existingTimeseries);
+      setLoading(false);
+    } else {
+      // Data not yet available - App.tsx is fetching it
+      setLoading(true);
+    }
+  }, [marker.id, timeseriesArr]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (overlayRef.current) {
@@ -180,50 +180,57 @@ export function DraggableChartOverlay(props: IProps) {
       </div>
 
       {/* Chart Content */}
-      <div className="px-4 pt-4 pb-2" style={{ height: `${size.height - 50}px` }}>
+      <div className="px-4 pt-4 pb-2 relative" style={{ height: `${size.height - 50}px` }}>
+        {/* Chart or skeleton */}
+        <div style={{ width: "100%", height: size.height - 140 }}>
+          {timeseries && (
+            <Plot
+              data={chartData}
+              layout={chartLayout}
+              config={chartConfig}
+              style={{ width: "100%", height: "100%" }}
+              useResizeHandler={true}
+            />
+          )}
+          {!timeseries && (
+            <div className="w-full h-full bg-gray-100 rounded flex items-center justify-center">
+              <div className="text-sm text-gray-400">Waiting for data...</div>
+            </div>
+          )}
+        </div>
+
+        {/* Loading pulse overlay */}
         {loading && (
-          <div style={{ height: `${size.height - 180}px` }} className="flex items-center justify-center">
-            <div className="text-sm text-gray-500">
-              Loading timeseries data...
+          <div
+            className="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center z-10 rounded-lg"
+            style={{ margin: '16px 16px 8px 16px' }}
+          >
+            <div className="bg-white rounded-lg shadow-lg px-4 py-2 flex items-center gap-2">
+              <div
+                className="w-2 h-2 rounded-full animate-pulse"
+                style={{ backgroundColor: marker.color }}
+              ></div>
+              <span className="text-sm text-gray-600">Loading...</span>
             </div>
           </div>
         )}
 
-        {!loading && timeseries && (
-          <>
-            <div style={{ width: "100%", height: size.height - 140 }}>
-              <Plot
-                data={chartData}
-                layout={chartLayout}
-                config={chartConfig}
-                style={{ width: "100%", height: "100%" }}
-                useResizeHandler={true}
-              />
-            </div>
-            {/* Stats */}
-            <div className="grid grid-cols-2 gap-3 mt-2 text-xs">
-              <div className="bg-gray-50 p-2 rounded">
-                <div className="text-gray-600">Total Points</div>
-                <div className="font-semibold">
-                  {timeseries.data.velocityArray.length}
-                </div>
-              </div>
-              <div className="bg-gray-50 p-2 rounded">
-                <div className="text-gray-600">Date Range</div>
-                <div className="font-semibold text-xs">
-                  {dateRange.min && dateRange.max
-                    ? `${dateRange.min.toLocaleDateString()} - ${dateRange.max.toLocaleDateString()}`
-                    : 'N/A'}
-                </div>
+        {/* Stats */}
+        {timeseries && (
+          <div className="grid grid-cols-2 gap-3 mt-2 text-xs">
+            <div className="bg-gray-50 p-2 rounded">
+              <div className="text-gray-600">Total Points</div>
+              <div className="font-semibold">
+                {timeseries.data.velocityArray.length}
               </div>
             </div>
-          </>
-        )}
-
-        {!loading && !timeseries && (
-          <div style={{ height: `${size.height - 140}px` }} className="flex items-center justify-center">
-            <div className="text-sm text-red-500">
-              Failed to load timeseries data
+            <div className="bg-gray-50 p-2 rounded">
+              <div className="text-gray-600">Date Range</div>
+              <div className="font-semibold text-xs">
+                {dateRange.min && dateRange.max
+                  ? `${dateRange.min.toLocaleDateString()} - ${dateRange.max.toLocaleDateString()}`
+                  : 'N/A'}
+              </div>
             </div>
           </div>
         )}

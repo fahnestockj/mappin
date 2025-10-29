@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, LayersControl, GeoJSON } from "react-leaflet";
 import { CRS } from "leaflet";
 import catalogJson from "../../geoJson/stripped_catalog.json";
 import { GeoJsonObject } from "geojson";
-import { IMarker, ISetSearchParams } from "../../types";
+import { IMarker, ISetSearchParams, ITimeseries } from "../../types";
 import MapEventController from "../MapEventController";
 import LocationMarker from "../LocationMarker/LocationMarker";
 import { MdFullscreen, MdFullscreenExit } from "react-icons/md";
@@ -20,10 +20,11 @@ type IProps = {
   setSearchParams: ISetSearchParams;
   hoveredMarkerId?: string | null;
   onMarkerHover?: (markerId: string | null) => void;
+  timeseriesArr: ITimeseries[];
 };
 
 const LeafletMap = memo(function Velmap(props: IProps) {
-  const { zoom, markers, setMarkers, setSearchParams, hoveredMarkerId, onMarkerHover } = props;
+  const { zoom, markers, setMarkers, setSearchParams, hoveredMarkerId, onMarkerHover, timeseriesArr } = props;
   const [isVelMosaicChecked, setVelMosaicChecked] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [markerToEditInModal, setMarkerToEditInModal] =
@@ -47,6 +48,10 @@ const LeafletMap = memo(function Velmap(props: IProps) {
     const newMarkers = markers.filter((m) => m.id !== markerId);
     setMarkers(newMarkers);
     onMarkerHover?.(null);
+    // Close overlay if the deleted marker was being displayed
+    if (markerWithChart?.id === markerId) {
+      setMarkerWithChart(null);
+    }
     setSearchParams((prevParams) => {
       const newParams = clearMarkersFromUrlParams(prevParams);
       newMarkers.forEach((marker) => {
@@ -87,6 +92,13 @@ const LeafletMap = memo(function Velmap(props: IProps) {
     };
   }, []);
 
+  // Close overlay if the marker no longer exists
+  useEffect(() => {
+    if (markerWithChart && !markers.some(m => m.id === markerWithChart.id)) {
+      setMarkerWithChart(null);
+    }
+  }, [markers, markerWithChart]);
+
   return (
     <div className="w-full h-full relative" ref={mapContainerRef}>
       {markerToEditInModal && (
@@ -103,6 +115,7 @@ const LeafletMap = memo(function Velmap(props: IProps) {
         <DraggableChartOverlay
           marker={markerWithChart}
           onClose={() => setMarkerWithChart(null)}
+          timeseriesArr={timeseriesArr}
         />
       )}
       <button
