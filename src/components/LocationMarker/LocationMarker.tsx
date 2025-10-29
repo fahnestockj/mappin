@@ -57,7 +57,7 @@ const LocationMarker = (props: IProps) => {
             lat: number;
             lng: number;
           };
-          newMarkers[oldMarkerIndex] = {
+          const updatedMarker = {
             id: createId(),
             color: markerProp.color,
             latLon: {
@@ -65,6 +65,7 @@ const LocationMarker = (props: IProps) => {
               lon: parseFloat(lon.toFixed(4)),
             },
           };
+          newMarkers[oldMarkerIndex] = updatedMarker;
           setSearchParams(
             (prevParams) => {
               // remove all markers from the url
@@ -79,6 +80,7 @@ const LocationMarker = (props: IProps) => {
           );
           setPosition({ lat, lon });
           setMarkers(newMarkers);
+          onShowChart?.(updatedMarker);
         }
       },
     }),

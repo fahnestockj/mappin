@@ -69,6 +69,7 @@ function App() {
           setSearchParams={setSearchParams}
           zoom={initialState.mapZoom}
           hoveredMarkerId={hoveredMarkerId}
+          onMarkerHover={setHoveredMarkerId}
         />
       </div>
 

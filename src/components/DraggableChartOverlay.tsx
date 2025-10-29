@@ -111,6 +111,16 @@ export function DraggableChartOverlay(props: IProps) {
     ];
   }, [timeseries]);
 
+  const dateRange = useMemo(() => {
+    if (!timeseries || timeseries.data.midDateArray.length === 0) {
+      return { min: null, max: null };
+    }
+    const dates = timeseries.data.midDateArray;
+    const min = new Date(Math.min(...dates.map(d => d.getTime())));
+    const max = new Date(Math.max(...dates.map(d => d.getTime())));
+    return { min, max };
+  }, [timeseries]);
+
   const chartLayout = useMemo<Partial<Plotly.Layout>>(() => {
     return {
       margin: { t: 10, b: 40, l: 60, r: 20 },
@@ -118,7 +128,7 @@ export function DraggableChartOverlay(props: IProps) {
       showlegend: false,
       xaxis: { type: "date" },
       yaxis: { title: "Speed (m/yr)" },
-      height: size.height - 100,
+      height: size.height - 140, // Account for header (~50px), padding (~24px), stats (~60px), margin (~8px)
       width: size.width - 40,
       hovermode: "closest",
     };
@@ -170,48 +180,50 @@ export function DraggableChartOverlay(props: IProps) {
       </div>
 
       {/* Chart Content */}
-      <div className="p-4">
+      <div className="px-4 pt-4 pb-2" style={{ height: `${size.height - 50}px` }}>
         {loading && (
-          <div className="text-sm text-gray-500 text-center py-8">
-            Loading timeseries data...
+          <div style={{ height: `${size.height - 180}px` }} className="flex items-center justify-center">
+            <div className="text-sm text-gray-500">
+              Loading timeseries data...
+            </div>
           </div>
         )}
 
         {!loading && timeseries && (
-          <div style={{ width: "100%", height: size.height - 100 }}>
-            <Plot
-              data={chartData}
-              layout={chartLayout}
-              config={chartConfig}
-              style={{ width: "100%", height: "100%" }}
-              useResizeHandler={true}
-            />
-          </div>
+          <>
+            <div style={{ width: "100%", height: size.height - 140 }}>
+              <Plot
+                data={chartData}
+                layout={chartLayout}
+                config={chartConfig}
+                style={{ width: "100%", height: "100%" }}
+                useResizeHandler={true}
+              />
+            </div>
+            {/* Stats */}
+            <div className="grid grid-cols-2 gap-3 mt-2 text-xs">
+              <div className="bg-gray-50 p-2 rounded">
+                <div className="text-gray-600">Total Points</div>
+                <div className="font-semibold">
+                  {timeseries.data.velocityArray.length}
+                </div>
+              </div>
+              <div className="bg-gray-50 p-2 rounded">
+                <div className="text-gray-600">Date Range</div>
+                <div className="font-semibold text-xs">
+                  {dateRange.min && dateRange.max
+                    ? `${dateRange.min.toLocaleDateString()} - ${dateRange.max.toLocaleDateString()}`
+                    : 'N/A'}
+                </div>
+              </div>
+            </div>
+          </>
         )}
 
         {!loading && !timeseries && (
-          <div className="text-sm text-red-500 text-center py-8">
-            Failed to load timeseries data
-          </div>
-        )}
-
-        {/* Stats */}
-        {timeseries && (
-          <div className="grid grid-cols-2 gap-3 mt-3 text-xs">
-            <div className="bg-gray-50 p-2 rounded">
-              <div className="text-gray-600">Total Points</div>
-              <div className="font-semibold">
-                {timeseries.data.velocityArray.length}
-              </div>
-            </div>
-            <div className="bg-gray-50 p-2 rounded">
-              <div className="text-gray-600">Date Range</div>
-              <div className="font-semibold text-xs">
-                {timeseries.data.midDateArray[0]?.getFullYear()} -{" "}
-                {timeseries.data.midDateArray[
-                  timeseries.data.midDateArray.length - 1
-                ]?.getFullYear()}
-              </div>
+          <div style={{ height: `${size.height - 140}px` }} className="flex items-center justify-center">
+            <div className="text-sm text-red-500">
+              Failed to load timeseries data
             </div>
           </div>
         )}

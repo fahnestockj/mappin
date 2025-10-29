@@ -9,12 +9,13 @@ type IProps = {
   markers: IMarker[];
   setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>;
   setSearchParams: ISetSearchParams;
+  onMarkerCreated?: (marker: IMarker) => void;
 };
 /**
  * Reponsible for creating a marker and updating the url params
  */
 export function createMarker(props: IProps) {
-  const { latitude, longitude, markers, setSearchParams, setMarkers } = props;
+  const { latitude, longitude, markers, setSearchParams, setMarkers, onMarkerCreated } = props;
 
   const newMarker: IMarker = {
     id: createId(),
@@ -36,4 +37,5 @@ export function createMarker(props: IProps) {
     { replace: true }
   );
   setMarkers(updatedMarkers);
+  onMarkerCreated?.(newMarker);
 }

@@ -14,11 +14,11 @@ export function MarkerList(props: IProps) {
   const { markers, onEdit, onDelete, compact = false, onHover } = props;
 
   return (
-    <div className={classNames("space-y-1", compact ? "p-2" : "p-2")}>
+    <div className={compact ? "" : ""}>
       {markers.map((marker) => (
         <div
           key={marker.id}
-          className="flex items-center gap-2 py-2 px-2 hover:bg-gray-100 rounded transition-colors group"
+          className="flex items-center gap-2 py-2 px-3 hover:bg-gray-100 transition-colors group"
           onMouseEnter={() => onHover?.(marker.id)}
           onMouseLeave={() => onHover?.(null)}
         >

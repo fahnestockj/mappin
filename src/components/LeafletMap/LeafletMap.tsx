@@ -19,10 +19,11 @@ type IProps = {
   setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>;
   setSearchParams: ISetSearchParams;
   hoveredMarkerId?: string | null;
+  onMarkerHover?: (markerId: string | null) => void;
 };
 
 const LeafletMap = memo(function Velmap(props: IProps) {
-  const { zoom, markers, setMarkers, setSearchParams, hoveredMarkerId } = props;
+  const { zoom, markers, setMarkers, setSearchParams, hoveredMarkerId, onMarkerHover } = props;
   const [isVelMosaicChecked, setVelMosaicChecked] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [markerToEditInModal, setMarkerToEditInModal] =
@@ -45,6 +46,7 @@ const LeafletMap = memo(function Velmap(props: IProps) {
   const handleDeleteMarker = (markerId: string) => {
     const newMarkers = markers.filter((m) => m.id !== markerId);
     setMarkers(newMarkers);
+    onMarkerHover?.(null);
     setSearchParams((prevParams) => {
       const newParams = clearMarkersFromUrlParams(prevParams);
       newMarkers.forEach((marker) => {
@@ -179,6 +181,7 @@ const LeafletMap = memo(function Velmap(props: IProps) {
             setMarkers={setMarkers}
             setSearchParams={setSearchParams}
             setVelMosaicChecked={setVelMosaicChecked}
+            onMarkerCreated={isFullscreen ? setMarkerWithChart : undefined}
           />
           {markers.map((marker) => (
             <LocationMarker
@@ -191,7 +194,7 @@ const LeafletMap = memo(function Velmap(props: IProps) {
               isDimmed={
                 hoveredMarkerId !== null && hoveredMarkerId !== marker.id
               }
-              onShowChart={setMarkerWithChart}
+              onShowChart={isFullscreen ? setMarkerWithChart : undefined}
             />
           ))}
         </MapContainer>

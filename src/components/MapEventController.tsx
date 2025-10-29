@@ -7,9 +7,10 @@ type IProps = {
   setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>;
   setSearchParams: ISetSearchParams;
   setVelMosaicChecked: React.Dispatch<React.SetStateAction<boolean>>;
+  onMarkerCreated?: (marker: IMarker) => void;
 };
 const MapEventController = (props: IProps) => {
-  const { markers, setMarkers, setSearchParams, setVelMosaicChecked } = props;
+  const { markers, setMarkers, setSearchParams, setVelMosaicChecked, onMarkerCreated } = props;
   useMapEvents({
     // Show velocity colorbar for reference
     layeradd(e) {
@@ -39,6 +40,7 @@ const MapEventController = (props: IProps) => {
           markers,
           setMarkers,
           setSearchParams,
+          onMarkerCreated,
         });
       }
     },

@@ -33,6 +33,7 @@ export function MarkerTable(props: IProps) {
   const handleDeleteMarker = (markerId: string) => {
     const newMarkers = markers.filter((m) => m.id !== markerId);
     setMarkers(newMarkers);
+    onMarkerHover?.(null);
     setSearchParams((prevParams) => {
       const newParams = clearMarkersFromUrlParams(prevParams);
       newMarkers.forEach((marker) => {
@@ -46,6 +47,7 @@ export function MarkerTable(props: IProps) {
   const handleClearAllMarkers = () => {
     setMarkers([]);
     setTimeseriesArr([]);
+    onMarkerHover?.(null);
     setSearchParams(
       (prevParams) => {
         const newParams = new URLSearchParams(prevParams);
