@@ -17,10 +17,11 @@ type IProps = {
   markers: IMarker[];
   setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>;
   setSearchParams: ISetSearchParams;
+  hoveredMarkerId?: string | null;
 };
 
 const LeafletMap = memo(function Velmap(props: IProps) {
-  const { zoom, markers, setMarkers, setSearchParams } = props;
+  const { zoom, markers, setMarkers, setSearchParams, hoveredMarkerId } = props;
   const [isVelMosaicChecked, setVelMosaicChecked] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [markerToEditInModal, setMarkerToEditInModal] = useState<IMarker | null>(null);
@@ -177,6 +178,8 @@ const LeafletMap = memo(function Velmap(props: IProps) {
               markers={markers}
               setMarkers={setMarkers}
               setSearchParams={setSearchParams}
+              isHovered={hoveredMarkerId === marker.id}
+              isDimmed={hoveredMarkerId !== null && hoveredMarkerId !== marker.id}
             />
           ))}
         </MapContainer>

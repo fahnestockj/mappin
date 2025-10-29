@@ -18,9 +18,10 @@ type IProps = {
   loading: boolean;
   plotBounds: IPlotBounds;
   setSearchParams: ISetSearchParams;
+  hoveredMarkerId?: string | null;
 };
 export const PlotlyChart = (props: IProps) => {
-  const { timeseriesArr, intervalDays, loading, setSearchParams, plotBounds } =
+  const { timeseriesArr, intervalDays, loading, setSearchParams, plotBounds, hoveredMarkerId } =
     props;
   const [dragmode, setDragmode] = useState<"pan" | "zoom">("zoom");
   const [satelliteView, setSatelliteView] = useState<boolean>(false);
@@ -210,16 +211,30 @@ export const PlotlyChart = (props: IProps) => {
       );
     }
 
-    return filteredTimeseries.map((timeseries) => {
+    const traces = filteredTimeseries.map((timeseries) => {
+      const isHovered = hoveredMarkerId === timeseries.marker.id;
+      const shouldDim = hoveredMarkerId !== null && !isHovered;
+
       return {
         x: timeseries.data.midDateArray,
         y: timeseries.data.velocityArray,
-        type: "scattergl",
-        mode: "markers",
-        marker: { color: timeseries.marker.color },
+        type: "scattergl" as const,
+        mode: "markers" as const,
+        marker: {
+          color: timeseries.marker.color,
+          opacity: shouldDim ? 0.1 : 1.0,
+        },
+        isHovered,
       };
     });
-  }, [timeseriesArr, intervalDays, satelliteView]);
+
+    // Sort so hovered trace renders last (on top)
+    return traces.sort((a, b) => {
+      if (a.isHovered) return 1;
+      if (b.isHovered) return -1;
+      return 0;
+    }).map(({ isHovered, ...trace }) => trace as Partial<Plotly.PlotData>);
+  }, [timeseriesArr, intervalDays, satelliteView, hoveredMarkerId]);
 
   return (
     <div className={classNames("w-full h-[90%]", loading && "animate-pulse")}>

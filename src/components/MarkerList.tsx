@@ -7,10 +7,11 @@ type IProps = {
   onEdit: (marker: IMarker) => void;
   onDelete: (markerId: string) => void;
   compact?: boolean;
+  onHover?: (markerId: string | null) => void;
 };
 
 export function MarkerList(props: IProps) {
-  const { markers, onEdit, onDelete, compact = false } = props;
+  const { markers, onEdit, onDelete, compact = false, onHover } = props;
 
   return (
     <div className={classNames("space-y-1", compact ? "p-2" : "p-2")}>
@@ -18,6 +19,8 @@ export function MarkerList(props: IProps) {
         <div
           key={marker.id}
           className="flex items-center gap-2 py-2 px-2 hover:bg-gray-100 rounded transition-colors group"
+          onMouseEnter={() => onHover?.(marker.id)}
+          onMouseLeave={() => onHover?.(null)}
         >
           <div
             className="w-3 h-3 rounded-full flex-shrink-0"

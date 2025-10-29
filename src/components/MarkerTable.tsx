@@ -10,10 +10,11 @@ type IProps = {
   setMarkers: React.Dispatch<React.SetStateAction<IMarker[]>>;
   setSearchParams: ISetSearchParams;
   setTimeseriesArr: React.Dispatch<React.SetStateAction<ITimeseries[]>>;
+  onMarkerHover?: (markerId: string | null) => void;
 };
 
 export function MarkerTable(props: IProps) {
-  const { markers, setMarkers, setSearchParams, setTimeseriesArr } = props;
+  const { markers, setMarkers, setSearchParams, setTimeseriesArr, onMarkerHover } = props;
   const [markerToEditInModal, setMarkerToEditInModal] =
     useState<IMarker | null>(null);
 
@@ -85,6 +86,7 @@ export function MarkerTable(props: IProps) {
                 markers={markers}
                 onEdit={setMarkerToEditInModal}
                 onDelete={handleDeleteMarker}
+                onHover={onMarkerHover}
               />
               <div ref={bottomRowRef} />
             </>

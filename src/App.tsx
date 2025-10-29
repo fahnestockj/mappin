@@ -23,6 +23,7 @@ function App() {
     initialState.intervalDays
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
 
   useEffect(() => {
     // cleanup for race conditions
@@ -61,17 +62,18 @@ function App() {
   return (
     <div id="root" className="w-full h-screen flex flex-col">
       {/* Map Section */}
-      <div className="w-full flex-[3] min-h-[300px] shadow-md">
+      <div className="w-full flex-[2] min-h-[300px] shadow-md">
         <LeafletMap
           markers={markers}
           setMarkers={setMarkers}
           setSearchParams={setSearchParams}
           zoom={initialState.mapZoom}
+          hoveredMarkerId={hoveredMarkerId}
         />
       </div>
 
       {/* Bottom Section */}
-      <div className="flex-[2] flex flex-col lg:flex-row p-4 gap-4 overflow-auto">
+      <div className="flex-[3] flex flex-col lg:flex-row p-4 gap-4 overflow-auto">
         {/* Chart Section */}
         <div className="flex-1 min-h-[300px] border-2 border-gray-200 overflow-hidden rounded-lg shadow-md">
           <PlotlyChart
@@ -80,18 +82,20 @@ function App() {
             intervalDays={intervalDays}
             plotBounds={initialState.plotBounds}
             setSearchParams={setSearchParams}
+            hoveredMarkerId={hoveredMarkerId}
           />
         </div>
 
         {/* Controls Section */}
         <div className="w-full lg:w-96 flex flex-col gap-4">
           {/* Marker Table */}
-          <div className="h-[166px]">
+          <div className="h-[240px]">
             <MarkerTable
               markers={markers}
               setMarkers={setMarkers}
               setSearchParams={setSearchParams}
               setTimeseriesArr={setTimeseriesArr}
+              onMarkerHover={setHoveredMarkerId}
             />
           </div>
 
