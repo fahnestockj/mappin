@@ -196,6 +196,7 @@ export const PlotlyChart = (props: IProps) => {
                     satellite as keyof typeof satelliteColorDict
                   ],
               },
+              hovertemplate: '<b>Date:</b> %{x}<br><b>Speed:</b> %{y:.2f} m/yr<extra></extra>',
             };
           }
           // @ts-ignore
@@ -224,6 +225,7 @@ export const PlotlyChart = (props: IProps) => {
           color: timeseries.marker.color,
           opacity: shouldDim ? 0.1 : 1.0,
         },
+        hovertemplate: '<b>Date:</b> %{x}<br><b>Speed:</b> %{y:.2f} m/yr<extra></extra>',
         isHovered,
       };
     });

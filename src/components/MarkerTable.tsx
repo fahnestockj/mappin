@@ -79,7 +79,7 @@ export function MarkerTable(props: IProps) {
         {/* Body - Scrollable */}
         <div className="flex-1 overflow-y-auto min-h-0">
           {markers.length === 0 ? (
-            <div className="px-3 py-4 text-sm text-gray-500 text-center">
+            <div className="px-3 py-10 text-sm text-gray-500 text-center">
               No markers added yet. Click on the map to add markers.
             </div>
           ) : (

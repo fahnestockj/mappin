@@ -104,7 +104,7 @@ function App() {
         {/* Controls Section */}
         <div className="w-full lg:w-96 flex flex-col gap-4">
           {/* Marker Table */}
-          <div className="h-[240px]">
+          <div className="h-[340px]">
             <MarkerTable
               markers={markers}
               setMarkers={setMarkers}
@@ -115,7 +115,7 @@ function App() {
           </div>
 
           {/* Controls Panel */}
-          <div className="flex-1 shadow-md border-2 border-gray-200 rounded-lg p-4 space-y-4">
+          <div className="flex-1 max-h-[200px] shadow-md border-2 border-gray-200 rounded-lg p-4 space-y-4">
             {/* Slider Section */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">

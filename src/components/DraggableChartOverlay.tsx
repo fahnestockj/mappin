@@ -3,6 +3,7 @@ import { IMarker, ITimeseries } from "../types";
 import createPlotlyComponent from "react-plotly.js/factory";
 import Plotly from "plotly.js-gl2d-dist-min";
 import { MdClose, MdDragIndicator } from "react-icons/md";
+import { satelliteSvgString } from "../utils/SatelliteSvg";
 
 const Plot = createPlotlyComponent(Plotly);
 
@@ -23,6 +24,8 @@ export function DraggableChartOverlay(props: IProps) {
   const [resizing, setResizing] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const [satelliteView, setSatelliteView] = useState<boolean>(false);
+  const [dragmode, setDragmode] = useState<"pan" | "zoom">("zoom");
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -95,6 +98,37 @@ export function DraggableChartOverlay(props: IProps) {
 
   const chartData = useMemo(() => {
     if (!timeseries) return [];
+
+    if (satelliteView) {
+      // Group by satellite
+      const satelliteDict: Record<string, Partial<Plotly.PlotData>> = {};
+
+      for (let i = 0; i < timeseries.data.velocityArray.length; i++) {
+        const satellite = timeseries.data.satelliteArray[i];
+        if (!satelliteDict[satellite]) {
+          satelliteDict[satellite] = {
+            x: [],
+            y: [],
+            type: "scattergl",
+            mode: "markers",
+            name: satellite,
+            marker: {
+              color: satelliteColorDict[satellite as keyof typeof satelliteColorDict],
+            },
+          };
+        }
+        // @ts-ignore
+        satelliteDict[satellite].x.push(timeseries.data.midDateArray[i]);
+        // @ts-ignore
+        satelliteDict[satellite].y.push(timeseries.data.velocityArray[i]);
+      }
+      return Object.values(satelliteDict).sort(
+        (a, b) =>
+          (parseInt(a.name![a.name!.length - 1]) || 0) -
+          (parseInt(b.name![b.name!.length - 1]) || 0)
+      );
+    }
+
     return [
       {
         x: timeseries.data.midDateArray,
@@ -109,7 +143,7 @@ export function DraggableChartOverlay(props: IProps) {
         hovertemplate: '<b>Date:</b> %{x}<br><b>Speed:</b> %{y:.2f} m/yr<extra></extra>',
       },
     ];
-  }, [timeseries]);
+  }, [timeseries, satelliteView]);
 
   const dateRange = useMemo(() => {
     if (!timeseries || timeseries.data.midDateArray.length === 0) {
@@ -123,21 +157,80 @@ export function DraggableChartOverlay(props: IProps) {
 
   const chartLayout = useMemo<Partial<Plotly.Layout>>(() => {
     return {
-      margin: { t: 10, b: 40, l: 60, r: 20 },
+      margin: { t: 10, b: 40, l: 60, r: satelliteView ? 150 : 20 },
       autosize: true,
-      showlegend: false,
+      showlegend: satelliteView,
       xaxis: { type: "date" },
       yaxis: { title: "Speed (m/yr)" },
       height: size.height - 140, // Account for header (~50px), padding (~24px), stats (~60px), margin (~8px)
       width: size.width - 40,
       hovermode: "closest",
+      dragmode,
+      legend: {
+        title: { text: "  Satellites", font: { size: 13 } },
+        x: 1,
+      },
+      modebar: {
+        orientation: "v",
+        color: "rgb(71 85 105)",
+      },
     };
-  }, [size]);
+  }, [size, satelliteView, dragmode]);
 
-  const chartConfig: Partial<Plotly.Config> = {
-    displayModeBar: false,
-    responsive: true,
-  };
+  const chartConfig: Partial<Plotly.Config> = useMemo(() => {
+    return {
+      modeBarButtons: [
+        [
+          {
+            name: "satelliteView",
+            title: "Satellite View",
+            icon: {
+              svg: satelliteSvgString,
+              name: "satellite",
+            },
+            click: function () {
+              setSatelliteView((prev) => !prev);
+            },
+          },
+          {
+            name: "zoom2d",
+            title: "Zoom",
+            icon: Plotly.Icons.zoombox,
+            click: function (gd) {
+              setDragmode("zoom");
+              Plotly.relayout(gd, { dragmode: "zoom" });
+            },
+          },
+          {
+            name: "pan2d",
+            title: "Pan",
+            icon: Plotly.Icons.pan,
+            click: function (gd) {
+              setDragmode("pan");
+              Plotly.relayout(gd, { dragmode: "pan" });
+            },
+          },
+          {
+            name: "autoscale2d",
+            title: "Reset Axes",
+            icon: Plotly.Icons.autoscale,
+            click: function (gd) {
+              Plotly.relayout(gd, {
+                "xaxis.autorange": true,
+                "yaxis.autorange": true,
+              });
+            },
+          },
+        ],
+      ],
+      doubleClick: "autosize",
+      doubleClickDelay: 600,
+      displaylogo: false,
+      showTips: false,
+      responsive: true,
+      displayModeBar: true,
+    };
+  }, []);
 
   return (
     <div
@@ -247,3 +340,13 @@ export function DraggableChartOverlay(props: IProps) {
     </div>
   );
 }
+
+const satelliteColorDict = {
+  "Sentinel 1": "#FE4A49",
+  "Sentinel 2": "#c47335ff",
+  "Landsat 4": "#2660a4ff",
+  "Landsat 5": "#A1C181",
+  "Landsat 7": "#55dde0ff",
+  "Landsat 8": "#2660a4ff",
+  "Landsat 9": "#C60F7B",
+};

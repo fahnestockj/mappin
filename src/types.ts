@@ -2,7 +2,7 @@ import { NavigateOptions, URLSearchParamsInit } from 'react-router-dom'
 
 enum ColorByHex {
   '#2660a4ff',// 'lapis-lazuli'
-  '#55dde0ff',// 'robin-egg-blue'
+  '#61D1D4',// 'robin-egg-blue'
   '#28502eff',// 'cal-poly-green
   '#c47335ff',// 'copper'
   '#7b7263ff',// 'dim-gray'
