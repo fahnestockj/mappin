@@ -13,26 +13,34 @@ const MapEventController = (props: IProps) => {
   useMapEvents({
     // Show velocity colorbar for reference
     layeradd(e) {
-      //@ts-ignore
-      if (e.layer._url === 'https://its-live-data.s3.amazonaws.com/velocity_mosaic/v2/static/v_tiles_global/{z}/{x}/{y}.png') {
-        setVelMosaicChecked(true)
+      if (
+        //@ts-ignore
+        e.layer._url ===
+        "https://its-live-data.s3.amazonaws.com/velocity_mosaic/v2/static/v_tiles_global/{z}/{x}/{y}.png"
+      ) {
+        setVelMosaicChecked(true);
       }
     },
     layerremove(e) {
-      //@ts-ignore
-      if (e.layer._url === 'https://its-live-data.s3.amazonaws.com/velocity_mosaic/v2/static/v_tiles_global/{z}/{x}/{y}.png') {
-        setVelMosaicChecked(false)
+      if (
+        //@ts-ignore
+        e.layer._url ===
+        "https://its-live-data.s3.amazonaws.com/velocity_mosaic/v2/static/v_tiles_global/{z}/{x}/{y}.png"
+      ) {
+        setVelMosaicChecked(false);
       }
     },
 
     click(e) {
-      createMarker({
-        latitude: e.latlng.lat,
-        longitude: e.latlng.lng,
-        markers,
-        setMarkers,
-        setSearchParams,
-      });
+      if (markers.length <= 10) {
+        createMarker({
+          latitude: e.latlng.lat,
+          longitude: e.latlng.lng,
+          markers,
+          setMarkers,
+          setSearchParams,
+        });
+      }
     },
     zoomend(e) {
       setSearchParams(

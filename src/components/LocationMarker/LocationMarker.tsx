@@ -18,10 +18,11 @@ type IProps = {
   setSearchParams: ISetSearchParams;
   isHovered?: boolean;
   isDimmed?: boolean;
+  onShowChart?: (marker: IMarker) => void;
 };
 
 const LocationMarker = (props: IProps) => {
-  const { markerProp, markers, setMarkers, setSearchParams, isHovered, isDimmed } = props;
+  const { markerProp, markers, setMarkers, setSearchParams, isHovered, isDimmed, onShowChart } = props;
   const markerRef = useRef(null);
   const [position, setPosition] = useState<ICoordinate>(markerProp.latLon);
 
@@ -34,13 +35,16 @@ const LocationMarker = (props: IProps) => {
     html: renderToStaticMarkup(SvgCross(markerProp.color)),
     iconSize: iconSize,
     iconAnchor: iconAnchor,
-    popupAnchor: [0, 0],
+    popupAnchor: [0, -18],
     shadowAnchor: [13, 28],
     className: "transparent",
   });
 
   const eventHandlers = useMemo(
     () => ({
+      click() {
+        onShowChart?.(markerProp);
+      },
       dragend() {
         const oldMarkerIndex = markers.findIndex(
           (marker) => marker.id === markerProp.id
@@ -78,8 +82,9 @@ const LocationMarker = (props: IProps) => {
         }
       },
     }),
-    [markerProp, markers, setMarkers, setSearchParams]
+    [markerProp, markers, setMarkers, setSearchParams, onShowChart]
   );
+
   return (
     <Marker
       position={{ lat: position.lat, lng: position.lon }}
@@ -90,7 +95,9 @@ const LocationMarker = (props: IProps) => {
       opacity={opacity}
     >
       <Popup>
-        Lat: {position.lat.toFixed(4)} Long: {position.lon.toFixed(4)}
+        <div className="font-mono text-sm font-semibold">
+          {position.lat.toFixed(4)}, {position.lon.toFixed(4)}
+        </div>
       </Popup>
     </Marker>
   );

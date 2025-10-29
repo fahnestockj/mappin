@@ -9,6 +9,7 @@ import LocationMarker from "../LocationMarker/LocationMarker";
 import { MdFullscreen, MdFullscreenExit } from "react-icons/md";
 import { MarkerList } from "../MarkerList";
 import { EditMarkerModal } from "../EditMarkerModal";
+import { DraggableChartOverlay } from "../DraggableChartOverlay";
 import { clearMarkersFromUrlParams } from "../../utils/searchParamUtilities";
 import "./leaflet.css";
 
@@ -24,7 +25,9 @@ const LeafletMap = memo(function Velmap(props: IProps) {
   const { zoom, markers, setMarkers, setSearchParams, hoveredMarkerId } = props;
   const [isVelMosaicChecked, setVelMosaicChecked] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [markerToEditInModal, setMarkerToEditInModal] = useState<IMarker | null>(null);
+  const [markerToEditInModal, setMarkerToEditInModal] =
+    useState<IMarker | null>(null);
+  const [markerWithChart, setMarkerWithChart] = useState<IMarker | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
   const middleMarkerIdx = Math.floor((markers.length - 1) / 2);
@@ -92,6 +95,12 @@ const LeafletMap = memo(function Velmap(props: IProps) {
           setSearchParams={setSearchParams}
           onClose={() => setMarkerToEditInModal(null)}
           container={mapContainerRef.current}
+        />
+      )}
+      {markerWithChart && (
+        <DraggableChartOverlay
+          marker={markerWithChart}
+          onClose={() => setMarkerWithChart(null)}
         />
       )}
       <button
@@ -179,7 +188,10 @@ const LeafletMap = memo(function Velmap(props: IProps) {
               setMarkers={setMarkers}
               setSearchParams={setSearchParams}
               isHovered={hoveredMarkerId === marker.id}
-              isDimmed={hoveredMarkerId !== null && hoveredMarkerId !== marker.id}
+              isDimmed={
+                hoveredMarkerId !== null && hoveredMarkerId !== marker.id
+              }
+              onShowChart={setMarkerWithChart}
             />
           ))}
         </MapContainer>
