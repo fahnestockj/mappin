@@ -165,7 +165,9 @@ const LeafletMap = memo(function Velmap(props: IProps) {
               src="/images/velocity_colorbar.png"
               alt="Vertical Velocity Colorbar"
               style={{ zIndex: 700 }}
-              className="absolute right-2 bottom-8 w-[70px] rounded-md"
+              className={`absolute right-2 bottom-8 rounded-md object-contain ${
+                isFullscreen ? 'w-[70px]' : 'w-auto max-h-[calc(100%-4rem)] max-w-[70px]'
+              }`}
             />
           )}
           <LayersControl>
@@ -180,7 +182,6 @@ const LeafletMap = memo(function Velmap(props: IProps) {
               tileSize={256}
             />
             <Overlay checked={false} name="Velocity Map">
-              {/* <img src="/images/velocity_colorbar.png" alt="Vertical Velocity Colorbar" className="leaflet-bottom leaflet-right h-[40px] rounded-t-md"></img> */}
               <TileLayer
                 className="!cursor-crosshair !opacity-50"
                 url="https://its-live-data.s3.amazonaws.com/velocity_mosaic/v2/static/v_tiles_global/{z}/{x}/{y}.png"

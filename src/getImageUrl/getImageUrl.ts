@@ -9,11 +9,6 @@ declare enum HTTPMethod {
  * @param originalIndex - The original zarr index (before filtering) for the data point
  * @returns Promise that resolves to the image URL string
  *
- * TODO: Implement this function to:
- * 1. Open zarr store at zarrUrl
- * 2. Read the imageUrl array at the path (you'll need to find the correct path)
- * 3. Fetch just imageUrl[originalIndex] from the zarr array
- * 4. Return the URL string
  */
 export async function getImageUrl(
   zarrUrl: string,
@@ -28,9 +23,7 @@ export async function getImageUrl(
     path: "/granule_url",
     mode: "r",
   });
-  console.log(imageUrlZarr);
-  
-  
+
   // Need to fetch the raw chunk and manually extract the bytes
   // Calculate which chunk contains our index
   const chunkSize = imageUrlZarr.meta.chunks[0]; // 84 elements per chunk
@@ -46,10 +39,13 @@ export async function getImageUrl(
   // Each element is 4096 bytes (1024 UTF-32 chars)
   const bytesPerElement = 1024 * 4; // 4096
   const startByte = indexInChunk * bytesPerElement;
-  const endByte = startByte + bytesPerElement;
 
-  const imageUrlRawData = new Uint8Array(decodedBytes, startByte, bytesPerElement);
-  
+  const imageUrlRawData = new Uint8Array(
+    decodedBytes,
+    startByte,
+    bytesPerElement
+  );
+
   // Process UTF-32 encoded data (4 bytes per character, 1024 characters total = 4096 bytes)
   const offset = 0;
   const bytesPerChar = 4; // UTF-32 encoding
@@ -78,7 +74,7 @@ export async function getImageUrl(
   }
 
   // Replace .nc extension with .png
-  const pngUrl = imageUrl.replace(/\.nc$/, '.png');
+  const pngUrl = imageUrl.replace(/\.nc$/, ".png");
 
   return pngUrl;
 }

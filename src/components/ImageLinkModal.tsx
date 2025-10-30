@@ -12,7 +12,6 @@ interface IProps {
 
 // Parse metadata from image URL
 function parseImageUrl(url: string) {
-  console.log(url);
 
   const filename = url.split("/").pop() || "";
   const withoutExtension = filename.replace(".png", "");
