@@ -2,7 +2,7 @@ import createPlotlyComponent from "react-plotly.js/factory";
 import { Figure } from "react-plotly.js/index";
 import Plotly from "plotly.js-gl2d-dist-min";
 import { ISetSearchParams, ITimeseries } from "../../types";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import classNames from "classnames";
 import { ITS_LIVE_LOGO_SVG } from "../../utils/ITS_LIVE_LOGO_SVG";
 import {
@@ -10,6 +10,8 @@ import {
   setPlotBoundsInUrlParams,
 } from "../../utils/searchParamUtilities";
 import { satelliteSvgString } from "../../utils/SatelliteSvg";
+import { ImageLinkModal } from "../ImageLinkModal";
+import { getImageUrl } from "../../getImageUrl/getImageUrl";
 const Plot = createPlotlyComponent(Plotly);
 
 type IProps = {
@@ -21,10 +23,25 @@ type IProps = {
   hoveredMarkerId?: string | null;
 };
 export const PlotlyChart = (props: IProps) => {
-  const { timeseriesArr, intervalDays, loading, setSearchParams, plotBounds, hoveredMarkerId } =
-    props;
+  const {
+    timeseriesArr,
+    intervalDays,
+    loading,
+    setSearchParams,
+    plotBounds,
+    hoveredMarkerId,
+  } = props;
   const [dragmode, setDragmode] = useState<"pan" | "zoom">("zoom");
   const [satelliteView, setSatelliteView] = useState<boolean>(false);
+  const [clickedPoint, setClickedPoint] = useState<{
+    imageUrl: string | null;
+    date: string;
+    satellite: string;
+    speed: string;
+    error?: string;
+  } | null>(null);
+  const isResettingAxesRef = useRef(false);
+
   const chartConfig: Partial<Plotly.Config> = useMemo(() => {
     return {
       modeBarButtons: [
@@ -124,6 +141,8 @@ export const PlotlyChart = (props: IProps) => {
       | "dragmode"
       | "legend"
       | "modebar"
+      | "hovermode"
+      | "hoverdistance"
     > = {
       margin: { t: 20, b: 60, l: 80, r: satelliteView ? 150 : 80 },
       autosize: true,
@@ -144,6 +163,8 @@ export const PlotlyChart = (props: IProps) => {
         orientation: "v",
         color: "rgb(71 85 105)",
       },
+      hovermode: "closest",
+      hoverdistance: 5, // Pixels - require cursor to be very close to point
     };
     return chartLayout;
   }, [plotBounds, satelliteView]);
@@ -154,6 +175,7 @@ export const PlotlyChart = (props: IProps) => {
       const filteredVelocityArray: number[] = [];
       const filteredDateDtArray: number[] = [];
       const filtertedSatelliteArray: string[] = [];
+      const filteredOriginalIndexArray: number[] = [];
 
       for (let i = 0; i < timeseries.data.velocityArray.length; i++) {
         const dt = timeseries.data.daysDeltaArray[i];
@@ -162,6 +184,9 @@ export const PlotlyChart = (props: IProps) => {
           filteredVelocityArray.push(timeseries.data.velocityArray[i]);
           filteredDateDtArray.push(timeseries.data.daysDeltaArray[i]);
           filtertedSatelliteArray.push(timeseries.data.satelliteArray[i]);
+          filteredOriginalIndexArray.push(
+            timeseries.data.originalIndexArray[i]
+          );
         }
       }
       return {
@@ -171,6 +196,7 @@ export const PlotlyChart = (props: IProps) => {
           velocityArray: filteredVelocityArray,
           dateDeltaArray: filteredDateDtArray,
           satelliteArray: filtertedSatelliteArray,
+          originalIndexArray: filteredOriginalIndexArray,
         },
       };
     });
@@ -196,7 +222,8 @@ export const PlotlyChart = (props: IProps) => {
                     satellite as keyof typeof satelliteColorDict
                   ],
               },
-              hovertemplate: '<b>Date:</b> %{x}<br><b>Speed:</b> %{y:.2f} m/yr<extra></extra>',
+              hovertemplate:
+                "<b>Date:</b> %{x}<br><b>Speed:</b> %{y:.2f} m/yr<extra></extra>",
             };
           }
           // @ts-ignore
@@ -225,21 +252,34 @@ export const PlotlyChart = (props: IProps) => {
           color: timeseries.marker.color,
           opacity: shouldDim ? 0.1 : 1.0,
         },
-        hovertemplate: '<b>Date:</b> %{x}<br><b>Speed:</b> %{y:.2f} m/yr<extra></extra>',
+        hovertemplate:
+          "<b>Date:</b> %{x}<br><b>Speed:</b> %{y:.2f} m/yr<extra></extra>",
         isHovered,
       };
     });
 
     // Sort so hovered trace renders last (on top)
-    return traces.sort((a, b) => {
-      if (a.isHovered) return 1;
-      if (b.isHovered) return -1;
-      return 0;
-    }).map(({ isHovered, ...trace }) => trace as Partial<Plotly.PlotData>);
+    return traces
+      .sort((a, b) => {
+        if (a.isHovered) return 1;
+        if (b.isHovered) return -1;
+        return 0;
+      })
+      .map(({ isHovered, ...trace }) => trace as Partial<Plotly.PlotData>);
   }, [timeseriesArr, intervalDays, satelliteView, hoveredMarkerId]);
 
   return (
     <div className={classNames("w-full h-[90%]", loading && "animate-pulse")}>
+      {clickedPoint && (
+        <ImageLinkModal
+          imageUrl={clickedPoint.imageUrl}
+          date={clickedPoint.date}
+          satellite={clickedPoint.satellite}
+          speed={clickedPoint.speed}
+          error={clickedPoint.error}
+          onClose={() => setClickedPoint(null)}
+        />
+      )}
       <div className="w-full flex justify-center mt-4">
         <a href="https://its-live.jpl.nasa.gov/">
           <ITS_LIVE_LOGO_SVG />
@@ -252,41 +292,135 @@ export const PlotlyChart = (props: IProps) => {
           </div>
         </div>
       ) : (
-      <Plot
-        onUpdate={(figure) => {
-          // this callback gets called a lot including when the user is dragging a zoom box
-          // in that time we need to be careful to ignore all changes except for those that actually change the x and y axis range
-          // heavily impacts chart performance
+        <Plot
+          onUpdate={(figure) => {
+            // this callback gets called a lot including when the user is dragging a zoom box
+            // in that time we need to be careful to ignore all changes except for those that actually change the x and y axis range
+            // heavily impacts chart performance
 
-          const plotXBounds = figure.layout.xaxis!.range! as [string, string];
-          const plotXBoundsDate = plotXBounds.map((date) => new Date(date)) as [
-            Date,
-            Date
-          ];
-          const plotYBounds = figure.layout.yaxis!.range! as [number, number];
+            const plotXBounds = figure.layout.xaxis!.range! as [string, string];
+            const plotXBoundsDate = plotXBounds.map(
+              (date) => new Date(date)
+            ) as [Date, Date];
+            const plotYBounds = figure.layout.yaxis!.range! as [number, number];
 
-          const currentPlotBounds: IPlotBounds = {
-            x: plotXBoundsDate,
-            y: plotYBounds,
-          };
-          // we need to see if our params don't match with
-          if (!arePlotBoundsEqual(plotBounds, currentPlotBounds)) {
             const currentPlotBounds: IPlotBounds = {
               x: plotXBoundsDate,
               y: plotYBounds,
             };
-            setSearchParams(
-              (prevParams) =>
-                setPlotBoundsInUrlParams(prevParams, currentPlotBounds),
-              { replace: true }
-            );
-          }
-        }}
-        data={data}
-        layout={chartLayout}
-        config={chartConfig}
-        className="w-full h-full"
-      />
+            // we need to see if our params don't match with
+            if (!arePlotBoundsEqual(plotBounds, currentPlotBounds)) {
+              const currentPlotBounds: IPlotBounds = {
+                x: plotXBoundsDate,
+                y: plotYBounds,
+              };
+              setSearchParams(
+                (prevParams) =>
+                  setPlotBoundsInUrlParams(prevParams, currentPlotBounds),
+                { replace: true }
+              );
+            }
+          }}
+          onRelayout={(event) => {
+            console.log("🔵 onRelayout fired", {
+              timestamp: Date.now(),
+              event,
+            });
+
+            // Detect if axes are being auto-ranged (happens on double-click or reset button)
+            if (
+              event["xaxis.autorange"] === true ||
+              event["yaxis.autorange"] === true
+            ) {
+              console.log(
+                "📊 Axes reset detected - setting isResettingAxes flag"
+              );
+              isResettingAxesRef.current = true;
+              setTimeout(() => {
+                console.log("🟢 Clearing isResettingAxes flag");
+                isResettingAxesRef.current = false;
+              }, 500);
+            }
+          }}
+          onClick={async (event) => {
+            console.log("🔴 onClick fired", {
+              timestamp: Date.now(),
+              isResettingAxesFlag: isResettingAxesRef.current,
+              hasPoints: event.points && event.points.length > 0,
+              pointsLength: event.points?.length,
+            });
+
+            // Add small delay to let onRelayout fire first
+            await new Promise((resolve) => setTimeout(resolve, 10));
+
+            // Now check the flag after giving onRelayout time to set it
+            if (isResettingAxesRef.current) {
+              console.log(
+                "⚠️ Ignoring click due to isResettingAxes flag (checked after delay)"
+              );
+              return;
+            }
+
+            if (event.points && event.points.length > 0) {
+              const point = event.points[0];
+              const pointIndex = point.pointIndex;
+              const curveNumber = point.curveNumber;
+
+              console.log("🎯 Processing click", {
+                pointIndex,
+                curveNumber,
+                satelliteView,
+                timeseriesLength: timeseriesArr.length,
+              });
+
+              // Only handle clicks in non-satellite view for now
+              if (!satelliteView && curveNumber < timeseriesArr.length) {
+                const timeseries = timeseriesArr[curveNumber];
+                const midDate = timeseries.data.midDateArray[pointIndex];
+                const satellite = timeseries.data.satelliteArray[pointIndex];
+                const speed =
+                  timeseries.data.velocityArray[pointIndex].toFixed(2);
+                const originalIndex =
+                  timeseries.data.originalIndexArray[pointIndex];
+
+                console.log("✅ Opening modal for point", { originalIndex });
+
+                // Show modal immediately with loading state
+                setClickedPoint({
+                  imageUrl: null, // Loading
+                  date: midDate.toLocaleDateString(),
+                  satellite,
+                  speed,
+                });
+
+                // Fetch image URL on demand using original zarr index
+                const imageUrl = await getImageUrl(
+                  timeseries.zarrUrl,
+                  originalIndex
+                );
+                setClickedPoint({
+                  imageUrl,
+                  date: midDate.toLocaleDateString(),
+                  satellite,
+                  speed,
+                });
+                // } catch (err) {
+                //   setClickedPoint({
+                //     imageUrl: null,
+                //     date: midDate.toLocaleDateString(),
+                //     satellite,
+                //     speed,
+                //     error: err instanceof Error ? err.message : 'Failed to load image URL',
+                //   });
+                // }
+              }
+            }
+          }}
+          data={data}
+          layout={chartLayout}
+          config={chartConfig}
+          className="w-full h-full"
+        />
       )}
     </div>
   );

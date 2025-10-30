@@ -35,6 +35,7 @@ export type ITimeseries = {
     daysDeltaArray: number[]
     velocityArray: number[]
     satelliteArray: string[]
+    originalIndexArray: number[] // Preserves original zarr index before filtering
   }
 }
 
