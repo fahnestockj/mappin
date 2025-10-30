@@ -83,6 +83,8 @@ export const PlotlyChart = (props: IProps) => {
               Plotly.downloadImage(gd, {
                 format: "png",
                 filename: "plot",
+                // @ts-ignore
+                scale: 2,
                 height: 600,
                 width: 1500,
               });
