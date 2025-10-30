@@ -12,6 +12,7 @@ import {
 import { satelliteSvgString } from "../../utils/SatelliteSvg";
 import { ImageLinkModal } from "../ImageLinkModal";
 import { getImageUrl } from "../../getImageUrl/getImageUrl";
+import { ZarrArray } from "@fahnestockj/zarr-fork";
 const Plot = createPlotlyComponent(Plotly);
 
 type IProps = {
@@ -21,6 +22,7 @@ type IProps = {
   plotBounds: IPlotBounds;
   setSearchParams: ISetSearchParams;
   hoveredMarkerId?: string | null;
+  onClearHover?: () => void;
 };
 export const PlotlyChart = (props: IProps) => {
   const {
@@ -30,6 +32,7 @@ export const PlotlyChart = (props: IProps) => {
     setSearchParams,
     plotBounds,
     hoveredMarkerId,
+    onClearHover,
   } = props;
   const [dragmode, setDragmode] = useState<"pan" | "zoom">("zoom");
   const [satelliteView, setSatelliteView] = useState<boolean>(false);
@@ -191,6 +194,7 @@ export const PlotlyChart = (props: IProps) => {
       }
       return {
         marker: timeseries.marker,
+        zarrUrl: timeseries.zarrUrl,
         data: {
           midDateArray: filteredMidDateArray,
           velocityArray: filteredVelocityArray,
@@ -255,6 +259,10 @@ export const PlotlyChart = (props: IProps) => {
         hovertemplate:
           "<b>Date:</b> %{x}<br><b>Speed:</b> %{y:.2f} m/yr<extra></extra>",
         isHovered,
+        markerId: timeseries.marker.id, // Store marker ID to look up timeseries
+        zarrUrl: timeseries.zarrUrl, // Store zarr URL
+        originalIndexArray: timeseries.data.originalIndexArray, // Store original indices
+        satelliteArray: timeseries.data.satelliteArray, // Store satellite names
       };
     });
 
@@ -265,7 +273,11 @@ export const PlotlyChart = (props: IProps) => {
         if (b.isHovered) return -1;
         return 0;
       })
-      .map(({ isHovered, ...trace }) => trace as Partial<Plotly.PlotData>);
+      .map(({ isHovered, markerId, zarrUrl, originalIndexArray, satelliteArray, ...trace }) => ({
+        ...trace,
+        // Store these in meta field which Plotly preserves
+        meta: { markerId, zarrUrl, originalIndexArray, satelliteArray },
+      } as Partial<Plotly.PlotData>));
   }, [timeseriesArr, intervalDays, satelliteView, hoveredMarkerId]);
 
   return (
@@ -366,24 +378,53 @@ export const PlotlyChart = (props: IProps) => {
               const pointIndex = point.pointIndex;
               const curveNumber = point.curveNumber;
 
+              // Get trace metadata
+              const trace = data[curveNumber] as any;
+              const traceMeta = trace.meta || {};
+
               console.log("🎯 Processing click", {
                 pointIndex,
                 curveNumber,
                 satelliteView,
                 timeseriesLength: timeseriesArr.length,
+                hoveredMarkerId,
+                hasTraceMeta: !!traceMeta,
+                traceMetaKeys: Object.keys(traceMeta),
+                markerId: traceMeta.markerId,
+                zarrUrl: traceMeta.zarrUrl,
+                originalIndexArrayLength: traceMeta.originalIndexArray?.length,
+                originalIndexForPoint: traceMeta.originalIndexArray?.[pointIndex],
               });
 
               // Only handle clicks in non-satellite view for now
-              if (!satelliteView && curveNumber < timeseriesArr.length) {
-                const timeseries = timeseriesArr[curveNumber];
-                const midDate = timeseries.data.midDateArray[pointIndex];
-                const satellite = timeseries.data.satelliteArray[pointIndex];
-                const speed =
-                  timeseries.data.velocityArray[pointIndex].toFixed(2);
-                const originalIndex =
-                  timeseries.data.originalIndexArray[pointIndex];
+              if (!satelliteView && traceMeta.markerId) {
+                // Look up the timeseries by marker ID to get zarrUrl
+                const timeseries = timeseriesArr.find(
+                  (ts) => ts.marker.id === traceMeta.markerId
+                );
 
-                console.log("✅ Opening modal for point", { originalIndex });
+                if (!timeseries) {
+                  console.error("Could not find timeseries for marker", traceMeta.markerId);
+                  return;
+                }
+
+                // Get data from the trace which matches the pointIndex after filtering
+                const midDate = new Date(trace.x[pointIndex]);
+                const satellite = traceMeta.satelliteArray[pointIndex];
+                const speed = trace.y[pointIndex].toFixed(2);
+                const originalIndex = traceMeta.originalIndexArray[pointIndex];
+
+                console.log("✅ Opening modal for point", {
+                  originalIndex,
+                  pointIndex,
+                  date: midDate,
+                  satellite,
+                  speed,
+                  zarrUrl: timeseries.zarrUrl,
+                });
+
+                // Clear hover state
+                onClearHover?.();
 
                 // Show modal immediately with loading state
                 setClickedPoint({

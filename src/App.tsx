@@ -98,6 +98,7 @@ function App() {
             plotBounds={initialState.plotBounds}
             setSearchParams={setSearchParams}
             hoveredMarkerId={hoveredMarkerId}
+            onClearHover={() => setHoveredMarkerId(null)}
           />
         </div>
 
