@@ -12,7 +12,6 @@ import {
 import { satelliteSvgString } from "../../utils/SatelliteSvg";
 import { ImageLinkModal } from "../ImageLinkModal";
 import { getImageUrl } from "../../getImageUrl/getImageUrl";
-import { ZarrArray } from "@fahnestockj/zarr-fork";
 const Plot = createPlotlyComponent(Plotly);
 
 type IProps = {
@@ -43,6 +42,7 @@ export const PlotlyChart = (props: IProps) => {
     speed: string;
     error?: string;
   } | null>(null);
+
   const isResettingAxesRef = useRef(false);
 
   const chartConfig: Partial<Plotly.Config> = useMemo(() => {
@@ -259,10 +259,6 @@ export const PlotlyChart = (props: IProps) => {
         hovertemplate:
           "<b>Date:</b> %{x}<br><b>Speed:</b> %{y:.2f} m/yr<extra></extra>",
         isHovered,
-        markerId: timeseries.marker.id, // Store marker ID to look up timeseries
-        zarrUrl: timeseries.zarrUrl, // Store zarr URL
-        originalIndexArray: timeseries.data.originalIndexArray, // Store original indices
-        satelliteArray: timeseries.data.satelliteArray, // Store satellite names
       };
     });
 
@@ -273,11 +269,7 @@ export const PlotlyChart = (props: IProps) => {
         if (b.isHovered) return -1;
         return 0;
       })
-      .map(({ isHovered, markerId, zarrUrl, originalIndexArray, satelliteArray, ...trace }) => ({
-        ...trace,
-        // Store these in meta field which Plotly preserves
-        meta: { markerId, zarrUrl, originalIndexArray, satelliteArray },
-      } as Partial<Plotly.PlotData>));
+      .map(({ isHovered, ...trace }) => trace as Partial<Plotly.PlotData>);
   }, [timeseriesArr, intervalDays, satelliteView, hoveredMarkerId]);
 
   return (
@@ -334,94 +326,82 @@ export const PlotlyChart = (props: IProps) => {
             }
           }}
           onRelayout={(event) => {
-            console.log("🔵 onRelayout fired", {
-              timestamp: Date.now(),
-              event,
-            });
+            // console.log("🔵 onRelayout fired", {
+            //   timestamp: Date.now(),
+            //   event,
+            // });
 
             // Detect if axes are being auto-ranged (happens on double-click or reset button)
             if (
               event["xaxis.autorange"] === true ||
               event["yaxis.autorange"] === true
             ) {
-              console.log(
-                "📊 Axes reset detected - setting isResettingAxes flag"
-              );
               isResettingAxesRef.current = true;
               setTimeout(() => {
-                console.log("🟢 Clearing isResettingAxes flag");
                 isResettingAxesRef.current = false;
               }, 500);
             }
           }}
           onClick={async (event) => {
-            console.log("🔴 onClick fired", {
-              timestamp: Date.now(),
-              isResettingAxesFlag: isResettingAxesRef.current,
-              hasPoints: event.points && event.points.length > 0,
-              pointsLength: event.points?.length,
-            });
-
-            // Add small delay to let onRelayout fire first
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
             // Now check the flag after giving onRelayout time to set it
             if (isResettingAxesRef.current) {
-              console.log(
-                "⚠️ Ignoring click due to isResettingAxes flag (checked after delay)"
-              );
               return;
             }
 
             if (event.points && event.points.length > 0) {
               const point = event.points[0];
-              const pointIndex = point.pointIndex;
-              const curveNumber = point.curveNumber;
 
-              // Get trace metadata
-              const trace = data[curveNumber] as any;
-              const traceMeta = trace.meta || {};
+              // Get the clicked coordinates
+              const clickedDate = point.x
+                ? new Date(point.x as string | number)
+                : null;
+              const clickedSpeed = typeof point.y === "number" ? point.y : null;
 
-              console.log("🎯 Processing click", {
-                pointIndex,
-                curveNumber,
-                satelliteView,
-                timeseriesLength: timeseriesArr.length,
-                hoveredMarkerId,
-                hasTraceMeta: !!traceMeta,
-                traceMetaKeys: Object.keys(traceMeta),
-                markerId: traceMeta.markerId,
-                zarrUrl: traceMeta.zarrUrl,
-                originalIndexArrayLength: traceMeta.originalIndexArray?.length,
-                originalIndexForPoint: traceMeta.originalIndexArray?.[pointIndex],
-              });
+              if (!clickedDate || clickedSpeed === null) {
+                console.error("Invalid click data", { x: point.x, y: point.y });
+                return;
+              }
 
               // Only handle clicks in non-satellite view for now
-              if (!satelliteView && traceMeta.markerId) {
-                // Look up the timeseries by marker ID to get zarrUrl
-                const timeseries = timeseriesArr.find(
-                  (ts) => ts.marker.id === traceMeta.markerId
-                );
+              if (!satelliteView) {
+                // Look up the point in the original timeseries data
+                let foundTimeseries = null;
+                let foundIndex = -1;
 
-                if (!timeseries) {
-                  console.error("Could not find timeseries for marker", traceMeta.markerId);
+                for (const timeseries of timeseriesArr) {
+                  for (
+                    let i = 0;
+                    i < timeseries.data.midDateArray.length;
+                    i++
+                  ) {
+                    const midDate = timeseries.data.midDateArray[i];
+                    const velocity = timeseries.data.velocityArray[i];
+
+                    // Match by date and velocity
+                    if (
+                      midDate.getTime() === clickedDate.getTime() &&
+                      Math.abs(velocity - clickedSpeed) < 0.01
+                    ) {
+                      foundTimeseries = timeseries;
+                      foundIndex = i;
+                      break;
+                    }
+                  }
+                  if (foundTimeseries) break;
+                }
+
+                if (!foundTimeseries || foundIndex === -1) {
+                  console.error("Could not find point in timeseries data");
                   return;
                 }
 
-                // Get data from the trace which matches the pointIndex after filtering
-                const midDate = new Date(trace.x[pointIndex]);
-                const satellite = traceMeta.satelliteArray[pointIndex];
-                const speed = trace.y[pointIndex].toFixed(2);
-                const originalIndex = traceMeta.originalIndexArray[pointIndex];
-
-                console.log("✅ Opening modal for point", {
-                  originalIndex,
-                  pointIndex,
-                  date: midDate,
-                  satellite,
-                  speed,
-                  zarrUrl: timeseries.zarrUrl,
-                });
+                const midDate = foundTimeseries.data.midDateArray[foundIndex];
+                const satellite =
+                  foundTimeseries.data.satelliteArray[foundIndex];
+                const speed =
+                  foundTimeseries.data.velocityArray[foundIndex].toFixed(2);
+                const originalIndex =
+                  foundTimeseries.data.originalIndexArray[foundIndex];
 
                 // Clear hover state
                 onClearHover?.();
@@ -436,7 +416,7 @@ export const PlotlyChart = (props: IProps) => {
 
                 // Fetch image URL on demand using original zarr index
                 const imageUrl = await getImageUrl(
-                  timeseries.zarrUrl,
+                  foundTimeseries.zarrUrl,
                   originalIndex
                 );
                 setClickedPoint({
@@ -445,15 +425,6 @@ export const PlotlyChart = (props: IProps) => {
                   satellite,
                   speed,
                 });
-                // } catch (err) {
-                //   setClickedPoint({
-                //     imageUrl: null,
-                //     date: midDate.toLocaleDateString(),
-                //     satellite,
-                //     speed,
-                //     error: err instanceof Error ? err.message : 'Failed to load image URL',
-                //   });
-                // }
               }
             }
           }}

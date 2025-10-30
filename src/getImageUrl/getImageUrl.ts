@@ -19,8 +19,6 @@ export async function getImageUrl(
   zarrUrl: string,
   originalIndex: number
 ): Promise<string> {
-  console.log("Fetching image URL for:", { zarrUrl, originalIndex });
-
   const store = new HTTPStore(zarrUrl, {
     fetchOptions: {},
     supportedMethods: ["GET" as HTTPMethod],
@@ -39,19 +37,11 @@ export async function getImageUrl(
   const chunkIndex = Math.floor(originalIndex / chunkSize);
   const indexInChunk = originalIndex % chunkSize;
 
-  console.log('Chunk info:', { chunkSize, chunkIndex, indexInChunk });
-
   // Fetch the entire chunk as raw data
   const chunkKey = `${imageUrlZarr.keyPrefix}${chunkIndex}`;
-  console.log('Fetching chunk:', chunkKey);
-
   const chunkData = await store.getItem(chunkKey);
-  console.log('Raw chunk data:', chunkData);
-
   // Decode the chunk (handles compression)
   const decodedBytes = await (imageUrlZarr as any).decodeChunk(chunkData);
-  console.log('Decoded bytes:', decodedBytes);
-  console.log('Decoded byteLength:', decodedBytes.byteLength);
 
   // Each element is 4096 bytes (1024 UTF-32 chars)
   const bytesPerElement = 1024 * 4; // 4096
@@ -59,8 +49,7 @@ export async function getImageUrl(
   const endByte = startByte + bytesPerElement;
 
   const imageUrlRawData = new Uint8Array(decodedBytes, startByte, bytesPerElement);
-  console.log('imageUrlRawData:', imageUrlRawData);
-
+  
   // Process UTF-32 encoded data (4 bytes per character, 1024 characters total = 4096 bytes)
   const offset = 0;
   const bytesPerChar = 4; // UTF-32 encoding
@@ -87,11 +76,9 @@ export async function getImageUrl(
 
     imageUrl += String.fromCharCode(codePoint);
   }
-  console.log('Decoded URL:', imageUrl);
 
   // Replace .nc extension with .png
   const pngUrl = imageUrl.replace(/\.nc$/, '.png');
-  console.log('PNG URL:', pngUrl);
 
   return pngUrl;
 }
