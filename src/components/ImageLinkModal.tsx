@@ -5,12 +5,44 @@ interface IProps {
   date: string;
   satellite: string;
   speed: string;
+  dt: number; // time delta in days
   error?: string;
   onClose: () => void;
 }
 
+// Parse metadata from image URL
+function parseImageUrl(url: string) {
+  console.log(url);
+
+  const filename = url.split("/").pop() || "";
+  const withoutExtension = filename.replace(".png", "");
+
+  // Split by _X_ to get the two image strings
+  const parts = withoutExtension.split("_X_");
+  if (parts.length !== 2) {
+    return null;
+  }
+  const image1 = parts[0];
+  const image2Part = parts[1];
+
+  // Extract coverage percentage from the end (e.g., P099)
+  const coverageMatch = image2Part.match(/P(\d+)$/);
+  const coverage = coverageMatch ? parseInt(coverageMatch[1]) : null;
+
+  // Extract version string (e.g., G0120V02) - comes after T1/T2 and before _P
+  const versionMatch = image2Part.match(/_T[12]_(G\d+V\d+)_P\d+$/);
+  const version = versionMatch ? versionMatch[1] : null;
+
+  // Remove version and coverage suffix from image2 - keep up to and including T1/T2
+  const image2 = image2Part.replace(/_G\d+V\d+_P\d+$/, "");
+
+  return { image1, image2, version, coverage };
+}
+
 export function ImageLinkModal(props: IProps) {
-  const { imageUrl, date, satellite, speed, error, onClose } = props;
+  const { imageUrl, date, satellite, speed, dt, error, onClose } = props;
+
+  const imageMetadata = imageUrl ? parseImageUrl(imageUrl) : null;
 
   return (
     <div
@@ -24,7 +56,7 @@ export function ImageLinkModal(props: IProps) {
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-800">
-            Satellite Image
+            Satellite Image Pair
           </h2>
           <button
             onClick={onClose}
@@ -38,18 +70,57 @@ export function ImageLinkModal(props: IProps) {
         {/* Data Point Info */}
         <div className="space-y-1 mb-4 text-sm">
           <div className="flex gap-2">
-            <span className="text-gray-600 font-medium">Date:</span>
+            <span className="text-gray-600 font-medium">Mid Date:</span>
             <span className="font-semibold">{date}</span>
           </div>
           <div className="flex gap-2">
-            <span className="text-gray-600 font-medium">Satellite:</span>
-            <span className="font-semibold">{satellite}</span>
-          </div>
-          <div className="flex gap-2">
-            <span className="text-gray-600 font-medium">Speed:</span>
+            <span className="text-gray-600 font-medium">Point Speed:</span>
             <span className="font-semibold">{speed} m/yr</span>
           </div>
+          <div className="flex gap-2">
+            <span className="text-gray-600 font-medium">Time Delta:</span>
+            <span className="font-semibold">{dt} days</span>
+          </div>
         </div>
+
+        {/* Image Metadata - only show when image URL is loaded */}
+        {imageMetadata && (
+          <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200 text-xs space-y-1">
+            <div className="font-semibold text-gray-700 mb-2">
+              Image Pair Details:
+            </div>
+            <div className="flex gap-2">
+              <span className="text-gray-600 flex-shrink-0">Image 1:</span>
+              <span className="font-mono text-gray-800 break-all">
+                {imageMetadata.image1}
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <span className="text-gray-600 flex-shrink-0">Image 2:</span>
+              <span className="font-mono text-gray-800 break-all">
+                {imageMetadata.image2}
+              </span>
+            </div>
+            <div className="flex gap-4">
+              {imageMetadata.version && (
+                <div className="flex gap-2">
+                  <span className="text-gray-600">Version:</span>
+                  <span className="font-semibold text-gray-800">
+                    {imageMetadata.version}
+                  </span>
+                </div>
+              )}
+              {imageMetadata.coverage !== null && (
+                <div className="flex gap-2">
+                  <span className="text-gray-600">Coverage:</span>
+                  <span className="font-semibold text-gray-800">
+                    {imageMetadata.coverage}%
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Image / Link / Loading / Error */}
         {error ? (
@@ -65,10 +136,10 @@ export function ImageLinkModal(props: IProps) {
                 alt={`Satellite image from ${date}`}
                 className="w-full h-auto"
                 onError={(e) => {
-                  console.error('Failed to load image:', imageUrl);
-                  e.currentTarget.style.display = 'none';
+                  console.error("Failed to load image:", imageUrl);
+                  e.currentTarget.style.display = "none";
                   const errorMsg = e.currentTarget.nextElementSibling;
-                  if (errorMsg) errorMsg.classList.remove('hidden');
+                  if (errorMsg) errorMsg.classList.remove("hidden");
                 }}
               />
               <div className="hidden bg-gray-100 p-4 text-center">

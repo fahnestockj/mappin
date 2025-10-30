@@ -40,6 +40,7 @@ export const PlotlyChart = (props: IProps) => {
     date: string;
     satellite: string;
     speed: string;
+    dt: number;
     error?: string;
   } | null>(null);
 
@@ -280,6 +281,7 @@ export const PlotlyChart = (props: IProps) => {
           date={clickedPoint.date}
           satellite={clickedPoint.satellite}
           speed={clickedPoint.speed}
+          dt={clickedPoint.dt}
           error={clickedPoint.error}
           onClose={() => setClickedPoint(null)}
         />
@@ -400,6 +402,7 @@ export const PlotlyChart = (props: IProps) => {
                   foundTimeseries.data.satelliteArray[foundIndex];
                 const speed =
                   foundTimeseries.data.velocityArray[foundIndex].toFixed(2);
+                const dt = foundTimeseries.data.daysDeltaArray[foundIndex];
                 const originalIndex =
                   foundTimeseries.data.originalIndexArray[foundIndex];
 
@@ -412,6 +415,7 @@ export const PlotlyChart = (props: IProps) => {
                   date: midDate.toLocaleDateString(),
                   satellite,
                   speed,
+                  dt,
                 });
 
                 // Fetch image URL on demand using original zarr index
@@ -424,6 +428,7 @@ export const PlotlyChart = (props: IProps) => {
                   date: midDate.toLocaleDateString(),
                   satellite,
                   speed,
+                  dt,
                 });
               }
             }
