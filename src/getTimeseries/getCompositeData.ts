@@ -66,10 +66,20 @@ export async function getCompositeData(
       throw new Error("v_phase should be a single number")
     })
 
-    const timeRaw = await timeZarr.get(null).then((res) => {
+    // Fetch time array - zarr.js returns Float64Array but we need to decode int64 from raw buffer
+    const timeFloat64 = await timeZarr.get(null).then((res) => {
       if (typeof res === "number") throw new Error("time data is a number")
-      return res.data as unknown as BigInt64Array
+      return res.data as Float64Array
     })
+
+    // Decode int64 values from the raw buffer (same approach as satellite string decoding)
+    const timeRaw: number[] = []
+    const timeDataView = new DataView(timeFloat64.buffer)
+    for (let i = 0; i < timeFloat64.length; i++) {
+      const low = timeDataView.getUint32(i * 8, true)
+      const high = timeDataView.getInt32(i * 8 + 4, true)
+      timeRaw.push(high * 0x100000000 + low)
+    }
 
     // Filter out no-data values and convert to arrays
     const v: number[] = []
@@ -79,7 +89,7 @@ export async function getCompositeData(
       if (vRaw[i] !== V_FILL_VALUE) {
         v.push(vRaw[i])
         // Convert days since epoch to Date
-        time.push(new Date(Number(timeRaw[i]) * 86400000))
+        time.push(new Date(timeRaw[i] * 86400000))
       }
     }
 

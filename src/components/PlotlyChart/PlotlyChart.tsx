@@ -12,6 +12,7 @@ import {
 import { satelliteSvgString } from "../../utils/SatelliteSvg";
 import { ImageLinkModal } from "../ImageLinkModal";
 import { getImageUrl } from "../../getImageUrl/getImageUrl";
+import { generateFittedTimeseries, generateDenseDates } from "../../utils/sineval";
 const Plot = createPlotlyComponent(Plotly);
 
 type IProps = {
@@ -34,7 +35,7 @@ export const PlotlyChart = (props: IProps) => {
     onClearHover,
   } = props;
   const [dragmode, setDragmode] = useState<"pan" | "zoom">("zoom");
-  const [satelliteView, setSatelliteView] = useState<boolean>(false);
+  const [viewMode, setViewMode] = useState<"default" | "satellite" | "annual">("default");
   const [clickedPoint, setClickedPoint] = useState<{
     imageUrl: string | null;
     date: string;
@@ -58,7 +59,15 @@ export const PlotlyChart = (props: IProps) => {
               name: "satellite",
             },
             click: function () {
-              setSatelliteView((prev) => !prev);
+              setViewMode((prev) => prev === "satellite" ? "default" : "satellite");
+            },
+          },
+          {
+            name: "annualView",
+            title: "Annual Composite View",
+            icon: Plotly.Icons.drawline,
+            click: function () {
+              setViewMode((prev) => prev === "annual" ? "default" : "annual");
             },
           },
 
@@ -131,7 +140,7 @@ export const PlotlyChart = (props: IProps) => {
       responsive: true,
       displayModeBar: true,
     };
-  }, [satelliteView, setSatelliteView]);
+  }, [setViewMode]);
 
   const chartLayout = useMemo(() => {
     const xBounds = plotBounds.x.slice(); // Needed to ensure immutability (the props don't get mutated)
@@ -150,9 +159,9 @@ export const PlotlyChart = (props: IProps) => {
       | "hovermode"
       | "hoverdistance"
     > = {
-      margin: { t: 20, b: 60, l: 80, r: satelliteView ? 150 : 80 },
+      margin: { t: 20, b: 60, l: 80, r: viewMode !== "default" ? 150 : 80 },
       autosize: true,
-      showlegend: satelliteView,
+      showlegend: viewMode !== "default",
       xaxis: { type: "date", range: xBounds, autorange: false },
       yaxis: {
         range: yBounds,
@@ -162,7 +171,7 @@ export const PlotlyChart = (props: IProps) => {
       },
       dragmode,
       legend: {
-        title: { text: "  Satellites", font: { size: 15 } },
+        title: { text: viewMode === "satellite" ? "  Satellites" : viewMode === "annual" ? "  Annual" : "", font: { size: 15 } },
         x: 1,
       },
       modebar: {
@@ -173,7 +182,7 @@ export const PlotlyChart = (props: IProps) => {
       hoverdistance: 5, // Pixels - require cursor to be very close to point
     };
     return chartLayout;
-  }, [plotBounds, satelliteView]);
+  }, [plotBounds, viewMode]);
 
   const data = useMemo<Figure["data"]>(() => {
     const filteredTimeseries = timeseriesArr.map((timeseries) => {
@@ -208,7 +217,7 @@ export const PlotlyChart = (props: IProps) => {
       };
     });
 
-    if (satelliteView) {
+    if (viewMode === "satellite") {
       // we need to regroup our timeseries by satellite
       // get all unique satellites - make a dict
       const satelliteDict: Record<string, Partial<Plotly.PlotData>> = {};
@@ -246,6 +255,68 @@ export const PlotlyChart = (props: IProps) => {
       );
     }
 
+    if (viewMode === "annual") {
+      const traces: Partial<Plotly.PlotData>[] = [];
+
+      console.log('Annual view - timeseriesArr:', timeseriesArr.map(t => ({ hasComposite: !!t.compositeData, compositeData: t.compositeData })));
+
+      for (const timeseries of timeseriesArr) {
+        const compositeData = timeseries.compositeData;
+        if (!compositeData || compositeData.v.length === 0) continue;
+
+        const markerColor = timeseries.marker.color;
+
+        // Add annual velocity points as markers
+        traces.push({
+          x: compositeData.time,
+          y: compositeData.v,
+          type: "scattergl",
+          mode: "markers",
+          name: "Annual Velocity",
+          marker: {
+            color: markerColor,
+            size: 10,
+          },
+          hovertemplate:
+            "<b>Year:</b> %{x|%Y}<br><b>Speed:</b> %{y:.2f} m/yr<extra></extra>",
+        });
+
+        // Generate fitted sine wave curve
+        if (!isNaN(compositeData.vAmp) && !isNaN(compositeData.vPhase) && compositeData.time.length >= 2) {
+          const startDate = new Date(Math.min(...compositeData.time.map(d => d.getTime())));
+          const endDate = new Date(Math.max(...compositeData.time.map(d => d.getTime())));
+          // Extend range by 6 months on each side for visualization
+          startDate.setMonth(startDate.getMonth() - 6);
+          endDate.setMonth(endDate.getMonth() + 6);
+
+          const denseDates = generateDenseDates(startDate, endDate, 500);
+          const fittedVelocities = generateFittedTimeseries(
+            compositeData.v,
+            compositeData.time,
+            compositeData.vAmp,
+            compositeData.vPhase,
+            denseDates
+          );
+
+          traces.push({
+            x: denseDates,
+            y: fittedVelocities,
+            type: "scattergl",
+            mode: "lines",
+            name: "Fitted Curve",
+            line: {
+              color: markerColor,
+              width: 2,
+            },
+            hovertemplate:
+              "<b>Date:</b> %{x}<br><b>Fitted Speed:</b> %{y:.2f} m/yr<extra></extra>",
+          });
+        }
+      }
+
+      return traces;
+    }
+
     const traces = filteredTimeseries.map((timeseries) => {
       const isHovered = hoveredMarkerId === timeseries.marker.id;
       const shouldDim = hoveredMarkerId !== null && !isHovered;
@@ -273,7 +344,7 @@ export const PlotlyChart = (props: IProps) => {
         return 0;
       })
       .map(({ isHovered, ...trace }) => trace as Partial<Plotly.PlotData>);
-  }, [timeseriesArr, intervalDays, satelliteView, hoveredMarkerId]);
+  }, [timeseriesArr, intervalDays, viewMode, hoveredMarkerId]);
 
   return (
     <div className={classNames("w-full h-[90%]", loading && "animate-pulse")}>
@@ -366,8 +437,8 @@ export const PlotlyChart = (props: IProps) => {
                 return;
               }
 
-              // Only handle clicks in non-satellite view for now
-              if (!satelliteView) {
+              // Only handle clicks in default view for now
+              if (viewMode === "default") {
                 // Look up the point in the original timeseries data
                 let foundTimeseries = null;
                 let foundIndex = -1;
