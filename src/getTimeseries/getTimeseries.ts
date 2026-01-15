@@ -1,6 +1,7 @@
 import { HTTPStore, openArray } from "@fahnestockj/zarr-fork";
 import { findClosestIndex } from "./findClosestIndex";
 import { geoJsonLookup } from "./geoJsonLookup";
+import { getCompositeData } from "./getCompositeData";
 import { IMarker, ITimeseries } from "../types";
 
 declare enum HTTPMethod {
@@ -150,6 +151,9 @@ export async function getTimeseries(marker: IMarker): Promise<ITimeseries> {
       satelliteArray.push(satelliteString);
     }
 
+    // Fetch composite data (v, v_amp, v_phase) from annual composite store
+    const compositeData = await getCompositeData(zarrUrl, cartesianCoordinate)
+
     return {
       marker,
       zarrUrl,
@@ -159,7 +163,8 @@ export async function getTimeseries(marker: IMarker): Promise<ITimeseries> {
         daysDeltaArray,
         satelliteArray,
         originalIndexArray,
-      }
+      },
+      compositeData: compositeData ?? undefined,
     }
   }))
 

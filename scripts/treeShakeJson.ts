@@ -1,5 +1,5 @@
 // @ts-nocheck
-import catalog_json from '../src/geoJson/catalog_v2.json'
+import catalog_json from '../src/geoJson/catalog_v02.json'
 import fs from 'node:fs'
 function main() {
 

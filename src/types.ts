@@ -27,6 +27,13 @@ export type IMarker = {
   latLon: ICoordinate
 }
 
+export type ICompositeData = {
+  v: number[]           // Annual velocity values
+  vAmp: number          // Fitted sine wave amplitude
+  vPhase: number        // Fitted phase of sine wave
+  time: Date[]          // Timestamps for annual v values
+}
+
 export type ITimeseries = {
   zarrUrl: string
   marker: IMarker
@@ -37,6 +44,7 @@ export type ITimeseries = {
     satelliteArray: string[]
     originalIndexArray: number[] // Preserves original zarr index before filtering
   }
+  compositeData?: ICompositeData
 }
 
 export type ISetSearchParams = (nextInit?: URLSearchParamsInit | ((prev: URLSearchParams) => URLSearchParamsInit), navigateOpts?: NavigateOptions) => void;
