@@ -159,9 +159,9 @@ export const PlotlyChart = (props: IProps) => {
       | "hovermode"
       | "hoverdistance"
     > = {
-      margin: { t: 20, b: 60, l: 80, r: viewMode !== "default" ? 150 : 80 },
+      margin: { t: 20, b: 60, l: 80, r: viewMode === "satellite" ? 150 : 80 },
       autosize: true,
-      showlegend: viewMode !== "default",
+      showlegend: viewMode === "satellite",
       xaxis: { type: "date", range: xBounds, autorange: false },
       yaxis: {
         range: yBounds,
@@ -171,7 +171,7 @@ export const PlotlyChart = (props: IProps) => {
       },
       dragmode,
       legend: {
-        title: { text: viewMode === "satellite" ? "  Satellites" : viewMode === "annual" ? "  Annual" : "", font: { size: 15 } },
+        title: { text: viewMode === "satellite" ? "  Satellites" : viewMode === "annual" ? "  Markers" : "", font: { size: 15 } },
         x: 1,
       },
       modebar: {
@@ -258,30 +258,30 @@ export const PlotlyChart = (props: IProps) => {
     if (viewMode === "annual") {
       const traces: Partial<Plotly.PlotData>[] = [];
 
-      console.log('Annual view - timeseriesArr:', timeseriesArr.map(t => ({ hasComposite: !!t.compositeData, compositeData: t.compositeData })));
+      for (let markerIdx = 0; markerIdx < filteredTimeseries.length; markerIdx++) {
+        const timeseries = filteredTimeseries[markerIdx];
+        const originalTimeseries = timeseriesArr[markerIdx];
+        const compositeData = originalTimeseries.compositeData;
+        const markerName = `Marker ${markerIdx + 1}`;
 
-      for (const timeseries of timeseriesArr) {
-        const compositeData = timeseries.compositeData;
-        if (!compositeData || compositeData.v.length === 0) continue;
-
-        const markerColor = timeseries.marker.color;
-
-        // Add annual velocity points as markers
+        // Add original scatter points for this marker (gray backdrop)
         traces.push({
-          x: compositeData.time,
-          y: compositeData.v,
+          x: timeseries.data.midDateArray,
+          y: timeseries.data.velocityArray,
           type: "scattergl",
           mode: "markers",
-          name: "Annual Velocity",
+          name: markerName,
           marker: {
-            color: markerColor,
-            size: 10,
+            color: "#9ca3af", // gray-400
+            opacity: 0.6,
+            size: 3,
           },
-          hovertemplate:
-            "<b>Year:</b> %{x|%Y}<br><b>Speed:</b> %{y:.2f} m/yr<extra></extra>",
+          hoverinfo: "skip",
         });
 
-        // Generate fitted sine wave curve
+        if (!compositeData || compositeData.v.length === 0) continue;
+
+        // Generate fitted sine wave curve (behind annual points)
         if (!isNaN(compositeData.vAmp) && !isNaN(compositeData.vPhase) && compositeData.time.length >= 2) {
           const startDate = new Date(Math.min(...compositeData.time.map(d => d.getTime())));
           const endDate = new Date(Math.max(...compositeData.time.map(d => d.getTime())));
@@ -303,15 +303,34 @@ export const PlotlyChart = (props: IProps) => {
             y: fittedVelocities,
             type: "scattergl",
             mode: "lines",
-            name: "Fitted Curve",
+            name: `${markerName} Fitted`,
             line: {
-              color: markerColor,
-              width: 2,
+              color: "#1e3a5f", // dark blue
+              width: 3,
             },
             hovertemplate:
               "<b>Date:</b> %{x}<br><b>Fitted Speed:</b> %{y:.2f} m/yr<extra></extra>",
           });
         }
+
+        // Add annual velocity points as markers (on top, bright)
+        traces.push({
+          x: compositeData.time,
+          y: compositeData.v,
+          type: "scattergl",
+          mode: "markers",
+          name: `${markerName} Annual`,
+          marker: {
+            color: "#ef4444", // red-500
+            size: 12,
+            line: {
+              color: "#ffffff",
+              width: 1,
+            },
+          },
+          hovertemplate:
+            "<b>Year:</b> %{x|%Y}<br><b>Speed:</b> %{y:.2f} m/yr<extra></extra>",
+        });
       }
 
       return traces;

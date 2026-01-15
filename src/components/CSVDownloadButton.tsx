@@ -17,7 +17,9 @@ export const CSVDownloadButton = (props: IProps) => {
       variant="primary"
       onClick={() => {
         data.forEach((timeseries) => {
-          let csvStr = "mid_date, v [m/yr], satellite, dt (days)\n";
+          // Level 2 image-pair data
+          let csvStr = "# Level 2 Image-Pair Data\n";
+          csvStr += "mid_date, v [m/yr], satellite, dt (days)\n";
           timeseries.data.midDateArray.forEach(
             (midDate, index) =>
               (csvStr += `${midDate.toISOString()},${
@@ -26,6 +28,18 @@ export const CSVDownloadButton = (props: IProps) => {
                 timeseries.data.daysDeltaArray[index]
               } \n`)
           );
+
+          // Composite annual data
+          if (timeseries.compositeData) {
+            const { v, vAmp, vPhase, time } = timeseries.compositeData;
+            csvStr += "\n# Annual Composite Data\n";
+            csvStr += `# v_amp [m/yr], ${isNaN(vAmp) ? "NaN" : vAmp}\n`;
+            csvStr += `# v_phase [day of year], ${isNaN(vPhase) ? "NaN" : vPhase}\n`;
+            csvStr += "year, v_annual [m/yr]\n";
+            time.forEach((date, index) => {
+              csvStr += `${date.getFullYear()}, ${v[index]}\n`;
+            });
+          }
 
           zip.file(
             `lat_${timeseries.marker.latLon.lat}_lon_${timeseries.marker.latLon.lon}.csv`,
