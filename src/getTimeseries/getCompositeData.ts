@@ -1,7 +1,6 @@
 import { HTTPStore, openArray } from "@fahnestockj/zarr-fork";
 import { ICompositeData } from "../types";
 import { getCompositeUrl } from "./getCompositeUrl";
-import { findClosestIndex } from "./findClosestIndex";
 
 declare enum HTTPMethod {
   GET = "GET",
@@ -12,11 +11,12 @@ const V_AMP_PHASE_FILL_VALUE = 32767
 
 /**
  * Fetches composite data (v, v_amp, v_phase) from the annual composite zarr store.
- * Uses the same x/y indexing structure as the regular datacubes.
+ * Reuses x/y indices from the regular datacube since they share the same coordinate system.
  */
 export async function getCompositeData(
   zarrUrl: string,
-  cartesianCoordinate: [number, number]
+  xIndex: number,
+  yIndex: number
 ): Promise<ICompositeData | null> {
   const compositeUrl = getCompositeUrl(zarrUrl)
 
@@ -25,22 +25,6 @@ export async function getCompositeData(
       fetchOptions: {},
       supportedMethods: ["GET" as HTTPMethod],
     });
-
-    // Open coordinate arrays
-    const xArrayZarr = await openArray({ store, path: "/x", mode: "r" })
-    const yArrayZarr = await openArray({ store, path: "/y", mode: "r" })
-
-    const xArray = await xArrayZarr.get(null).then((res) => {
-      if (typeof res === "number") throw new Error("x data is a number")
-      return res.data as Float64Array
-    })
-
-    const yArray = await yArrayZarr.get(null).then((res) => {
-      if (typeof res === "number") throw new Error("y data is a number")
-      return res.data as Float64Array
-    })
-
-    const [xIndex, yIndex] = findClosestIndex(xArray, yArray, cartesianCoordinate)
 
     // Open data arrays
     const vZarr = await openArray({ store, path: "/v", mode: "r" })

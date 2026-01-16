@@ -264,7 +264,7 @@ export const PlotlyChart = (props: IProps) => {
         const compositeData = originalTimeseries.compositeData;
         const markerName = `Marker ${markerIdx + 1}`;
 
-        // Add original scatter points for this marker (gray backdrop)
+        // Add original scatter points for this marker (faded backdrop)
         traces.push({
           x: timeseries.data.midDateArray,
           y: timeseries.data.velocityArray,
@@ -272,8 +272,8 @@ export const PlotlyChart = (props: IProps) => {
           mode: "markers",
           name: markerName,
           marker: {
-            color: "#9ca3af", // gray-400
-            opacity: 0.6,
+            color: timeseries.marker.color,
+            opacity: 0.3,
             size: 3,
           },
           hoverinfo: "skip",
@@ -281,10 +281,16 @@ export const PlotlyChart = (props: IProps) => {
 
         if (!compositeData || compositeData.v.length === 0) continue;
 
+        // Shift dates to mid-year for better visual alignment (annual averages should be centered)
+        const midYearDates = compositeData.time.map(d => {
+          const year = d.getFullYear();
+          return new Date(year, 6, 1); // July 1st (mid-year)
+        });
+
         // Generate fitted sine wave curve (behind annual points)
         if (!isNaN(compositeData.vAmp) && !isNaN(compositeData.vPhase) && compositeData.time.length >= 2) {
-          const startDate = new Date(Math.min(...compositeData.time.map(d => d.getTime())));
-          const endDate = new Date(Math.max(...compositeData.time.map(d => d.getTime())));
+          const startDate = new Date(Math.min(...midYearDates.map(d => d.getTime())));
+          const endDate = new Date(Math.max(...midYearDates.map(d => d.getTime())));
           // Extend range by 6 months on each side for visualization
           startDate.setMonth(startDate.getMonth() - 6);
           endDate.setMonth(endDate.getMonth() + 6);
@@ -292,7 +298,7 @@ export const PlotlyChart = (props: IProps) => {
           const denseDates = generateDenseDates(startDate, endDate, 500);
           const fittedVelocities = generateFittedTimeseries(
             compositeData.v,
-            compositeData.time,
+            midYearDates,
             compositeData.vAmp,
             compositeData.vPhase,
             denseDates
@@ -305,7 +311,7 @@ export const PlotlyChart = (props: IProps) => {
             mode: "lines",
             name: `${markerName} Fitted`,
             line: {
-              color: "#1e3a5f", // dark blue
+              color: timeseries.marker.color,
               width: 3,
             },
             hovertemplate:
@@ -313,15 +319,24 @@ export const PlotlyChart = (props: IProps) => {
           });
         }
 
-        // Add annual velocity points as markers (on top, bright)
+        // Add annual velocity points as markers (on top, colored by marker)
+
+        // Generate opacity fade based on time (older = more faded)
+        const timeValues = compositeData.time.map(d => d.getTime());
+        const minTime = Math.min(...timeValues);
+        const maxTime = Math.max(...timeValues);
+        const timeRange = maxTime - minTime || 1;
+        const opacities = timeValues.map(t => 0.4 + 0.6 * ((t - minTime) / timeRange));
+
         traces.push({
-          x: compositeData.time,
+          x: midYearDates,
           y: compositeData.v,
           type: "scattergl",
           mode: "markers",
           name: `${markerName} Annual`,
           marker: {
-            color: "#ef4444", // red-500
+            color: timeseries.marker.color,
+            opacity: opacities,
             size: 12,
             line: {
               color: "#ffffff",

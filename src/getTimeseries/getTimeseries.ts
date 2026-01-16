@@ -152,7 +152,8 @@ export async function getTimeseries(marker: IMarker): Promise<ITimeseries> {
     }
 
     // Fetch composite data (v, v_amp, v_phase) from annual composite store
-    const compositeData = await getCompositeData(zarrUrl, cartesianCoordinate)
+    // Reuse x/y indices since composite zarr shares the same coordinate system
+    const compositeData = await getCompositeData(zarrUrl, xIndex, yIndex)
 
     return {
       marker,
