@@ -65,7 +65,9 @@ export const PlotlyChart = (props: IProps) => {
           {
             name: "annualView",
             title: "Annual Composite View",
-            icon: Plotly.Icons.drawline,
+            icon: {
+              svg: '<svg fill="#475569" height="16px" width="16px" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M5 50 Q 17.5 20, 30 50 Q 42.5 80, 55 50 Q 67.5 20, 80 50 Q 92.5 80, 95 50" fill="none" stroke="#475569" stroke-width="8" stroke-linecap="round"/></svg>',
+            },
             click: function () {
               setViewMode((prev) => prev === "annual" ? "default" : "annual");
             },
