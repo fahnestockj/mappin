@@ -37,7 +37,8 @@ export const CSVDownloadButton = (props: IProps) => {
             csvStr += `# v_phase [day of year], ${isNaN(vPhase) ? "NaN" : vPhase}\n`;
             csvStr += "year, v_annual [m/yr]\n";
             time.forEach((date, index) => {
-              csvStr += `${date.getFullYear()}, ${v[index]}\n`;
+              // Use getUTCFullYear() since time values are midnight UTC dates
+              csvStr += `${date.getUTCFullYear()}, ${v[index]}\n`;
             });
           }
 

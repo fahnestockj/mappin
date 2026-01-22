@@ -282,8 +282,9 @@ export const PlotlyChart = (props: IProps) => {
         if (!compositeData || compositeData.v.length === 0) continue;
 
         // Shift dates to mid-year for better visual alignment (annual averages should be centered)
+        // Use getUTCFullYear() since the time values are stored as midnight UTC dates
         const midYearDates = compositeData.time.map(d => {
-          const year = d.getFullYear();
+          const year = d.getUTCFullYear();
           return new Date(year, 6, 1); // July 1st (mid-year)
         });
 
