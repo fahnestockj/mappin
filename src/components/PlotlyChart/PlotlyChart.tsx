@@ -2,7 +2,7 @@ import createPlotlyComponent from "react-plotly.js/factory";
 import { Figure } from "react-plotly.js/index";
 import Plotly from "plotly.js-gl2d-dist-min";
 import { ISetSearchParams, ITimeseries } from "../../types";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import classNames from "classnames";
 import { ITS_LIVE_LOGO_SVG } from "../../utils/ITS_LIVE_LOGO_SVG";
 import {
@@ -10,6 +10,9 @@ import {
   setPlotBoundsInUrlParams,
 } from "../../utils/searchParamUtilities";
 import { satelliteSvgString } from "../../utils/SatelliteSvg";
+import { ImageLinkModal } from "../ImageLinkModal";
+import { getImageUrl } from "../../getImageUrl/getImageUrl";
+import { generateFittedTimeseries, generateDenseDates } from "../../utils/sineval";
 const Plot = createPlotlyComponent(Plotly);
 
 type IProps = {
@@ -18,12 +21,32 @@ type IProps = {
   loading: boolean;
   plotBounds: IPlotBounds;
   setSearchParams: ISetSearchParams;
+  hoveredMarkerId?: string | null;
+  onClearHover?: () => void;
 };
 export const PlotlyChart = (props: IProps) => {
-  const { timeseriesArr, intervalDays, loading, setSearchParams, plotBounds } =
-    props;
+  const {
+    timeseriesArr,
+    intervalDays,
+    loading,
+    setSearchParams,
+    plotBounds,
+    hoveredMarkerId,
+    onClearHover,
+  } = props;
   const [dragmode, setDragmode] = useState<"pan" | "zoom">("zoom");
-  const [satelliteView, setSatelliteView] = useState<boolean>(false);
+  const [viewMode, setViewMode] = useState<"default" | "satellite" | "annual">("default");
+  const [clickedPoint, setClickedPoint] = useState<{
+    imageUrl: string | null;
+    date: string;
+    satellite: string;
+    speed: string;
+    dt: number;
+    error?: string;
+  } | null>(null);
+
+  const isResettingAxesRef = useRef(false);
+
   const chartConfig: Partial<Plotly.Config> = useMemo(() => {
     return {
       modeBarButtons: [
@@ -36,7 +59,17 @@ export const PlotlyChart = (props: IProps) => {
               name: "satellite",
             },
             click: function () {
-              setSatelliteView((prev) => !prev);
+              setViewMode((prev) => prev === "satellite" ? "default" : "satellite");
+            },
+          },
+          {
+            name: "annualView",
+            title: "Annual Composite View",
+            icon: {
+              svg: '<svg fill="#475569" height="16px" width="16px" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M5 50 Q 17.5 20, 30 50 Q 42.5 80, 55 50 Q 67.5 20, 80 50 Q 92.5 80, 95 50" fill="none" stroke="#475569" stroke-width="8" stroke-linecap="round"/></svg>',
+            },
+            click: function () {
+              setViewMode((prev) => prev === "annual" ? "default" : "annual");
             },
           },
 
@@ -61,6 +94,8 @@ export const PlotlyChart = (props: IProps) => {
               Plotly.downloadImage(gd, {
                 format: "png",
                 filename: "plot",
+                // @ts-ignore
+                scale: 2,
                 height: 600,
                 width: 1500,
               });
@@ -107,7 +142,7 @@ export const PlotlyChart = (props: IProps) => {
       responsive: true,
       displayModeBar: true,
     };
-  }, [satelliteView, setSatelliteView]);
+  }, [setViewMode]);
 
   const chartLayout = useMemo(() => {
     const xBounds = plotBounds.x.slice(); // Needed to ensure immutability (the props don't get mutated)
@@ -123,10 +158,12 @@ export const PlotlyChart = (props: IProps) => {
       | "dragmode"
       | "legend"
       | "modebar"
+      | "hovermode"
+      | "hoverdistance"
     > = {
-      margin: { t: 20, b: 60, l: 80, r: satelliteView ? 150 : 80 },
+      margin: { t: 20, b: 60, l: 80, r: viewMode === "satellite" ? 150 : 80 },
       autosize: true,
-      showlegend: satelliteView,
+      showlegend: viewMode === "satellite",
       xaxis: { type: "date", range: xBounds, autorange: false },
       yaxis: {
         range: yBounds,
@@ -136,16 +173,18 @@ export const PlotlyChart = (props: IProps) => {
       },
       dragmode,
       legend: {
-        title: { text: "  Satellites", font: { size: 15 } },
+        title: { text: viewMode === "satellite" ? "  Satellites" : viewMode === "annual" ? "  Markers" : "", font: { size: 15 } },
         x: 1,
       },
       modebar: {
         orientation: "v",
         color: "rgb(71 85 105)",
       },
+      hovermode: "closest",
+      hoverdistance: 5, // Pixels - require cursor to be very close to point
     };
     return chartLayout;
-  }, [plotBounds, satelliteView]);
+  }, [plotBounds, viewMode]);
 
   const data = useMemo<Figure["data"]>(() => {
     const filteredTimeseries = timeseriesArr.map((timeseries) => {
@@ -153,6 +192,7 @@ export const PlotlyChart = (props: IProps) => {
       const filteredVelocityArray: number[] = [];
       const filteredDateDtArray: number[] = [];
       const filtertedSatelliteArray: string[] = [];
+      const filteredOriginalIndexArray: number[] = [];
 
       for (let i = 0; i < timeseries.data.velocityArray.length; i++) {
         const dt = timeseries.data.daysDeltaArray[i];
@@ -161,20 +201,25 @@ export const PlotlyChart = (props: IProps) => {
           filteredVelocityArray.push(timeseries.data.velocityArray[i]);
           filteredDateDtArray.push(timeseries.data.daysDeltaArray[i]);
           filtertedSatelliteArray.push(timeseries.data.satelliteArray[i]);
+          filteredOriginalIndexArray.push(
+            timeseries.data.originalIndexArray[i]
+          );
         }
       }
       return {
         marker: timeseries.marker,
+        zarrUrl: timeseries.zarrUrl,
         data: {
           midDateArray: filteredMidDateArray,
           velocityArray: filteredVelocityArray,
           dateDeltaArray: filteredDateDtArray,
           satelliteArray: filtertedSatelliteArray,
+          originalIndexArray: filteredOriginalIndexArray,
         },
       };
     });
 
-    if (satelliteView) {
+    if (viewMode === "satellite") {
       // we need to regroup our timeseries by satellite
       // get all unique satellites - make a dict
       const satelliteDict: Record<string, Partial<Plotly.PlotData>> = {};
@@ -195,6 +240,8 @@ export const PlotlyChart = (props: IProps) => {
                     satellite as keyof typeof satelliteColorDict
                   ],
               },
+              hovertemplate:
+                "<b>Date:</b> %{x}<br><b>Speed:</b> %{y:.2f} m/yr<extra></extra>",
             };
           }
           // @ts-ignore
@@ -210,59 +257,298 @@ export const PlotlyChart = (props: IProps) => {
       );
     }
 
-    return filteredTimeseries.map((timeseries) => {
+    if (viewMode === "annual") {
+      const traces: Partial<Plotly.PlotData>[] = [];
+
+      for (let markerIdx = 0; markerIdx < filteredTimeseries.length; markerIdx++) {
+        const timeseries = filteredTimeseries[markerIdx];
+        const originalTimeseries = timeseriesArr[markerIdx];
+        const compositeData = originalTimeseries.compositeData;
+        const markerName = `Marker ${markerIdx + 1}`;
+
+        // Add original scatter points for this marker (faded backdrop)
+        traces.push({
+          x: timeseries.data.midDateArray,
+          y: timeseries.data.velocityArray,
+          type: "scattergl",
+          mode: "markers",
+          name: markerName,
+          marker: {
+            color: timeseries.marker.color,
+            opacity: 0.3,
+            size: 3,
+          },
+          hoverinfo: "skip",
+        });
+
+        if (!compositeData || compositeData.v.length === 0) continue;
+
+        // Shift dates to mid-year for better visual alignment (annual averages should be centered)
+        // Use getUTCFullYear() since the time values are stored as midnight UTC dates
+        const midYearDates = compositeData.time.map(d => {
+          const year = d.getUTCFullYear();
+          return new Date(year, 6, 1); // July 1st (mid-year)
+        });
+
+        // Generate fitted sine wave curve (behind annual points)
+        if (!isNaN(compositeData.vAmp) && !isNaN(compositeData.vPhase) && compositeData.time.length >= 2) {
+          const startDate = new Date(Math.min(...midYearDates.map(d => d.getTime())));
+          const endDate = new Date(Math.max(...midYearDates.map(d => d.getTime())));
+          // Extend range by 6 months on each side for visualization
+          startDate.setMonth(startDate.getMonth() - 6);
+          endDate.setMonth(endDate.getMonth() + 6);
+
+          const denseDates = generateDenseDates(startDate, endDate, 500);
+          const fittedVelocities = generateFittedTimeseries(
+            compositeData.v,
+            midYearDates,
+            compositeData.vAmp,
+            compositeData.vPhase,
+            denseDates
+          );
+
+          traces.push({
+            x: denseDates,
+            y: fittedVelocities,
+            type: "scattergl",
+            mode: "lines",
+            name: `${markerName} Fitted`,
+            line: {
+              color: timeseries.marker.color,
+              width: 3,
+            },
+            hovertemplate:
+              "<b>Date:</b> %{x}<br><b>Fitted Speed:</b> %{y:.2f} m/yr<extra></extra>",
+          });
+        }
+
+        // Add annual velocity points as markers (on top, colored by marker)
+
+        // Generate opacity fade based on time (older = more faded)
+        const timeValues = compositeData.time.map(d => d.getTime());
+        const minTime = Math.min(...timeValues);
+        const maxTime = Math.max(...timeValues);
+        const timeRange = maxTime - minTime || 1;
+        const opacities = timeValues.map(t => 0.4 + 0.6 * ((t - minTime) / timeRange));
+
+        traces.push({
+          x: midYearDates,
+          y: compositeData.v,
+          type: "scattergl",
+          mode: "markers",
+          name: `${markerName} Annual`,
+          marker: {
+            color: timeseries.marker.color,
+            opacity: opacities,
+            size: 12,
+            line: {
+              color: "#ffffff",
+              width: 1,
+            },
+          },
+          hovertemplate:
+            "<b>Year:</b> %{x|%Y}<br><b>Speed:</b> %{y:.2f} m/yr<extra></extra>",
+        });
+      }
+
+      return traces;
+    }
+
+    const traces = filteredTimeseries.map((timeseries) => {
+      const isHovered = hoveredMarkerId === timeseries.marker.id;
+      const shouldDim = hoveredMarkerId !== null && !isHovered;
+
       return {
         x: timeseries.data.midDateArray,
         y: timeseries.data.velocityArray,
-        type: "scattergl",
-        mode: "markers",
-        marker: { color: timeseries.marker.color },
+        type: "scattergl" as const,
+        mode: "markers" as const,
+        marker: {
+          color: timeseries.marker.color,
+          opacity: shouldDim ? 0.1 : 1.0,
+        },
+        hovertemplate:
+          "<b>Date:</b> %{x}<br><b>Speed:</b> %{y:.2f} m/yr<extra></extra>",
+        isHovered,
       };
     });
-  }, [timeseriesArr, intervalDays, satelliteView]);
+
+    // Sort so hovered trace renders last (on top)
+    return traces
+      .sort((a, b) => {
+        if (a.isHovered) return 1;
+        if (b.isHovered) return -1;
+        return 0;
+      })
+      .map(({ isHovered, ...trace }) => trace as Partial<Plotly.PlotData>);
+  }, [timeseriesArr, intervalDays, viewMode, hoveredMarkerId]);
 
   return (
     <div className={classNames("w-full h-[90%]", loading && "animate-pulse")}>
+      {clickedPoint && (
+        <ImageLinkModal
+          imageUrl={clickedPoint.imageUrl}
+          date={clickedPoint.date}
+          satellite={clickedPoint.satellite}
+          speed={clickedPoint.speed}
+          dt={clickedPoint.dt}
+          error={clickedPoint.error}
+          onClose={() => setClickedPoint(null)}
+        />
+      )}
       <div className="w-full flex justify-center mt-4">
         <a href="https://its-live.jpl.nasa.gov/">
           <ITS_LIVE_LOGO_SVG />
         </a>
       </div>
-      <Plot
-        onUpdate={(figure) => {
-          // this callback gets called a lot including when the user is dragging a zoom box
-          // in that time we need to be careful to ignore all changes except for those that actually change the x and y axis range
-          // heavily impacts chart performance
+      {timeseriesArr.length === 0 ? (
+        <div className="w-full h-full flex items-center justify-center">
+          <div className="text-gray-500 text-center">
+            No markers added yet. Click on the map to add markers.
+          </div>
+        </div>
+      ) : (
+        <Plot
+          onUpdate={(figure) => {
+            // this callback gets called a lot including when the user is dragging a zoom box
+            // in that time we need to be careful to ignore all changes except for those that actually change the x and y axis range
+            // heavily impacts chart performance
 
-          const plotXBounds = figure.layout.xaxis!.range! as [string, string];
-          const plotXBoundsDate = plotXBounds.map((date) => new Date(date)) as [
-            Date,
-            Date
-          ];
-          const plotYBounds = figure.layout.yaxis!.range! as [number, number];
+            const plotXBounds = figure.layout.xaxis!.range! as [string, string];
+            const plotXBoundsDate = plotXBounds.map(
+              (date) => new Date(date)
+            ) as [Date, Date];
+            const plotYBounds = figure.layout.yaxis!.range! as [number, number];
 
-          const currentPlotBounds: IPlotBounds = {
-            x: plotXBoundsDate,
-            y: plotYBounds,
-          };
-          // we need to see if our params don't match with
-          if (!arePlotBoundsEqual(plotBounds, currentPlotBounds)) {
             const currentPlotBounds: IPlotBounds = {
               x: plotXBoundsDate,
               y: plotYBounds,
             };
-            setSearchParams(
-              (prevParams) =>
-                setPlotBoundsInUrlParams(prevParams, currentPlotBounds),
-              { replace: true }
-            );
-          }
-        }}
-        data={data}
-        layout={chartLayout}
-        config={chartConfig}
-        className="w-full h-full"
-      />
+            // we need to see if our params don't match with
+            if (!arePlotBoundsEqual(plotBounds, currentPlotBounds)) {
+              const currentPlotBounds: IPlotBounds = {
+                x: plotXBoundsDate,
+                y: plotYBounds,
+              };
+              setSearchParams(
+                (prevParams) =>
+                  setPlotBoundsInUrlParams(prevParams, currentPlotBounds),
+                { replace: true }
+              );
+            }
+          }}
+          onRelayout={(event) => {
+            // console.log("🔵 onRelayout fired", {
+            //   timestamp: Date.now(),
+            //   event,
+            // });
+
+            // Detect if axes are being auto-ranged (happens on double-click or reset button)
+            if (
+              event["xaxis.autorange"] === true ||
+              event["yaxis.autorange"] === true
+            ) {
+              isResettingAxesRef.current = true;
+              setTimeout(() => {
+                isResettingAxesRef.current = false;
+              }, 500);
+            }
+          }}
+          onClick={async (event) => {
+            // Now check the flag after giving onRelayout time to set it
+            if (isResettingAxesRef.current) {
+              return;
+            }
+
+            if (event.points && event.points.length > 0) {
+              const point = event.points[0];
+
+              // Get the clicked coordinates
+              const clickedDate = point.x
+                ? new Date(point.x as string | number)
+                : null;
+              const clickedSpeed = typeof point.y === "number" ? point.y : null;
+
+              if (!clickedDate || clickedSpeed === null) {
+                console.error("Invalid click data", { x: point.x, y: point.y });
+                return;
+              }
+
+              // Only handle clicks in default view for now
+              if (viewMode === "default") {
+                // Look up the point in the original timeseries data
+                let foundTimeseries = null;
+                let foundIndex = -1;
+
+                for (const timeseries of timeseriesArr) {
+                  for (
+                    let i = 0;
+                    i < timeseries.data.midDateArray.length;
+                    i++
+                  ) {
+                    const midDate = timeseries.data.midDateArray[i];
+                    const velocity = timeseries.data.velocityArray[i];
+
+                    // Match by date and velocity
+                    if (
+                      midDate.getTime() === clickedDate.getTime() &&
+                      Math.abs(velocity - clickedSpeed) < 0.01
+                    ) {
+                      foundTimeseries = timeseries;
+                      foundIndex = i;
+                      break;
+                    }
+                  }
+                  if (foundTimeseries) break;
+                }
+
+                if (!foundTimeseries || foundIndex === -1) {
+                  console.error("Could not find point in timeseries data");
+                  return;
+                }
+
+                const midDate = foundTimeseries.data.midDateArray[foundIndex];
+                const satellite =
+                  foundTimeseries.data.satelliteArray[foundIndex];
+                const speed =
+                  foundTimeseries.data.velocityArray[foundIndex].toFixed(2);
+                const dt = foundTimeseries.data.daysDeltaArray[foundIndex];
+                const originalIndex =
+                  foundTimeseries.data.originalIndexArray[foundIndex];
+
+                // Clear hover state
+                onClearHover?.();
+
+                // Show modal immediately with loading state
+                setClickedPoint({
+                  imageUrl: null, // Loading
+                  date: midDate.toLocaleDateString(),
+                  satellite,
+                  speed,
+                  dt,
+                });
+
+                // Fetch image URL on demand using original zarr index
+                const imageUrl = await getImageUrl(
+                  foundTimeseries.zarrUrl,
+                  originalIndex
+                );
+                setClickedPoint({
+                  imageUrl,
+                  date: midDate.toLocaleDateString(),
+                  satellite,
+                  speed,
+                  dt,
+                });
+              }
+            }
+          }}
+          data={data}
+          layout={chartLayout}
+          config={chartConfig}
+          className="w-full h-full"
+        />
+      )}
     </div>
   );
 };

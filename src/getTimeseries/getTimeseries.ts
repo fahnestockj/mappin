@@ -1,6 +1,7 @@
 import { HTTPStore, openArray } from "@fahnestockj/zarr-fork";
 import { findClosestIndex } from "./findClosestIndex";
 import { geoJsonLookup } from "./geoJsonLookup";
+import { getCompositeData } from "./getCompositeData";
 import { IMarker, ITimeseries } from "../types";
 
 declare enum HTTPMethod {
@@ -116,16 +117,24 @@ export async function getTimeseries(marker: IMarker): Promise<ITimeseries> {
     const midDateArray: Array<Date> = []
     const daysDeltaArray: Array<number> = []
     const satelliteArray: Array<string> = []
+    const originalIndexArray: Array<number> = []
+    // console.log(timeseriesArr.length);
+    // console.log('bytelength ', timeseriesArr.byteLength);
 
     for (let i = 0; i < timeseriesArr.length; i++) {
-      if (timeseriesArr[i] === -32767) continue
+      if (timeseriesArr[i] === -32767) {
+        // console.log("SKIPPING");
+
+        continue
+      }
       velocityArray.push(timeseriesArr[i])
-      /** 
+      /**
        * NOTE: Mid date array is in days since 1970-01-01 (EPOCH) which the Date constructor cannot handle
        * new Date(daysSinceEpochFloat * 86400000) -> converts to milliseconds since EPOCH which the Date constructor can handle
        **/
       midDateArray.push(new Date(midDateArr[i] * 86400000))
       daysDeltaArray.push(Math.round(dateDeltaArr[i]))
+      originalIndexArray.push(i) // Preserve the original zarr index
 
       const offset = i * 8
       const eightBytes = satelliteArr.buffer.slice(offset, offset + 8);
@@ -142,14 +151,21 @@ export async function getTimeseries(marker: IMarker): Promise<ITimeseries> {
       satelliteArray.push(satelliteString);
     }
 
+    // Fetch composite data (v, v_amp, v_phase) from annual composite store
+    // Reuse x/y indices since composite zarr shares the same coordinate system
+    const compositeData = await getCompositeData(zarrUrl, xIndex, yIndex)
+
     return {
       marker,
+      zarrUrl,
       data: {
         midDateArray,
         velocityArray,
         daysDeltaArray,
         satelliteArray,
-      }
+        originalIndexArray,
+      },
+      compositeData: compositeData ?? undefined,
     }
   }))
 
