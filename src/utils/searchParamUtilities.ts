@@ -40,7 +40,7 @@ export interface IPlotBounds {
 }
 function getBoundsFromParams(params: URLSearchParams): IPlotBounds {
   const defaultPlotBounds: IPlotBounds = {
-    x: [new Date("1985-01-01"), new Date("2024-01-01")],
+    x: [new Date("1985-01-01"), new Date()],
     y: [-500, 10000]
   }
   const x = params.getAll('x')
