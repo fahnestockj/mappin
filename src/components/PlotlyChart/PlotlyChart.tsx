@@ -404,7 +404,9 @@ export const PlotlyChart = (props: IProps) => {
       {timeseriesArr.length === 0 ? (
         <div className="w-full h-full flex items-center justify-center">
           <div className="text-gray-500 text-center">
-            No markers added yet. Click on the map to add markers.
+            {loading
+              ? "Loading timeseries data..."
+              : "No markers added yet. Click on the map to add markers."}
           </div>
         </div>
       ) : (

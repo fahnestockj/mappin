@@ -22,7 +22,7 @@ function App() {
   const [intervalDays, setIntervalDays] = useState<Array<number>>(
     initialState.intervalDays
   );
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(initialState.markers.length > 0);
   const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
 
