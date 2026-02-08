@@ -147,7 +147,7 @@ function App() {
             {/* Action Buttons */}
             <div className="flex gap-3 pt-2">
               <CSVDownloadButton data={timeseriesArr} />
-              <ShareButton />
+              <ShareButton markers={markers} />
             </div>
           </div>
         </div>
