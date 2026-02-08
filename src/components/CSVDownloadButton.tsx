@@ -1,4 +1,4 @@
-import { BiDownload } from "react-icons/bi";
+import { MdDownload } from "react-icons/md";
 import JSZip from "jszip";
 import { ITimeseries } from "../types";
 import { downloadBlob } from "../utils/downloadBlob";
@@ -53,8 +53,8 @@ export const CSVDownloadButton = (props: IProps) => {
         });
       }}
     >
+      <MdDownload className="w-4 h-4" />
       Download CSV
-      <BiDownload className="scale-150 ml-3 mb-1" />
     </Button>
   );
 };
