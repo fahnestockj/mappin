@@ -1,4 +1,4 @@
-import { MdClose, MdOpenInNew } from "react-icons/md";
+import { MdClose, MdDownload, MdOpenInNew } from "react-icons/md";
 
 interface IProps {
   imageUrl: string | null; // null when loading
@@ -146,16 +146,26 @@ export function ImageLinkModal(props: IProps) {
               </div>
             </div>
 
-            {/* Link button */}
-            <a
-              href={imageUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
-            >
-              <MdOpenInNew className="w-5 h-5" />
-              <span>Open in New Tab</span>
-            </a>
+            {/* Action buttons */}
+            <div className="flex gap-2">
+              <a
+                href={imageUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+              >
+                <MdOpenInNew className="w-5 h-5" />
+                <span>Open Image in New Tab</span>
+              </a>
+              <a
+                href={imageUrl.replace(/\.png$/, ".nc")}
+                download
+                className="flex items-center justify-center gap-2 flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+              >
+                <MdDownload className="w-5 h-5" />
+                <span>Download Granule</span>
+              </a>
+            </div>
           </>
         ) : (
           <div className="flex items-center justify-center gap-2 w-full bg-gray-100 text-gray-600 font-semibold py-3 px-4 rounded-lg">
