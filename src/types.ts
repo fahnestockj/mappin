@@ -37,6 +37,8 @@ export type ICompositeData = {
 export type ITimeseries = {
   zarrUrl: string
   marker: IMarker
+  xIndex: number
+  yIndex: number
   data: {
     midDateArray: Date[]
     daysDeltaArray: number[]

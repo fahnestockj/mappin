@@ -13,6 +13,8 @@ import { satelliteSvgString } from "../../utils/SatelliteSvg";
 import { ImageLinkModal } from "../ImageLinkModal";
 import { getImageUrl } from "../../getImageUrl/getImageUrl";
 import { generateFittedTimeseries, generateDenseDates } from "../../utils/sineval";
+import { getCompositeData } from "../../getTimeseries/getCompositeData";
+import { ICompositeData } from "../../types";
 const Plot = createPlotlyComponent(Plotly);
 
 type IProps = {
@@ -46,6 +48,47 @@ export const PlotlyChart = (props: IProps) => {
   } | null>(null);
 
   const isResettingAxesRef = useRef(false);
+
+  // Lazy-fetch composite data only when the user selects Annual Composite View
+  const [compositeDataMap, setCompositeDataMap] = useState<Record<string, ICompositeData>>({});
+  const [compositeLoading, setCompositeLoading] = useState(false);
+
+  useEffect(() => {
+    if (viewMode !== "annual" || timeseriesArr.length === 0) return;
+
+    // Only fetch for timeseries we haven't fetched yet
+    const needed = timeseriesArr.filter(
+      (ts) => !ts.compositeData && !compositeDataMap[ts.marker.id]
+    );
+    if (needed.length === 0) return;
+
+    let cancelled = false;
+    setCompositeLoading(true);
+
+    Promise.all(
+      needed.map((ts) =>
+        getCompositeData(ts.zarrUrl, ts.xIndex, ts.yIndex).then((data) => ({
+          markerId: ts.marker.id,
+          data,
+        }))
+      )
+    ).then((results) => {
+      if (cancelled) return;
+      setCompositeDataMap((prev) => {
+        const next = { ...prev };
+        for (const r of results) {
+          if (r.data) next[r.markerId] = r.data;
+        }
+        return next;
+      });
+      setCompositeLoading(false);
+    }).catch((err) => {
+      console.error("Failed to fetch composite data:", err);
+      if (!cancelled) setCompositeLoading(false);
+    });
+
+    return () => { cancelled = true; };
+  }, [viewMode, timeseriesArr]);
 
   const chartConfig: Partial<Plotly.Config> = useMemo(() => {
     return {
@@ -262,7 +305,7 @@ export const PlotlyChart = (props: IProps) => {
       for (let markerIdx = 0; markerIdx < filteredTimeseries.length; markerIdx++) {
         const timeseries = filteredTimeseries[markerIdx];
         const originalTimeseries = timeseriesArr[markerIdx];
-        const compositeData = originalTimeseries.compositeData;
+        const compositeData = originalTimeseries.compositeData ?? compositeDataMap[originalTimeseries.marker.id];
         const markerName = `Marker ${markerIdx + 1}`;
 
         // Add original scatter points for this marker (faded backdrop)
@@ -380,10 +423,10 @@ export const PlotlyChart = (props: IProps) => {
         return 0;
       })
       .map(({ isHovered, ...trace }) => trace as Partial<Plotly.PlotData>);
-  }, [timeseriesArr, intervalDays, viewMode, hoveredMarkerId]);
+  }, [timeseriesArr, intervalDays, viewMode, hoveredMarkerId, compositeDataMap]);
 
   return (
-    <div className={classNames("w-full h-[90%]", loading && "animate-pulse")}>
+    <div className={classNames("w-full h-[90%]", (loading || compositeLoading) && "animate-pulse")}>
       {clickedPoint && (
         <ImageLinkModal
           imageUrl={clickedPoint.imageUrl}
