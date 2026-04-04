@@ -475,8 +475,7 @@ export const PlotlyChart = (props: IProps) => {
                 return;
               }
 
-              // Only handle clicks in default view for now
-              if (viewMode === "default") {
+              if (viewMode === "default" || viewMode === "satellite") {
                 // Look up the point in the original timeseries data
                 let foundTimeseries = null;
                 let foundIndex = -1;
