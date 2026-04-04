@@ -238,7 +238,7 @@ export const PlotlyChart = (props: IProps) => {
                 color:
                   satelliteColorDict[
                     satellite as keyof typeof satelliteColorDict
-                  ],
+                  ] ?? "#888888",
               },
               hovertemplate:
                 "<b>Date:</b> %{x}<br><b>Speed:</b> %{y:.2f} m/yr<extra></extra>",
@@ -252,8 +252,7 @@ export const PlotlyChart = (props: IProps) => {
       }
       return Object.values(satelliteDict).sort(
         (a, b) =>
-          (parseInt(a.name![a.name!.length - 1]) || 0) -
-          (parseInt(b.name![b.name!.length - 1]) || 0)
+          (a.name ?? "").localeCompare(b.name ?? "")
       );
     }
 

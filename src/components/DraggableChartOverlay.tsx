@@ -113,7 +113,7 @@ export function DraggableChartOverlay(props: IProps) {
             mode: "markers",
             name: satellite,
             marker: {
-              color: satelliteColorDict[satellite as keyof typeof satelliteColorDict],
+              color: satelliteColorDict[satellite as keyof typeof satelliteColorDict] ?? "#888888",
             },
           };
         }

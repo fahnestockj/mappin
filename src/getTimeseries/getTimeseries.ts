@@ -147,7 +147,7 @@ export async function getTimeseries(marker: IMarker): Promise<ITimeseries> {
         }
       }
 
-      const satelliteString = satelliteStrDict[satelliteShorthand as keyof typeof satelliteStrDict];
+      const satelliteString = satelliteStrDict[satelliteShorthand as keyof typeof satelliteStrDict] ?? `Unknown (${satelliteShorthand})`;
       satelliteArray.push(satelliteString);
     }
 
@@ -179,8 +179,10 @@ export async function getTimeseries(marker: IMarker): Promise<ITimeseries> {
 const satelliteStrDict = {
   "1A": "Sentinel 1",
   "1B": "Sentinel 1",
+  "1C": "Sentinel 1",
   "2A": "Sentinel 2",
   "2B": "Sentinel 2",
+  "2C": "Sentinel 2",
   "4": "Landsat 4",
   "5": "Landsat 5",
   "7": "Landsat 7",
